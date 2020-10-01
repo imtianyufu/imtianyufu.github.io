@@ -1,23 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title>hello</title>
-    <url>/2020/09/25/hello-1/</url>
-    <content><![CDATA[]]></content>
-  </entry>
-  <entry>
-    <title>hello</title>
-    <url>/2020/09/25/hello/</url>
-    <content><![CDATA[]]></content>
-  </entry>
-  <entry>
-    <title>next</title>
-    <url>/2020/09/25/next/</url>
-    <content><![CDATA[]]></content>
-  </entry>
-  <entry>
-    <title>private</title>
-    <url>/2020/09/27/private/</url>
+    <title>927</title>
+    <url>/2020/09/27/927/</url>
     <content><![CDATA[]]></content>
   </entry>
   <entry>
@@ -26,18 +11,13 @@
     <content><![CDATA[]]></content>
   </entry>
   <entry>
-    <title>test_my_site</title>
-    <url>/2020/09/25/test-my-site/</url>
-    <content><![CDATA[]]></content>
-  </entry>
-  <entry>
-    <title>927</title>
-    <url>/2020/09/27/927/</url>
-    <content><![CDATA[]]></content>
-  </entry>
-  <entry>
     <title>giteee</title>
     <url>/2020/09/27/giteee/</url>
+    <content><![CDATA[]]></content>
+  </entry>
+  <entry>
+    <title>hello</title>
+    <url>/2020/09/25/hello-1/</url>
     <content><![CDATA[]]></content>
   </entry>
   <entry>
@@ -59,8 +39,28 @@
 ]]></content>
   </entry>
   <entry>
+    <title>hello</title>
+    <url>/2020/09/25/hello/</url>
+    <content><![CDATA[]]></content>
+  </entry>
+  <entry>
+    <title>next</title>
+    <url>/2020/09/25/next/</url>
+    <content><![CDATA[]]></content>
+  </entry>
+  <entry>
+    <title>private</title>
+    <url>/2020/09/27/private/</url>
+    <content><![CDATA[]]></content>
+  </entry>
+  <entry>
     <title>test_my_site</title>
     <url>/2020/09/25/test-my-site-1/</url>
+    <content><![CDATA[]]></content>
+  </entry>
+  <entry>
+    <title>test_my_site</title>
+    <url>/2020/09/25/test-my-site/</url>
     <content><![CDATA[]]></content>
   </entry>
 </search>
