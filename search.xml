@@ -4,11 +4,25 @@
     <title>927</title>
     <url>/2020/09/27/927/</url>
     <content><![CDATA[]]></content>
+      <categories>
+        <category>test</category>
+      </categories>
+      <tags>
+        <tag>tagtest1</tag>
+        <tag>tagtest2</tag>
+        <tag>tag3</tag>
+        <tag>tag4</tag>
+        <tag>tag5</tag>
+        <tag>tag6</tag>
+      </tags>
   </entry>
   <entry>
     <title>auto</title>
     <url>/2020/10/01/auto/</url>
     <content><![CDATA[<h2 id="test"><a href="#test" class="headerlink" title="test"></a>test</h2>]]></content>
+      <categories>
+        <category>test</category>
+      </categories>
   </entry>
   <entry>
     <title>domain_test</title>
