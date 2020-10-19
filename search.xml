@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title>PCA学习笔记</title>
+    <title>PCA学习笔记(含推导过程)</title>
     <url>/2020/10/18/PCA%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/</url>
-    <content><![CDATA[<h1 id="PCA学习笔记"><a href="#PCA学习笔记" class="headerlink" title="PCA学习笔记"></a>PCA学习笔记</h1><p>本篇博客的主要内容有：</p>
+    <content><![CDATA[<p>本篇博客的主要内容有：</p>
 <ol>
 <li>降维</li>
 <li>PCA的数学基础</li>
