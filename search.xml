@@ -43,7 +43,7 @@
 <h2 id="PCA的基础概念"><a href="#PCA的基础概念" class="headerlink" title="PCA的基础概念"></a>PCA的基础概念</h2><ol>
 <li><p>求和向量$1_{n}$<br>对于任何一个向量x，其所有元素之和都等于x与求和向量的内积</p>
 </li>
-<li><p>中心化矩阵(centering matrix)<br>$H = I_{N} - \frac{1}{N}\cdot 1_{N}\cdot 1_{N}^{T}$<br>对于任意的向量x,$H\cdot x$表示将原数据向量的各个元素减去n个数据的均值的结果,直观上理解就是将数据往中心原点移动<br>中心化矩阵有两个基本性质：</p>
+<li><p>中心化矩阵(centering matrix)<br>$H = I_{N} - \frac{1}{N}\cdot 1_{N}\cdot 1_{N}^{T}$<br>对于任意的向量x,$H\cdot x$表示将原数据向量的各个元素减去n个数据的均值的结果,直观上理解就是将数据往中心原点移动,中心化后的数据均值为0。<br>中心化矩阵有两个基本性质：</p>
 </li>
 </ol>
 <ul>
@@ -55,10 +55,9 @@
 </li>
 <li><p>Sample Mean:<br>$\bar{X} = \frac{1}{N} \sum_{i=1}^{N}x_{i}$</p>
 </li>
-<li><p>Sample Covariance<br>对于一维数据，我们有：<br>$S = \frac{1}{N} \sum_{i=1}^{N}(x_{i}-\bar{x})^{2} = \frac{1}{N}\cdot X^{T}\cdot 1_{N}$</p>
-<p>对于p维数据，我们有：<br>$S_{p\times p} = \frac{1}{N} \sum_{i=1}^{N}(x_{i}-\bar{x})\cdot (x_{i}-\bar{x})^{T} = \frac{1}{N}\cdot X^{T}\cdot H\cdot X$</p>
+<li><p>Sample Covariance<br>对于一维数据，我们有：<br>$S = \frac{1}{N} \sum_{i=1}^{N}(x_{i}-\bar{x})^{2} = \frac{1}{N}\cdot X^{T}\cdot 1_{N}$<br>对于p维数据，我们有：<br>$S_{p\times p} = \frac{1}{N} \sum_{i=1}^{N}(x_{i}-\bar{x})\cdot (x_{i}-\bar{x})^{T} = \frac{1}{N}\cdot X^{T}\cdot H\cdot X$</p>
 </li>
-<li><p>计算向量在某个方向上的投影<br>$\vec{a}\cdot \vec{b} = \left | \vec{a} \right |\cdot \left | \vec{b} \right |\cdot \cos \theta $<br>因此，当$\left | \vec{b} \right | = 1$时，$\vec{a}$在$\vec{b}$上面的投影为：<br>$ P = \left | \vec{a} \right |\cdot\cos \theta $</p>
+<li><p>计算向量在某个方向上的投影<br>假设有两个向量$\vec{a},\vec{b}$,则$\vec{a}$在$\vec{b}$上面的投影$P_{1} = |\vec{a}| \cdot  \cos \theta$<br>同时我们有$\vec{a}\cdot \vec{b} = \left | \vec{a} \right |\cdot \left | \vec{b} \right |\cdot \cos \theta$<br>因此，当$\left | \vec{b} \right | = 1$时,<br>$\vec{a}\cdot \vec{b} =  \left | \vec{a} \right |\cdot\cos \theta = P_{2}$<br>我们可以看到,当$\left | \vec{b} \right | = 1$,$P_{1} = P_{2}$<br>因此算投影可以直接算向量点积,在数学中我们一般写成下面的形式: $P = a^{T} \cdot b$<br>s.t. $\left | \vec{b} \right | = 1$</p>
 </li>
 </ol>
 <h2 id="PCA的思想与推导过程"><a href="#PCA的思想与推导过程" class="headerlink" title="PCA的思想与推导过程"></a>PCA的思想与推导过程</h2><p>PCA的主要内容可以用一句话来概括，那就是：<strong>一个中心，两个基本点</strong><br><strong>一个中心</strong>：是对原始特征空间的重构，将一组可能是线性相关的数据通过正交变换，变成线性无关的数据(即去除数据的线性相关性)，当重构的空间维数小于原始特征空间维数时，就达到了降维的目的。<br><strong>两个基本点</strong>：</p>
@@ -66,8 +65,8 @@
 <li>最大投影方差思想</li>
 <li>最小重构距离思想</li>
 </ul>
-<h3 id="基于最大投影方差思想的推导过程"><a href="#基于最大投影方差思想的推导过程" class="headerlink" title="基于最大投影方差思想的推导过程"></a>基于最大投影方差思想的推导过程</h3><p>最大投影方差指：<br>将样本投影到新的坐标下，数据能够尽可能的分开(也就是方差尽可能大)，这样就能尽可能的将降低数据维度的时候更好的保留原始数据的特性，更好的区分原始数据。<br>我们先计算将数据降至1维，投影方向$\vec{u_{1}}$</p>
-<p>$j = \overrightarrow{(x_{i}-\bar{x})^{T}}\cdot \vec{u_{1}}$<br>实际上投影是一个数，以$u_{1}$为基底时，在$u_{1}$上面的坐标<br>那么投影方差应该表示为：<br>$J = \frac{1}{N}\sum_{i=1}^{N}\begin{Bmatrix}<br>(x_{i}-\bar{x})^{T}\cdot u_{1}<br>\end{Bmatrix}^{2}$<br>$= \frac{1}{N}\sum_{i=1}^{N}u_{1}^{T}\cdot (x_{i}-\bar{x})\cdot (x_{i}-\bar{x})^{T}\cdot u_{1}$<br>$=u_{1}^{T}\cdot \bigl(\begin{smallmatrix}<br>\frac{1}{N}\sum_{i=1}^{N}<br>(x_{i}-\bar{x})\cdot (x_{i}-\bar{x})^{T}<br>\end{smallmatrix}\bigr)\cdot u_{1}$<br>$= u_{1}^{T}\cdot S \cdot u_{1}$</p>
+<h3 id="基于最大投影方差思想的推导过程"><a href="#基于最大投影方差思想的推导过程" class="headerlink" title="基于最大投影方差思想的推导过程"></a>基于最大投影方差思想的推导过程</h3><p>最大投影方差指：<br>将样本投影到新的坐标下，数据能够尽可能的分开(也就是方差尽可能大)，这样就能尽可能的将降低数据维度的同时更好的保留原始数据的特性，更好的区分原始数据。<br>我们先计算将数据降至1维，投影方向$\vec{u_{1}}$</p>
+<p>$j = \overrightarrow{(x_{i}-\bar{x})^{T}}\cdot \vec{u_{1}}$<br>s.t. $\vec{|u_{1}|}=1(u_{1}^{T} \cdot u_{1}=1)$<br>实际上投影是一个数:以$u_{1}$为基底时，在$u_{1}$方向上的坐标<br>那么投影方差应该表示为：<br>$J = \frac{1}{N}\sum_{i=1}^{N}\begin{Bmatrix}<br>(x_{i}-\bar{x})^{T}\cdot u_{1}<br>\end{Bmatrix}^{2}$<br>(这里要注意,因为前面已经中心化,均值已经为0了,所以直接把投影做平方累加就好)<br>$= \frac{1}{N}\sum_{i=1}^{N}u_{1}^{T}\cdot (x_{i}-\bar{x})\cdot (x_{i}-\bar{x})^{T}\cdot u_{1}$<br>$=u_{1}^{T}\cdot \bigl(\begin{smallmatrix}<br>\frac{1}{N}\sum_{i=1}^{N}<br>(x_{i}-\bar{x})\cdot (x_{i}-\bar{x})^{T}<br>\end{smallmatrix}\bigr)\cdot u_{1}$<br>$= u_{1}^{T}\cdot S \cdot u_{1}$</p>
 <p>到这里我们就得到了J的表示函数，就将问题转为求：<br>$\check{u_{1}} = argmax ( u_{1}^{T}\cdot S \cdot u_{1}) $<br>s.t. $u_{1}^{T} \cdot u_{1} = 1$</p>
 <p>根据拉格朗日乘子法<br>$\alpha (u_{1},\lambda ) = u_{1}^{T}\cdot S \cdot u_{1})  + \lambda \cdot (1-u_{1}^{T}\cdot u_{1})$<br>有<br>$ \frac{\partial \alpha}{\partial u_{1}} = 2\cdot S\cdot u_{1} - \lambda \cdot 2\cdot u_{1}=0$<br>$Su_{1} = \lambda u_{1}$</p>
 <p>这里面涉及到矩阵求导，请参考：<br><a href="https://zhuanlan.zhihu.com/p/24709748" target="_blank" rel="noopener">矩阵求导术</a></p>
