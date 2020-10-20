@@ -90,8 +90,7 @@
 <p>Output: $X_{N \times q} =  X_{N \times p} \cdot P_{p \times q}$</p>
 <p>关于PCA的内容还有一个是关于PCA的计算优化PCoA，使用SVD分解，以及scikit learn中的PCA源码就是使用PCoA，这个先挖坑待填。</p>
 <hr>
-<p>References：</p>
-<ol>
+<h2 id="References："><a href="#References：" class="headerlink" title="References："></a>References：</h2><ol>
 <li><a href="https://www.visiondummy.com/2014/04/curse-dimensionality-affect-classification/" target="_blank" rel="noopener">Vincent Spruyt. The Curse of Dimensionality in classification. Computer vision for dummies. 2014.</a></li>
 <li>西瓜书</li>
 <li>PRML</li>
