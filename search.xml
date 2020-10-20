@@ -80,15 +80,15 @@
 </li>
 <li>最小重构代价计算<br>$J = \frac{1}{N} \sum_{i=1}^{N}\left | \vec{x_{i}}-\hat{x_{i}} \right |^{2}$<br>$ = \frac{1}{N} \sum_{i=1}^{N}\left |   \sum_{k=q+1}^{p}(\vec{x_{i}^{T}} \cdot \vec{u_{k}} )\cdot \vec{u_{k}}    \right |^{2}$<br>$= \frac{1}{N} \sum_{i=1}^{N} \sum_{k=q+1}^{p}(x_{i}^{T}\cdot u_{k})^{2}$<br>前面我们假设数据已经中心化，现在我们代入真正的数据<br>$J= \frac{1}{N} \sum_{i=1}^{N} \sum_{k=q+1}^{p}\begin{Bmatrix}<br>(x_{i}^{T}-\bar{x})\cdot u_{k}<br>\end{Bmatrix}^{2}$<br>$J= \sum_{k=q+1}^{p}\sum_{i=1}^{N} \frac{1}{N}  \begin{Bmatrix}<br>(x_{i}^{T}-\bar{x})\cdot u_{k}<br>\end{Bmatrix}^{2}$<br>$J=\sum_{k=q+1}^{p}u_{k}^{T}\cdot S \cdot u_{k}$<br>s.t. $u_{k}^{T}\cdot u_{k}=1$<br>到这里我们的推导已经基本上完成了，下面是我们的优化目标：让J最小<br>$J = argmin (\sum_{k=q+1}^{p}u_{k}^{T}\cdot S \cdot u_{k}) $<br>s.t. $u_{k}^{T}\cdot u_{k}=1$<br>在这里我们可以发现，这个优化目标与最大方差的优化目标形式是一样的，只不过一个是求最大的$\vec{u}$，一个是降至k维后余下向量的$\vec{u}$<br>要求最小的J的话,应该求最小的特征值，那么剩下的特征值就是前q维的主成分了。</li>
 </ol>
-<h2 id="PCA的计算过程-IPO"><a href="#PCA的计算过程-IPO" class="headerlink" title="PCA的计算过程(IPO)"></a>PCA的计算过程(IPO)</h2><p>input: $X_{N \times p}$,降至q维<br>Process:</p>
+<h2 id="PCA的计算过程-IPO"><a href="#PCA的计算过程-IPO" class="headerlink" title="PCA的计算过程(IPO)"></a>PCA的计算过程(IPO)</h2><p>input:  $X_{N \times p}$,降至q维<br>Process:</p>
 <ol>
 <li>中心化 $X:= H \cdot X$ </li>
 <li>计算样本的协方差矩阵S</li>
 <li>对S做特征值分解</li>
 <li>取前q大个特征值所对应的特征向量 $u_{1},u_{2},…u_{q}$(列向量)组成投影矩阵$P=(u_{1}u_{2}…u_{q})$</li>
 </ol>
-<p>Output:<br>$X_{N \times q} = P^{-1} \cdot X_{N \times p} = P^{T} \cdot X_{N \times p}$</p>
-<p>关于PCA的内容还有一个是关于PCA的计算优化PCoA，使用SVD分解，以及scikit learn中的PCA源码就是使用PCoA，这个先挖坑待填，下次我将会更新从SVD角度的PCoA和PCA的实现源码。</p>
+<p>Output: $X_{N \times q} =  X_{N \times p} \cdot P_{p \times q}$</p>
+<p>关于PCA的内容还有一个是关于PCA的计算优化PCoA，使用SVD分解，以及scikit learn中的PCA源码就是使用PCoA，这个先挖坑待填。</p>
 <hr>
 <p>References：</p>
 <ol>
