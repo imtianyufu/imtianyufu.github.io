@@ -93,7 +93,7 @@
 <meta property="og:site_name" content="just do I T">
 <meta property="og:description" content="本篇博客的主要内容有：  降维 PCA的数学基础 PCA的两种思想推导 基于最大投影方差 基于最小重构距离   PCA的计算过程">
 <meta property="article:published_time" content="2020-10-18T07:04:18.000Z">
-<meta property="article:modified_time" content="2020-10-20T12:29:32.498Z">
+<meta property="article:modified_time" content="2020-10-20T12:45:41.124Z">
 <meta property="article:author" content="符说八道">
 <meta property="article:tag" content="PCA">
 <meta property="article:tag" content="降维">
@@ -399,7 +399,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  3k字
+                  3.1k字
                 </span>
               
 
@@ -516,7 +516,8 @@
 <li>取前d大个特征值所对应的特征向量 $u_{1},u_{2},…u_{d}$(列向量)组成投影矩阵$P=(u_{1}u_{2}…u_{d})$</li>
 </ol>
 <p>Output: $X_{N \times d} =  X_{N \times p} \cdot P_{p \times d}$</p>
-<p>这里还有一个小细节,就是西瓜书中计算新的坐标时是采用:<br> $X_{d \times N} = P^{T}_{d \times p} \cdot X_{p \times N}$<br> 最后得出来的结果是一样的.<br>关于PCA的内容还有一个是关于PCA的计算优化PCoA，使用SVD分解，以及scikit learn中的PCA源码就是使用PCoA，这个先挖坑待填。</p>
+<p>这里还有一个小细节,就是西瓜书中计算新的坐标时是采用:<br> $X_{d \times N} = P^{T}_{d \times p} \cdot X_{p \times N}$<br> 最后得出来的结果是一样的.<br> 网上的很多文章对这个都解释的不太清楚,这里从矩阵线性变换的角度来理解看看:<br> 首先,计算一个列向量$x$在新基下面的坐标是这样计算的:<br> $x^{‘}: P^{-1} \cdot x$<br> 而如果将列向量组成矩阵,那么计算应该是这样的:<br> $X_{d \times N} = P^{-1}_{d \times p} \cdot X_{p \times N}$<br> 但是,如果是标准正交基的话,有:<br> $P^{-1} = P^{T}$<br> 这样就变成西瓜书上面的:<br>  $X_{d \times N} = P^{T}_{d \times p} \cdot X_{p \times N}$</p>
+<p>关于PCA的内容还有一个是关于PCA的计算优化PCoA，使用SVD分解，以及scikit learn中的PCA源码就是使用PCoA，这个先挖坑待填。</p>
 <hr>
 <h2 id="References"><a href="#References" class="headerlink" title="References"></a>References</h2><ol>
 <li><a href="https://www.visiondummy.com/2014/04/curse-dimensionality-affect-classification/" target="_blank" rel="noopener">Vincent Spruyt. The Curse of Dimensionality in classification. Computer vision for dummies. 2014.</a></li>
