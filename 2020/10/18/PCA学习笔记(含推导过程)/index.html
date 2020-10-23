@@ -93,7 +93,7 @@
 <meta property="og:site_name" content="just do I T">
 <meta property="og:description" content="本篇博客的主要内容有：  降维 PCA的数学基础 PCA的两种思想推导 基于最大投影方差 基于最小重构距离   PCA的计算过程">
 <meta property="article:published_time" content="2020-10-18T07:04:18.000Z">
-<meta property="article:modified_time" content="2020-10-23T10:28:06.590Z">
+<meta property="article:modified_time" content="2020-10-23T10:37:06.164Z">
 <meta property="article:author" content="符说八道">
 <meta property="article:tag" content="PCA">
 <meta property="article:tag" content="降维">
@@ -499,7 +499,7 @@
 <p>到这里我们就得到了J的表示函数，就将问题转为求：<br>$\check{u_{1}} = argmax ( u_{1}^{T}\cdot S \cdot u_{1})$<br>s.t. $u_{1}^{T} \cdot u_{1} = 1$</p>
 <p>根据拉格朗日乘子法<br>$\alpha (u_{1},\lambda ) = u_{1}^{T}\cdot S \cdot u_{1})  + \lambda \cdot (1-u_{1}^{T}\cdot u_{1})$<br>有<br>$\frac{\partial \alpha}{\partial u_{1}} = 2\cdot S\cdot u_{1} - \lambda \cdot 2\cdot u_{1}=0$<br>$Su_{1} = \lambda u_{1}$</p>
 <p>这里面涉及到矩阵求导，请参考：<br><a href="https://zhuanlan.zhihu.com/p/24709748" target="_blank" rel="noopener">矩阵求导术</a></p>
-<p>实际上式子推导到这里，我们可以得出结论：<br>$\lambda$即特征值，$u_{1}$即特征向量<br>也就是说，我们的投影方向应该是S的特征向量的方向<br>再接着我们将上面的式子左乘$u_{1}^{T}$可以得到：<br>$u_{1}^{T}\cdot S \cdot u_{1} = J = \lambda$<br>注意这里$\lambda$刚好就是等于我们的$J$<br>也就是说，如果将数据降至一维，那么我们的$\check{u_{1}} = argmax ( u_{1}^{T}\cdot S \cdot u_{1}) $ 极大值就是$\lambda$<br>即$u_{1}$是S最大特征值对应的特征向量时，投影方差取到极大值，我们称$u_{1}$为<strong>第一主成分</strong><br>那么接下来我们就先获得方差最大的1维，生成该维的补空间；，继续在补空间中获得方差最大的1维，继续生成新的补空间，依次循环下去得到M维的空间，我们就可以降至M维了。<br>S的特征向量，就可以认为是<strong>主成分</strong></p>
+<p>实际上式子推导到这里，我们可以得出结论：<br>$\lambda$即特征值，$u_{1}$即特征向量<br>也就是说，我们的投影方向应该是S的特征向量的方向<br>再接着我们将上面的式子左乘$u_{1}^{T}$可以得到：<br>$u_{1}^{T}\cdot S \cdot u_{1} = J = \lambda$<br>注意这里$\lambda$刚好就是等于我们的$J$<br>也就是说，如果将数据降至一维，那么我们的$\check{u_{1}} = argmax ( u_{1}^{T}\cdot S \cdot u_{1}) $ 极大值就是$\lambda$<br>即$u_{1}$是S最大特征值对应的特征向量时，投影方差取到极大值，我们称$u_{1}$为<strong>第一主成分</strong><br>那么接下来我们就先获得方差最大的1维，生成该维的补空间；，继续在补空间中获得方差最大的1维，继续生成新的补空间，依次循环下去得到q维的空间，我们就可以降至q维了。<br>S的特征向量，就可以认为是<strong>主成分</strong></p>
 <h3 id="基于最小重构距离思想的推导过程"><a href="#基于最小重构距离思想的推导过程" class="headerlink" title="基于最小重构距离思想的推导过程"></a>基于最小重构距离思想的推导过程</h3><p>最小重构距离指：<br>恢复到原始数据的代价最小(当我们考虑最大投影方差时，其实也可以任务数据尽可能的分散，那么恢复成原始数据的代价就更小，如果数据都重合在了一起，那么想要恢复数据，也就是重构，就更加困难了)</p>
 <ol>
 <li><p>在新基底(以S的特征向量为基底)的向量表示<br>$\vec{x_{i}} = \sum_{k=1}^{p}(\vec{x_{i}^{T}}\cdot \vec{u_{k}} )\cdot \vec{u_{k}}$<br>为了简化描述，我们先假设数据已经中心化，注意这里的<strong>原始数据是p维的</strong></p>
