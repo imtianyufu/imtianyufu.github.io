@@ -75,7 +75,7 @@
 
 
 
-  <meta name="keywords" content="PCA,降维," />
+  <meta name="keywords" content="Hexo, NexT" />
 
 
 
@@ -86,17 +86,11 @@
 
 
 
-<meta name="description" content="本篇博客的主要内容有：  降维 PCA的数学基础 PCA的两种思想推导 基于最大投影方差 基于最小重构距离   PCA的计算过程">
-<meta property="og:type" content="article">
-<meta property="og:title" content="PCA学习笔记(含推导过程)">
-<meta property="og:url" content="http://example.com/2020/10/18/PCA%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0(%E5%90%AB%E6%8E%A8%E5%AF%BC%E8%BF%87%E7%A8%8B)/index.html">
+<meta property="og:type" content="website">
+<meta property="og:title" content="just do I T">
+<meta property="og:url" content="http://example.com/tags/%E6%A2%AF%E5%BA%A6%E4%B8%8B%E9%99%8D/index.html">
 <meta property="og:site_name" content="just do I T">
-<meta property="og:description" content="本篇博客的主要内容有：  降维 PCA的数学基础 PCA的两种思想推导 基于最大投影方差 基于最小重构距离   PCA的计算过程">
-<meta property="article:published_time" content="2020-10-18T07:04:18.000Z">
-<meta property="article:modified_time" content="2020-10-23T10:37:06.164Z">
 <meta property="article:author" content="符说八道">
-<meta property="article:tag" content="PCA">
-<meta property="article:tag" content="降维">
 <meta name="twitter:card" content="summary">
 
 
@@ -127,13 +121,13 @@
 
 
 
-  <link rel="canonical" href="http://example.com/2020/10/18/PCA学习笔记(含推导过程)/"/>
+  <link rel="canonical" href="http://example.com/tags/梯度下降/"/>
 
 
 
 
 
-  <title>PCA学习笔记(含推导过程) | just do I T</title>
+  <title>标签: 梯度下降 | just do I T</title>
   
 
 
@@ -152,7 +146,7 @@
     
   
 
-  <div class="container sidebar-position-left page-post-detail">
+  <div class="container sidebar-position-left ">
     <div class="headband"></div>
 
     <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
@@ -280,332 +274,54 @@
           <div id="content" class="content">
             
 
-  <div id="posts" class="posts-expand">
-    
+  
+  
+  
+  <div class="post-block tag">
 
-  
+    <div id="posts" class="posts-collapse">
+      <div class="collection-title">
+        <h1>梯度下降<small>标签</small>
+        </h1>
+      </div>
 
-  
-  
-  
+      
+        
 
   <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2020/10/18/PCA%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0(%E5%90%AB%E6%8E%A8%E5%AF%BC%E8%BF%87%E7%A8%8B)/">
+    <header class="post-header">
 
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="符说八道">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="https://i.loli.net/2020/09/28/bqlJh8RXW6yLmGp.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="just do I T">
-    </span>
-
-    
-      <header class="post-header">
-
+      <h2 class="post-title">
         
+            <a class="post-title-link" href="/2020/10/24/NG%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0ex1/" itemprop="url">
+              
+                <span itemprop="name">NG机器学习ex1</span>
+              
+            </a>
         
-          <h1 class="post-title" itemprop="name headline">PCA学习笔记(含推导过程)</h1>
-        
+      </h2>
 
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-10-18T15:04:18+08:00">
-                2020-10-18
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/ML/" itemprop="url" rel="index">
-                    <span itemprop="name">ML</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-              <span class="post-comments-count">
-                <span class="post-meta-divider">|</span>
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-comment-o"></i>
-                </span>
-                <a href="/2020/10/18/PCA%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0(%E5%90%AB%E6%8E%A8%E5%AF%BC%E8%BF%87%E7%A8%8B)/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count valine-comment-count" data-xid="/2020/10/18/PCA%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0(%E5%90%AB%E6%8E%A8%E5%AF%BC%E8%BF%87%E7%A8%8B)/" itemprop="commentCount"></span>
-                </a>
-              </span>
-            
-          
-
-          
-          
-             <span id="/2020/10/18/PCA%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0(%E5%90%AB%E6%8E%A8%E5%AF%BC%E8%BF%87%E7%A8%8B)/" class="leancloud_visitors" data-flag-title="PCA学习笔记(含推导过程)">
-               <span class="post-meta-divider">|</span>
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               
-                 <span class="post-meta-item-text">热度&#58;</span>
-               
-                 <span class="leancloud-visitors-count"></span>
-                 <span>℃</span>
-             </span>
-          
-
-          
-
-          
-            <div class="post-wordcount">
-              
-                
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-file-word-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">字数统计&#58;</span>
-                
-                <span title="字数统计">
-                  3.2k字
-                </span>
-              
-
-              
-                <span class="post-meta-divider">|</span>
-              
-
-              
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-clock-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
-                
-                <span title="阅读时长">
-                  13分钟
-                </span>
-              
-            </div>
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        <p>本篇博客的主要内容有：</p>
-<ol>
-<li>降维</li>
-<li>PCA的数学基础</li>
-<li>PCA的两种思想推导<ul>
-<li>基于最大投影方差</li>
-<li>基于最小重构距离</li>
-</ul>
-</li>
-<li>PCA的计算过程</li>
-</ol>
-<hr>
-<a id="more"></a>
-<h2 id="降维"><a href="#降维" class="headerlink" title="降维"></a>降维</h2><p>降维属于<strong>无监督学习</strong>，可以用来解决训练中<strong>过拟合</strong>和<strong>维数灾难</strong>问题。</p>
-<ol>
-<li><p><strong>维数灾难</strong> 导致数据稀疏性/过拟合<br>一个直观的理解是：假设我们有十个样本<br>特征维数为1D时，当特征空间是长度为5的线段时，样本密度是10/5=2。<br>特征维数为2D时，特征空间大小为$5^{2}$，样本密度为10/25=0.4。<br>特征维数为3D时，特征空间大小为$5^{3}$，样本密度为10/125=0.08<br>如果我们继续增加特征，特征空间的维数就会不断增长，变得越来越稀疏。由于这种稀疏性，当特征的数量无穷大时，训练样本位于最佳超平面错误一侧的可能性无穷小，因此找到可分离超平面就变得容易得多。事实上，增加特征数量使得高维空间线性可分，相当于在低维空间内训练一个复杂的非线性分类器。不过，这个非线性分类器学习了训练数据中的specific instances and exceptions，这就直接导致导致了<strong>过拟合</strong></p>
-</li>
-<li><p><strong>过拟合(overfitting)</strong> 使用太多特征将会导致过拟合，泛化能力差<br><strong>overfitting</strong>: The classifier starts learning exceptions that are specific to the training data and do not generalize well when new data is encountered.<br>虽然在较低维度下分类器的性能表现的可能不如在高维空间中的好，但是对于未见过的数据却表现了良好的泛化能力，也就是说，使用更少的特征，我们的分类器可以<strong>避免过拟合</strong>，进而<strong>避免维数灾难</strong></p>
-</li>
-<li><p>维数灾难不同视角一<br>假设每个样本的特征值都是唯一的，并且每个特征的范围都是[0-1]<br>在1D时，如果我们想要将训练数据覆盖特征范围的20%时，我们需要所有样本的20%作为训练数据<br>在2D时，0.45^2=0.2，因此我们需要所有样本的45%作为训练数据<br>在3D时，0.58^3=0.2，因为我们需要所有样本的58%作为训练样本<br>也就是说，随着特征维数的增加，为了覆盖特征值值域的20%，我们需要增加更多的训练样本，当<strong>训练样本数量固定时，增加更多的特征维数，就容易导致过拟合</strong></p>
-</li>
-<li><p>维数灾难中不同视角二<br>维数灾难导致<strong>训练样本的分布不均</strong> 在中心位置的数据比在其周围的数据分布更加的稀疏，更多的数据将会分布在超立方体的角落。<br>可以这样来理解，设我们的立方体的边长为1。<br>不管维数多少，我们的超立方体的体积都为1<br>超球体的体积计算公式为：<br>$V_{超球体} = K \cdot  r ^{D}$   （r为小于1的数）<br>当D-&gt;无穷大时，V-&gt;0，这部分说明了分类问题中的“维数灾难”：<strong>在高维特征空间中，大多数的训练样本位于超立方体的角落。</strong></p>
-</li>
-<li><p>维数灾难中不同视角三<br>想象我们有一个圆环，其外环半径为1，内环半径为$1-\varepsilon$<br>可以求得：<br>$V_{外} = K \cdot 1 ^{D} = K$<br>$V_{环} =V_{外} - V_{内} =  K - K \cdot (1-\varepsilon )^{D}$<br>从而有：<br>$\frac{V_{外}}{V_{内}}  =  1 - (1-\varepsilon ) ^{D}$<br>$\lim_{D \to \infty }\frac{V_{外}}{V_{内}} = 1$<br><strong>随着维数的增加，我们在三维空间中的几何直觉会在考虑高维空间中不起作用。</strong> 一个球体的大部分体积都聚集在表面附近的薄球壳上面。</p>
-</li>
-<li><p>降维的方法分类<br>对于数据降维的方法有</p>
-<ul>
-<li>直接降维(特征选择)</li>
-<li>线性降维(PCA等)</li>
-<li>非线性降维(流行学习等)<br>下面将开始介绍PCA降维的思想。</li>
-</ul>
-</li>
-</ol>
-<h2 id="PCA的基础概念"><a href="#PCA的基础概念" class="headerlink" title="PCA的基础概念"></a>PCA的基础概念</h2><ol>
-<li><p>求和向量$1_{n}$<br>对于任何一个向量x，其所有元素之和都等于x与求和向量的内积</p>
-</li>
-<li><p>中心化矩阵(centering matrix)<br>$H = I_{N} - \frac{1}{N}\cdot 1_{N}\cdot 1_{N}^{T}$<br>对于任意的向量x,$H\cdot x$表示将原数据向量的各个元素减去n个数据的均值的结果,直观上理解就是将数据往中心原点移动,中心化后的数据均值为0。<br>中心化矩阵有两个基本性质：</p>
-</li>
-</ol>
-<ul>
-<li>$H^{T} = H$</li>
-<li>$H^{n} = H$<br>以上两个将会在推导PCoA中使用到</li>
-</ul>
-<ol>
-<li><p>Data:<br>$X_{N\times P} = \begin{pmatrix}<br>x_{1}&amp; x_{2} &amp; …  &amp; x_{n}<br>\end{pmatrix}^{T}$<br>表示有N个数据，每个数据是P维的</p>
-</li>
-<li><p>Sample Mean:<br>$\bar{X} = \frac{1}{N} \sum_{i=1}^{N}x_{i}$</p>
-</li>
-<li><p>Sample Covariance<br>对于一维数据，我们有：<br>$S = \frac{1}{N} \sum_{i=1}^{N}(x_{i}-\bar{x})^{2} = \frac{1}{N}\cdot X^{T}\cdot 1_{N}$<br>对于p维数据，我们有：<br>$S_{p\times p} = \frac{1}{N} \sum_{i=1}^{N}(x_{i}-\bar{x})\cdot (x_{i}-\bar{x})^{T} = \frac{1}{N}\cdot X^{T}\cdot H\cdot X$</p>
-</li>
-<li><p>计算向量在某个方向上的投影<br>假设有两个向量$\vec{a},\vec{b}$,则$\vec{a}$在$\vec{b}$上面的投影$P_{1} = |\vec{a}| \cdot  \cos \theta$<br>同时我们有$\vec{a}\cdot \vec{b} = \left | \vec{a} \right |\cdot \left | \vec{b} \right |\cdot \cos \theta$<br>因此，当$\left | \vec{b} \right | = 1$时,<br>$\vec{a}\cdot \vec{b} =  \left | \vec{a} \right |\cdot\cos \theta = P_{2}$<br>我们可以看到,当$\left | \vec{b} \right | = 1$,$P_{1} = P_{2}$<br>因此算投影可以直接算向量点积,在数学中我们一般写成下面的形式: $P = a^{T} \cdot b$<br>s.t. $\left | \vec{b} \right | = 1$</p>
-</li>
-</ol>
-<h2 id="PCA的思想与推导过程"><a href="#PCA的思想与推导过程" class="headerlink" title="PCA的思想与推导过程"></a>PCA的思想与推导过程</h2><p>PCA的主要内容可以用一句话来概括，那就是：<strong>一个中心，两个基本点</strong><br><strong>一个中心</strong>：是对原始特征空间的重构，将一组可能是线性相关的数据通过正交变换，变成线性无关的数据(即去除数据的线性相关性)，当重构的空间维数小于原始特征空间维数时，就达到了降维的目的。<br><strong>两个基本点</strong>：</p>
-<ul>
-<li>最大投影方差思想</li>
-<li>最小重构距离思想</li>
-</ul>
-<h3 id="基于最大投影方差思想的推导过程"><a href="#基于最大投影方差思想的推导过程" class="headerlink" title="基于最大投影方差思想的推导过程"></a>基于最大投影方差思想的推导过程</h3><p>最大投影方差指：<br>将样本投影到新的坐标下，数据能够尽可能的分开(也就是方差尽可能大)，这样就能尽可能的将降低数据维度的同时更好的保留原始数据的特性，更好的区分原始数据。<br>我们先计算将数据降至1维，投影方向$\vec{u_{1}}$</p>
-<p>$j = \overrightarrow{(x_{i}-\bar{x})^{T}}\cdot \vec{u_{1}}$<br>s.t. $\vec{|u_{1}|}=1(u_{1}^{T} \cdot u_{1}=1)$<br>实际上投影是一个数:以$u_{1}$为基底时，在$u_{1}$方向上的坐标<br>那么投影方差应该表示为：<br>$J = \frac{1}{N}\sum_{i=1}^{N}\begin{Bmatrix}<br>(x_{i}-\bar{x})^{T}\cdot u_{1}<br>\end{Bmatrix}^{2}$<br>(这里要注意,因为前面已经中心化,均值已经为0了,所以直接把投影做平方累加就好)<br>$= \frac{1}{N}\sum_{i=1}^{N}u_{1}^{T}\cdot (x_{i}-\bar{x})\cdot (x_{i}-\bar{x})^{T}\cdot u_{1}$<br>$=u_{1}^{T}\cdot \bigl(\begin{smallmatrix}<br>\frac{1}{N}\sum_{i=1}^{N}<br>(x_{i}-\bar{x})\cdot (x_{i}-\bar{x})^{T}<br>\end{smallmatrix}\bigr)\cdot u_{1}$<br>$= u_{1}^{T}\cdot S \cdot u_{1}$</p>
-<p>到这里我们就得到了J的表示函数，就将问题转为求：<br>$\check{u_{1}} = argmax ( u_{1}^{T}\cdot S \cdot u_{1})$<br>s.t. $u_{1}^{T} \cdot u_{1} = 1$</p>
-<p>根据拉格朗日乘子法<br>$\alpha (u_{1},\lambda ) = u_{1}^{T}\cdot S \cdot u_{1})  + \lambda \cdot (1-u_{1}^{T}\cdot u_{1})$<br>有<br>$\frac{\partial \alpha}{\partial u_{1}} = 2\cdot S\cdot u_{1} - \lambda \cdot 2\cdot u_{1}=0$<br>$Su_{1} = \lambda u_{1}$</p>
-<p>这里面涉及到矩阵求导，请参考：<br><a href="https://zhuanlan.zhihu.com/p/24709748" target="_blank" rel="noopener">矩阵求导术</a></p>
-<p>实际上式子推导到这里，我们可以得出结论：<br>$\lambda$即特征值，$u_{1}$即特征向量<br>也就是说，我们的投影方向应该是S的特征向量的方向<br>再接着我们将上面的式子左乘$u_{1}^{T}$可以得到：<br>$u_{1}^{T}\cdot S \cdot u_{1} = J = \lambda$<br>注意这里$\lambda$刚好就是等于我们的$J$<br>也就是说，如果将数据降至一维，那么我们的$\check{u_{1}} = argmax ( u_{1}^{T}\cdot S \cdot u_{1}) $ 极大值就是$\lambda$<br>即$u_{1}$是S最大特征值对应的特征向量时，投影方差取到极大值，我们称$u_{1}$为<strong>第一主成分</strong><br>那么接下来我们就先获得方差最大的1维，生成该维的补空间；，继续在补空间中获得方差最大的1维，继续生成新的补空间，依次循环下去得到q维的空间，我们就可以降至q维了。<br>S的特征向量，就可以认为是<strong>主成分</strong></p>
-<h3 id="基于最小重构距离思想的推导过程"><a href="#基于最小重构距离思想的推导过程" class="headerlink" title="基于最小重构距离思想的推导过程"></a>基于最小重构距离思想的推导过程</h3><p>最小重构距离指：<br>恢复到原始数据的代价最小(当我们考虑最大投影方差时，其实也可以任务数据尽可能的分散，那么恢复成原始数据的代价就更小，如果数据都重合在了一起，那么想要恢复数据，也就是重构，就更加困难了)</p>
-<ol>
-<li><p>在新基底(以S的特征向量为基底)的向量表示<br>$\vec{x_{i}} = \sum_{k=1}^{p}(\vec{x_{i}^{T}}\cdot \vec{u_{k}} )\cdot \vec{u_{k}}$<br>为了简化描述，我们先假设数据已经中心化，注意这里的<strong>原始数据是p维的</strong></p>
-</li>
-<li><p>降至<strong>q维</strong>的向量表示<br>$\vec{\hat{x_{i}}} = \sum_{k=1}^{q}(\vec{x_{i}^{T}}\cdot \vec{u_{k}} )\cdot \vec{u_{k}}$</p>
-</li>
-<li>最小重构代价计算<br>$J = \frac{1}{N} \sum_{i=1}^{N}\left | \vec{x_{i}}-\hat{x_{i}} \right |^{2}$<br>$= \frac{1}{N} \sum_{i=1}^{N}\left |   \sum_{k=q+1}^{p}(\vec{x_{i}^{T}} \cdot \vec{u_{k}} )\cdot \vec{u_{k}}    \right |^{2}$<br>$= \frac{1}{N} \sum_{i=1}^{N} \sum_{k=q+1}^{p}(x_{i}^{T}\cdot u_{k})^{2}$<br>前面我们假设数据已经中心化，现在我们代入真正的数据<br>$J= \frac{1}{N} \sum_{i=1}^{N} \sum_{k=q+1}^{p}\begin{Bmatrix}<br>(x_{i}^{T}-\bar{x})\cdot u_{k}<br>\end{Bmatrix}^{2}$<br>$J= \sum_{k=q+1}^{p}\sum_{i=1}^{N} \frac{1}{N}  \begin{Bmatrix}<br>(x_{i}^{T}-\bar{x})\cdot u_{k}<br>\end{Bmatrix}^{2}$<br>$J=\sum_{k=q+1}^{p}u_{k}^{T}\cdot S \cdot u_{k}$<br>s.t. $u_{k}^{T}\cdot u_{k}=1$<br>到这里我们的推导已经基本上完成了，下面是我们的优化目标：让J最小<br>$J = argmin (\sum_{k=q+1}^{p}u_{k}^{T}\cdot S \cdot u_{k})$<br>s.t. $u_{k}^{T}\cdot u_{k}=1$<br>在这里我们可以发现，这个优化目标与最大方差的优化目标形式是一样的，只不过一个是求最大的$\vec{u}$，一个是降至k维后余下向量的$\vec{u}$<br>要求最小的J的话,应该求最小的特征值，那么剩下的特征值就是前q维的主成分了。</li>
-</ol>
-<h2 id="PCA的计算过程-IPO"><a href="#PCA的计算过程-IPO" class="headerlink" title="PCA的计算过程(IPO)"></a>PCA的计算过程(IPO)</h2><p>input:  $X_{N \times p}$,降至d维<br>Process:</p>
-<ol>
-<li>中心化 $X:= H \cdot X$ </li>
-<li>计算样本的协方差矩阵S</li>
-<li>对S做特征值分解</li>
-<li>取前d大个特征值所对应的特征向量 $u_{1},u_{2},…u_{d}$(列向量)组成投影矩阵$P=(u_{1}u_{2}…u_{d})$</li>
-</ol>
-<p>Output: $X_{N \times d} =  X_{N \times p} \cdot P_{p \times d}$</p>
-<p>这里还有一个小细节,就是西瓜书中计算新的坐标时是采用:<br> $X_{d \times N} = P^{T}_{d \times p} \cdot X_{p \times N}$<br> 最后得出来的结果是一样的.<br> 网上的很多文章对这个都解释的不太清楚,这里从矩阵线性变换的角度来理解看看:<br> 首先,计算一个列向量$x$在新基下面的坐标是这样计算的:<br> $x^{‘}: P^{-1} \cdot x$<br> 而如果将列向量组成矩阵,那么计算应该是这样的:<br> $X_{d \times N} = P^{-1}_{d \times p} \cdot X_{p \times N}$<br> 但是,如果是标准正交基的话,有:<br> $P^{-1} = P^{T}$<br> 这样就变成西瓜书上面的:<br>  $X_{d \times N} = P^{T}_{d \times p} \cdot X_{p \times N}$</p>
-<p>关于PCA的内容还有一个是关于PCA的计算优化PCoA，使用SVD分解，以及scikit learn中的PCA源码就是使用PCoA，这个先挖坑待填。</p>
-<hr>
-<h2 id="References"><a href="#References" class="headerlink" title="References"></a>References</h2><ol>
-<li><a href="https://www.visiondummy.com/2014/04/curse-dimensionality-affect-classification/" target="_blank" rel="noopener">Vincent Spruyt. The Curse of Dimensionality in classification. Computer vision for dummies. 2014.</a></li>
-<li>西瓜书</li>
-<li>PRML</li>
-<li><a href="https://www.cnblogs.com/yanxingang/p/10776475.html" target="_blank" rel="noopener">求和向量和中心矩阵</a></li>
-<li><a href="https://zhuanlan.zhihu.com/p/24709748" target="_blank" rel="noopener">矩阵求导术</a></li>
-<li><a href="https://www.bilibili.com/video/BV1aE411o7qd?t=4&amp;p=4" target="_blank" rel="noopener">白板推导系列</a></li>
-</ol>
-
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-      <div>
-        <ul class="post-copyright">
-  <li class="post-copyright-author">
-    <strong>本文作者：</strong>
-    符说八道
-  </li>
-  <li class="post-copyright-link">
-    <strong>本文链接：</strong>
-    <a href="http://example.com/2020/10/18/PCA%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0(%E5%90%AB%E6%8E%A8%E5%AF%BC%E8%BF%87%E7%A8%8B)/" title="PCA学习笔记(含推导过程)">http://example.com/2020/10/18/PCA%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0(%E5%90%AB%E6%8E%A8%E5%AF%BC%E8%BF%87%E7%A8%8B)/</a>
-  </li>
-  <li class="post-copyright-license">
-    <strong>版权声明： </strong>
-    本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 3.0</a> 许可协议。转载请注明出处！
-  </li>
-</ul>
-
+      <div class="post-meta">
+        <time class="post-time" itemprop="dateCreated"
+              datetime="2020-10-24T19:25:05+08:00"
+              content="2020-10-24" >
+          10-24
+        </time>
       </div>
-    
 
-    <footer class="post-footer">
-      
-        <div class="post-tags">
-          
-            <a href="/tags/PCA/" rel="tag"># PCA</a>
-          
-            <a href="/tags/%E9%99%8D%E7%BB%B4/" rel="tag"># 降维</a>
-          
-        </div>
-      
-
-      
-      
-      
-
-      
-        <div class="post-nav">
-          <div class="post-nav-next post-nav-item">
-            
-          </div>
-
-          <span class="post-nav-divider"></span>
-
-          <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2020/10/24/NG%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0ex1/" rel="prev" title="NG机器学习ex1">
-                NG机器学习ex1 <i class="fa fa-chevron-right"></i>
-              </a>
-            
-          </div>
-        </div>
-      
-
-      
-      
-    </footer>
-  </div>
-  
-  
-  
+    </header>
   </article>
 
 
-
-    <div class="post-spread">
       
     </div>
+
   </div>
+  
+  
+  
+
+  
 
 
           </div>
@@ -613,13 +329,6 @@
 
 
           
-
-  
-    <div class="comments" id="comments">
-    </div>
-  
-
-
 
         </div>
         
@@ -640,17 +349,8 @@
       
 
       
-        <ul class="sidebar-nav motion-element">
-          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
-            文章目录
-          </li>
-          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
-            站点概览
-          </li>
-        </ul>
-      
 
-      <section class="site-overview-wrap sidebar-panel">
+      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
             
@@ -717,22 +417,6 @@
 
       </section>
 
-      
-      <!--noindex-->
-        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
-          <div class="post-toc">
-
-            
-              
-            
-
-            
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#降维"><span class="nav-number">1.</span> <span class="nav-text">降维</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#PCA的基础概念"><span class="nav-number">2.</span> <span class="nav-text">PCA的基础概念</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#PCA的思想与推导过程"><span class="nav-number">3.</span> <span class="nav-text">PCA的思想与推导过程</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#基于最大投影方差思想的推导过程"><span class="nav-number">3.1.</span> <span class="nav-text">基于最大投影方差思想的推导过程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#基于最小重构距离思想的推导过程"><span class="nav-number">3.2.</span> <span class="nav-text">基于最小重构距离思想的推导过程</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#PCA的计算过程-IPO"><span class="nav-number">4.</span> <span class="nav-text">PCA的计算过程(IPO)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#References"><span class="nav-number">5.</span> <span class="nav-text">References</span></a></li></ol></div>
-            
-
-          </div>
-        </section>
-      <!--/noindex-->
       
 
       
@@ -916,10 +600,6 @@
 
 
   
-  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
-<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
-
-
 
   
 
