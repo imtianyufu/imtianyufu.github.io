@@ -73,8 +73,14 @@
 </li>
 <li><p>降至<strong>q维</strong>的向量表示<br>$\vec{\hat{x_{i}}} = \sum_{k=1}^{q}(\vec{x_{i}^{T}}\cdot \vec{u_{k}} )\cdot \vec{u_{k}}$</p>
 </li>
-<li>最小重构代价计算<br>$J = \frac{1}{N} \sum_{i=1}^{N}\left | \vec{x_{i}}-\hat{x_{i}} \right |^{2}$<br>$= \frac{1}{N} \sum_{i=1}^{N}\left |   \sum_{k=q+1}^{p}(\vec{x_{i}^{T}} \cdot \vec{u_{k}} )\cdot \vec{u_{k}}    \right |^{2}$<br>$= \frac{1}{N} \sum_{i=1}^{N} \sum_{k=q+1}^{p}(x_{i}^{T}\cdot u_{k})^{2}$<br>前面我们假设数据已经中心化，现在我们代入真正的数据<br>$J= \frac{1}{N} \sum_{i=1}^{N} \sum_{k=q+1}^{p}\begin{Bmatrix}<br>(x_{i}^{T}-\bar{x})\cdot u_{k}<br>\end{Bmatrix}^{2}$<br>$J= \sum_{k=q+1}^{p}\sum_{i=1}^{N} \frac{1}{N}  \begin{Bmatrix}<br>(x_{i}^{T}-\bar{x})\cdot u_{k}<br>\end{Bmatrix}^{2}$<br>$J=\sum_{k=q+1}^{p}u_{k}^{T}\cdot S \cdot u_{k}$<br>s.t. $u_{k}^{T}\cdot u_{k}=1$<br>到这里我们的推导已经基本上完成了，下面是我们的优化目标：让J最小<br>$J = argmin (\sum_{k=q+1}^{p}u_{k}^{T}\cdot S \cdot u_{k})$<br>s.t. $u_{k}^{T}\cdot u_{k}=1$<br>在这里我们可以发现，这个优化目标与最大方差的优化目标形式是一样的，只不过一个是求最大的$\vec{u}$，一个是降至k维后余下向量的$\vec{u}$<br>要求最小的J的话,应该求最小的特征值，那么剩下的特征值就是前q维的主成分了。</li>
+<li><p>最小重构代价计算<br>$J = \frac{1}{N} \sum_{i=1}^{N}\parallel \vec{x_{i}}-\hat{x_{i}} \parallel^{2}$</p>
+<p>$= \frac{1}{N} \sum_{i=1}^{N}\parallel   \sum_{k=q+1}^{p}(\vec{x_{i}^{T}} \cdot \vec{u_{k}} )\cdot \vec{u_{k}}   \parallel^{2}$</p>
+<p>$= \frac{1}{N} \sum_{i=1}^{N} \sum_{k=q+1}^{p}(x_{i}^{T}\cdot u_{k})^{2}$<br>前面我们假设数据已经中心化，现在我们代入真正的数据<br>$J= \frac{1}{N} \sum_{i=1}^{N} \sum_{k=q+1}^{p}\begin{Bmatrix}<br>(x_{i}^{T}-\bar{x})\cdot u_{k}<br>\end{Bmatrix}^{2}$</p>
+</li>
 </ol>
+<p>$J= \sum_{k=q+1}^{p}\sum_{i=1}^{N} \frac{1}{N}  \begin{Bmatrix}<br>(x_{i}^{T}-\bar{x})\cdot u_{k}<br>\end{Bmatrix}^{2}$</p>
+<p>$J=\sum_{k=q+1}^{p}u_{k}^{T}\cdot S \cdot u_{k}$<br>s.t. $u_{k}^{T}\cdot u_{k}=1$</p>
+<p>到这里我们的推导已经基本上完成了，下面是我们的优化目标：让J最小<br>$J = argmin (\sum_{k=q+1}^{p}u_{k}^{T}\cdot S \cdot u_{k})$<br>s.t. $u_{k}^{T}\cdot u_{k}=1$<br>在这里我们可以发现，这个优化目标与最大方差的优化目标形式是一样的，只不过一个是求最大的$\vec{u}$，一个是降至k维后余下向量的$\vec{u}$<br>要求最小的J的话,应该求最小的特征值，那么剩下的特征值就是前q维的主成分了。</p>
 <h2 id="PCA的计算过程-IPO"><a href="#PCA的计算过程-IPO" class="headerlink" title="PCA的计算过程(IPO)"></a>PCA的计算过程(IPO)</h2><p>input:  $X_{N \times p}$,降至d维<br>Process:</p>
 <ol>
 <li>中心化 $X:= H \cdot X$ </li>
@@ -99,7 +105,6 @@
         <category>ML</category>
       </categories>
       <tags>
-        <tag>PCA</tag>
         <tag>降维</tag>
       </tags>
   </entry>
@@ -195,6 +200,83 @@
       <tags>
         <tag>线性回归</tag>
         <tag>梯度下降</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>K-Means算法实现</title>
+    <url>/2020/10/27/K-Means%E7%AE%97%E6%B3%95%E5%AE%9E%E7%8E%B0/</url>
+    <content><![CDATA[<p>本篇博客的主要内容有：</p>
+<ol>
+<li>K-means算法</li>
+<li>python代码实现<ul>
+<li>任意选择K(类别)聚类</li>
+<li>选取最佳的k,画出聚类后的图像分布</li>
+<li>计算准则函数J,画出J的变化图像</li>
+<li>完整python代码</li>
+</ul>
+</li>
+</ol>
+<hr>
+<a id="more"></a>
+<p>这是模式识别课的作业</p>
+<blockquote>
+<p>试用K—均值法对如下模式分布进行聚类分析。编程实现，编程语言不限。<br>    {x1(0, 0), x2(3,8), x3(2,2), x4(1,1),<br>    x5(5,3), x6(4,8), x7(6,3), x8(5,4),<br>    x9(6,4), x10(7,5)}</p>
+</blockquote>
+<h2 id="K-Means算法"><a href="#K-Means算法" class="headerlink" title="K-Means算法"></a>K-Means算法</h2><p>K均值是一种动态巨累法<br><strong>动态聚类法</strong>先粗略地进行预分类，然后再逐步调整，直到把类分得比较合理为止，这种方法计算量较小、使用内存量小、方法简单,适用于大样本的聚类分析。<br>K均值算法的思想是首先任意选取K个聚类中心，按最小距离原则将各模式分配到K类的某一类,再不断计算聚类中心和调整各模式的类别,最终使各模式到其判属类别中心的距离平方之和最小。<br>具体步骤:</p>
+<ol>
+<li>任意选K个聚类中心(可以随机,或者直接选样本的前K个,后面会动态调整)</li>
+<li>遍历所有样本,将每个样本按照最小距离原则分到K类中的一类</li>
+<li>更新聚类中心,具体为将每个类别的聚类中心改为该类中所有样本的均值</li>
+<li>一直重复上述过程,直到聚类中心保持不变。</li>
+</ol>
+<p>这里有个问题是,为什么<strong>聚类中心为什么要选择样本的均值</strong>,在下面的准则函数中将会给出推导过程。<br>所以K均值算法的实现最重要的就是计算距离和均值。</p>
+<h2 id="准则函数定义"><a href="#准则函数定义" class="headerlink" title="准则函数定义"></a>准则函数定义</h2><ul>
+<li><p>对于第j个类别$S_{j}$,有$N_{j}$个样本,聚类中心为$Z_{j}$</p>
+<p>  $J_{j} = \sum_{i=1}^{N_{j}}\parallel X_{i} - Z{j} \parallel ^{2}$</p>
+<p>  (这里应该是二范数的平方,markdown公式和博客代码不是很兼容的原因导致只是显示了一条竖线)</p>
+</li>
+<li><p>对于所有K个类别的准则函数就是把每个类别的求和就行</p>
+<p>  由上面的准则函数,可以得到,对于某一个聚类$j$,应有:</p>
+<p>  $\frac{\partial J_{j}}{\partial Z_{j}} = 0$</p>
+<p>  那么有:</p>
+<p>  $\frac{\partial \sum_{i=1}^{N_{j}}\parallel X_{i} - Z{j} \parallel ^{2}}{\partial Z_{j}} = \frac{\partial \sum_{i=1}^{N_{j}}(X_{i}-Z_{j})^{T}(X_{i}-Z_{j}) }{\partial Z_{j}} = 0$</p>
+<p>  可以解得:<br>  $Z_{j}= \frac{1}{N_{j}}\sum_{i=1}^{N_{j}}X_{i},X_{i} \in S_{j}$</p>
+</li>
+</ul>
+<p>所以 为了使得准则函数最小,$S_{j}$类的聚类中心应选为<strong>该类样本的均值</strong></p>
+<p>下面是作业的python实现。</p>
+<h2 id="K-Means的python实现"><a href="#K-Means的python实现" class="headerlink" title="K-Means的python实现"></a>K-Means的python实现</h2><ol>
+<li><p>首先,K均值算法的K我们是没有办法事先预知的,所以,我先画出了图像的分布情况。<br>下面是原始数据,将其保存在txt文件中:</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">0,0</span><br><span class="line">3,8</span><br><span class="line">2,2</span><br><span class="line">1,1</span><br><span class="line">5,3</span><br><span class="line">4,8</span><br><span class="line">6,3</span><br><span class="line">5,4</span><br><span class="line">6,4</span><br><span class="line">7,5</span><br></pre></td></tr></table></figure>
+<p>先将其读入,并且画出图像</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">path &#x3D;  &#39;data.txt&#39;</span><br><span class="line">data &#x3D; pd.read_csv(path, header&#x3D;None, names&#x3D;[&#39;x1&#39;, &#39;x2&#39;])</span><br></pre></td></tr></table></figure>
+<p><img src="/images/3 kmeans/data.png" width="50%" height="50%"></p>
+</li>
+<li><p>计算距离</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">def calDist(X,center):</span><br><span class="line">    return np.linalg.norm(X - center,2,1)</span><br></pre></td></tr></table></figure>
+<p>这里直接返回了二范数的距离(平方再开根号)</p>
+</li>
+<li><p>K-means算法的实现</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">def kmeans(X,k):</span><br><span class="line">#@ return centers,clusters[每个聚类中心,每个样本所属的类别]</span><br><span class="line">    centers &#x3D; X[:k,:]</span><br><span class="line">    newCenters &#x3D; np.zeros(centers.shape)</span><br><span class="line">    clusters &#x3D; np.zeros(len(X))</span><br><span class="line">    while True: #当聚类中心不再变化时算法停止</span><br><span class="line"></span><br><span class="line">        #计算每个点到所有中心的距离</span><br><span class="line">        for i in range(len(X)):</span><br><span class="line">            d &#x3D; calDist(X[i], centers)</span><br><span class="line">            cluster &#x3D; np.argmin(d) </span><br><span class="line">            clusters[i] &#x3D; cluster #第i个样本的类别设定为到所有聚类中心最近的那个</span><br><span class="line">        #遍历k个中心,分别找出以该聚类中心的所有点并且求均值作为新的聚类中心</span><br><span class="line">        for i in range(k):</span><br><span class="line">            points &#x3D; [X[j] for j in range(len(X)) if clusters[j] &#x3D;&#x3D; i]</span><br><span class="line">            newCenters[i] &#x3D; np.mean(points, axis&#x3D;0)</span><br><span class="line">        if (centers &#x3D;&#x3D; newCenters).all():#当聚类中心不再变化时,终止循环</span><br><span class="line">            break </span><br><span class="line">        else:</span><br><span class="line">            centers &#x3D; newCenters</span><br><span class="line">    return centers,clusters</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<h2 id="K-3的代码分析"><a href="#K-3的代码分析" class="headerlink" title="K = 3的代码分析"></a>K = 3的代码分析</h2><p>由于我们之前已经画出了图像,可以很自然的得到他应该分为3个类别,使用K-means算法,并画出图像<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">centers,clusters &#x3D; kmeans(X,k)</span><br><span class="line">colors &#x3D; [&#39;r&#39;, &#39;g&#39;, &#39;b&#39;]</span><br><span class="line">fig, ax &#x3D; plt.subplots()</span><br><span class="line">for i in range(k):</span><br><span class="line">    points &#x3D; np.array([X[j] for j in range(len(X)) if clusters[j] &#x3D;&#x3D; i])</span><br><span class="line">    #上面是3*1*2的array,先用flatten变为1*len(X)维的,再reshape</span><br><span class="line">    points &#x3D; points.flatten()</span><br><span class="line">    points &#x3D; np.reshape(points,(int(len(points)&#x2F;2),2))</span><br><span class="line">    print(points[:,0],points[:,1])      </span><br><span class="line">    ax.scatter(points[:,0],points[:,1], s&#x3D;20, c&#x3D;colors[i])</span><br><span class="line">ax.scatter(newCenters[:, 0], newCenters[:, 1], marker&#x3D;&#39;*&#39;, s&#x3D;30, c&#x3D;&#39;y&#39;)</span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure><br>下面是K-means算法后的结果,其中五角星是聚类中心<br> <img src="/images/3 kmeans/k3.png" width="50%" height="50%"><br>由图可知,分成了三类,每个聚类中心分别为<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">[[1.  1. ] </span><br><span class="line"> [3.5 8. ] </span><br><span class="line"> [5.8 3.8]]</span><br></pre></td></tr></table></figure></p>
+<h2 id="取K不同值时J的变化"><a href="#取K不同值时J的变化" class="headerlink" title="取K不同值时J的变化"></a>取K不同值时J的变化</h2><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line">J &#x3D; np.zeros([11,1])</span><br><span class="line">with warnings.catch_warnings():</span><br><span class="line">    warnings.filterwarnings(&#39;error&#39;)</span><br><span class="line">    #依次计算出J[k](准则函数)</span><br><span class="line">    for k in range(1,11):</span><br><span class="line">        try:</span><br><span class="line">            centers,clusters &#x3D; kmeans(X,k)</span><br><span class="line">            for i in range(len(X)):</span><br><span class="line">                d &#x3D; calDist(X[i],centers[int(clusters[i])])</span><br><span class="line">                J[k] &#x3D; J[k] + (d**2)              </span><br><span class="line">        except:</span><br><span class="line">            print(&quot;None&quot;)</span><br><span class="line">            </span><br><span class="line">fig, ax &#x3D; plt.subplots(figsize&#x3D;(12,8))</span><br><span class="line">ax.plot(range(1,11), J[1:], &#39;b&#39;)</span><br><span class="line"></span><br><span class="line">#下面是为了标出每个点的坐标</span><br><span class="line">for i_x, i_y in zip(range(1,11), J[1:]):</span><br><span class="line">    plt.text(i_x, i_y, &#39;(&#123;&#125;, &#123;&#125;)&#39;.format(i_x, i_y))</span><br><span class="line">ax.scatter(range(1,11),J[1:])</span><br><span class="line">ax.scatter(3,J[3:],&#39;r&#39;)</span><br><span class="line">ax.set_xlabel(&#39;k&#39;)</span><br><span class="line">ax.set_ylabel(&#39;J&#39;)</span><br><span class="line">ax.set_title(&#39;J vs k&#39;)</span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure>
+<p>下面是取不同k值的j的变化.这里的J是距离平方的和</p>
+<p> <img src="/images/3 kmeans/j vs k.png" width="50%" height="50%"></p>
+<p>一般来说,如果样本集的合理聚类数为K类，当类别数从1增加到K时准则函数迅速减小，当类别数超过K时，准则函数虽然继续减少但会呈现平缓趋势。 所以<strong>K一般会选择在拐点</strong><br>上图中K=3的时候是比较合适的点(在K&gt;3之后下降缓慢)。</p>
+<p><strong>K均值的结果受到所选聚类中心的个数和其初始位置的影响较大,实际应用中需要试探不同的K值和选择不同的聚类中心起始值。(这里我直接去前K个样本)</strong></p>
+<h2 id="完整代码"><a href="#完整代码" class="headerlink" title="完整代码"></a>完整代码</h2><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">import numpy as np</span><br><span class="line">import pandas as pd</span><br><span class="line">import matplotlib.pyplot as plt</span><br><span class="line">import warnings</span><br><span class="line"></span><br><span class="line">def calDist(X,center):</span><br><span class="line">    return np.linalg.norm(X - center,2,1)</span><br><span class="line"></span><br><span class="line">def kmeans(X,k):</span><br><span class="line">    np.seterr(invalid&#x3D;&#39;ignore&#39;)</span><br><span class="line">    centers &#x3D; X[:k,:]</span><br><span class="line">    newCenters &#x3D; np.zeros(centers.shape)</span><br><span class="line">    clusters &#x3D; np.zeros(len(X))</span><br><span class="line">    while True:</span><br><span class="line">        for i in range(len(X)):</span><br><span class="line">            d &#x3D; calDist(X[i], centers)</span><br><span class="line">            cluster &#x3D; np.argmin(d) </span><br><span class="line">            clusters[i] &#x3D; cluster</span><br><span class="line">        for i in range(k):</span><br><span class="line">            points &#x3D; [X[j] for j in range(len(X)) if clusters[j] &#x3D;&#x3D; i]</span><br><span class="line">            newCenters[i] &#x3D; np.mean(points, axis&#x3D;0)</span><br><span class="line">        if (centers &#x3D;&#x3D; newCenters).all():</span><br><span class="line">            break </span><br><span class="line">        else:</span><br><span class="line">            centers &#x3D; newCenters</span><br><span class="line">    return centers,clusters</span><br><span class="line"></span><br><span class="line">def plotPoints(X,centers,clusters,k):</span><br><span class="line">    colors &#x3D; [&#39;r&#39;, &#39;g&#39;, &#39;b&#39;, &#39;y&#39;, &#39;c&#39;, &#39;m&#39;]</span><br><span class="line">    fig, ax &#x3D; plt.subplots()</span><br><span class="line">    for i in range(k):</span><br><span class="line">        points &#x3D; np.array([X[j] for j in range(len(X)) if clusters[j] &#x3D;&#x3D; i])</span><br><span class="line">        points &#x3D; points.flatten()</span><br><span class="line">        points &#x3D; np.reshape(points,(int(len(points)&#x2F;2),2))</span><br><span class="line">        print(points[:,0],points[:,1])      </span><br><span class="line">        ax.scatter(points[:,0],points[:,1], s&#x3D;7, c&#x3D;colors[i])</span><br><span class="line">    ax.scatter(centers[:, 0], centers[:, 1], marker&#x3D;&#39;*&#39;, s&#x3D;10, c&#x3D;&#39;y&#39;)</span><br><span class="line">    plt.show()</span><br><span class="line"></span><br><span class="line">def main():</span><br><span class="line">    path &#x3D;  &#39;data.txt&#39;</span><br><span class="line">    data &#x3D; pd.read_csv(path, header&#x3D;None, names&#x3D;[&#39;x1&#39;, &#39;x2&#39;])</span><br><span class="line">    X &#x3D; data</span><br><span class="line">    X &#x3D; np.matrix(X.values)</span><br><span class="line">    J &#x3D; np.zeros([11,1])</span><br><span class="line">    with warnings.catch_warnings():</span><br><span class="line">        warnings.filterwarnings(&#39;error&#39;)</span><br><span class="line">        for k in range(1,11):</span><br><span class="line">            try:</span><br><span class="line">                centers,clusters &#x3D; kmeans(X,k)</span><br><span class="line">                for i in range(len(X)):</span><br><span class="line">                    d &#x3D; calDist(X[i],centers[int(clusters[i])])</span><br><span class="line">                    J[k] &#x3D; J[k] + (d**2)              </span><br><span class="line">            except:</span><br><span class="line">                print(&quot;None&quot;)      </span><br><span class="line">    fig, ax &#x3D; plt.subplots(figsize&#x3D;(12,8))</span><br><span class="line">    ax.plot(range(1,11), J[1:], &#39;b&#39;)</span><br><span class="line">    # ax.scatter(3,J[3],&#39;r&#39;)</span><br><span class="line">    for i_x, i_y in zip(range(1,11), J[1:]):</span><br><span class="line">        plt.text(i_x, i_y, &#39;(&#123;&#125;, &#123;&#125;)&#39;.format(i_x, i_y[0]))</span><br><span class="line">    ax.scatter(range(1,11),J[1:])</span><br><span class="line">    ax.set_xlabel(&#39;k&#39;)</span><br><span class="line">    ax.set_ylabel(&#39;J&#39;)</span><br><span class="line">    ax.set_title(&#39;J vs k&#39;)</span><br><span class="line">    plt.show()</span><br><span class="line">main()</span><br></pre></td></tr></table></figure>
+<h2 id="References"><a href="#References" class="headerlink" title="References"></a>References</h2><ol>
+<li><a href="https://www.cnblogs.com/shenfeng/p/kmeans_demo.html" target="_blank" rel="noopener">K-Means算法的Python实现</a></li>
+<li>模式识别课的PPT</li>
+</ol>
+]]></content>
+      <categories>
+        <category>ML</category>
+      </categories>
+      <tags>
+        <tag>k-means</tag>
       </tags>
   </entry>
 </search>
