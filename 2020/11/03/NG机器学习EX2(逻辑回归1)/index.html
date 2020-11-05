@@ -1,0 +1,1454 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link href="/lib/pace/pace-theme-minimal.min.css?v=1.0.2" rel="stylesheet">
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="分类," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="本篇博客的主要内容有：  逻辑回归理论知识 python代码实现EX2的第一个练习">
+<meta property="og:type" content="article">
+<meta property="og:title" content="NG机器学习EX2(逻辑回归1)">
+<meta property="og:url" content="http://blog.tyfuu.net/2020/11/03/NG%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0EX2(%E9%80%BB%E8%BE%91%E5%9B%9E%E5%BD%921)/index.html">
+<meta property="og:site_name" content="just do I T">
+<meta property="og:description" content="本篇博客的主要内容有：  逻辑回归理论知识 python代码实现EX2的第一个练习">
+<meta property="og:image" content="http://blog.tyfuu.net/images/4%20NG%20EX2/convex.jpg">
+<meta property="og:image" content="http://blog.tyfuu.net/images/4%20NG%20EX2/cost.jpg">
+<meta property="og:image" content="http://blog.tyfuu.net/images/4%20NG%20EX2/grad.png">
+<meta property="og:image" content="http://blog.tyfuu.net/images/4%20NG%20EX2/data1.png">
+<meta property="og:image" content="http://blog.tyfuu.net/images/4%20NG%20EX2/sigmoid.png">
+<meta property="og:image" content="http://blog.tyfuu.net/images/4%20NG%20EX2/boundary.png">
+<meta property="article:published_time" content="2020-11-03T13:14:25.000Z">
+<meta property="article:modified_time" content="2020-11-05T10:51:25.574Z">
+<meta property="article:author" content="符说八道">
+<meta property="article:tag" content="分类">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://blog.tyfuu.net/images/4%20NG%20EX2/convex.jpg">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://blog.tyfuu.net/2020/11/03/NG机器学习EX2(逻辑回归1)/"/>
+
+
+
+
+
+  <title>NG机器学习EX2(逻辑回归1) | just do I T</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta custom-logo">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">just do I T</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">我相信 坚持的力量</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://blog.tyfuu.net/2020/11/03/NG%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0EX2(%E9%80%BB%E8%BE%91%E5%9B%9E%E5%BD%921)/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="符说八道">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.JPG">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="just do I T">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">NG机器学习EX2(逻辑回归1)</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-11-03T21:14:25+08:00">
+                2020-11-03
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/NG-ML/" itemprop="url" rel="index">
+                    <span itemprop="name">NG-ML</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2020/11/03/NG%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0EX2(%E9%80%BB%E8%BE%91%E5%9B%9E%E5%BD%921)/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count valine-comment-count" data-xid="/2020/11/03/NG%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0EX2(%E9%80%BB%E8%BE%91%E5%9B%9E%E5%BD%921)/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+             <span id="/2020/11/03/NG%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0EX2(%E9%80%BB%E8%BE%91%E5%9B%9E%E5%BD%921)/" class="leancloud_visitors" data-flag-title="NG机器学习EX2(逻辑回归1)">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">热度&#58;</span>
+               
+                 <span class="leancloud-visitors-count"></span>
+                 <span>℃</span>
+             </span>
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  3.7k字
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  17分钟
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>本篇博客的主要内容有：</p>
+<ol>
+<li>逻辑回归理论知识</li>
+<li>python代码实现EX2的第一个练习</li>
+</ol>
+<hr>
+<a id="more"></a>
+<p>这篇博客的主要来源是吴恩达老师的机器学习第三周的学习课程,还有一些内容参考自<a href="https://github.com/fengdu78/Coursera-ML-AndrewNg-Notes" target="_blank" rel="noopener">黄海广博士的笔记GitHub</a>,先根据作业完成了matlab代码,并且学习将它用python来实现(博客中无matlab实现)。在学习的过程中我结合吴恩达老师的上课内容和matlab代码修改了一部分代码(个人认为可以优化的地方)。</p>
+<h2 id="逻辑回归总结"><a href="#逻辑回归总结" class="headerlink" title="逻辑回归总结"></a>逻辑回归总结</h2><h3 id="Logistic-Regression-for-Classification"><a href="#Logistic-Regression-for-Classification" class="headerlink" title="Logistic Regression for Classification"></a>Logistic Regression for Classification</h3><p>线性回归不适合用来解决分类问题,因为分类问题<strong>不是一个线性函数</strong>,加入新的样本,就可能导致线性回归的方程改变了,使得我们没有办法找到正确的划分点,因此没有办法分类。<br>线性回归问题其$h_{\theta}(x)$的值可能是大于1或者小于0的<br>而对于分类问题,<strong>我们的输出</strong>只有0或者1(二分类),因此$h_{\theta}(x)$太大或者太小都不行,我们可以用逻辑函数（logistic function,也可以叫做sigmoid函数)来使$0\leq h_{\theta}(x) \leq 1$<br><strong>不要被回归所误导,逻辑回归解决的是分类问题</strong></p>
+<h3 id="Hypothesis-Representation"><a href="#Hypothesis-Representation" class="headerlink" title="Hypothesis Representation"></a>Hypothesis Representation</h3><p>逻辑回归模型的 $h_\theta(X)=g(\theta^{T}X)$</p>
+<p>$X$ 代表特征向量<br>$g$ 代表逻辑函数（<strong>logistic function</strong>)是一个常用的逻辑函数为<strong>S</strong>形函数（<strong>Sigmoid function</strong>），公式为： $g(z)= \frac{1}{1 + e^{-z}}$<br>这里有个概念非常重要,那就是:<br>$h_\theta(X)$ = estimated probability that y=1 on input x<br>也就是说,经过sigmoid函数作用后的$h_\theta(X)$,输出的是y=1的概率!<br>也就是说:<br>$h_\theta(X) = P(y=1 | x;\theta)$</p>
+<h3 id="Decision-boundary"><a href="#Decision-boundary" class="headerlink" title="Decision boundary"></a>Decision boundary</h3><p>我们假设,<br>$h_\theta(X) \geq 0.5$时 y=1 也就是$\theta^{T}X \geq 0$<br>$h_\theta(X) &lt; 0.5$时 y=0 也就是$\theta^{T}X &lt; 0$<br>这里的等号不需要纠结<br>也就是说$\theta^{T}X = 0$就是我们的决策边界<br>对于简单的线性可分的边界,我们可以直接画出来一条直线<br>对于复杂的比如不能非线性可分的,我们可以通过添加多项式项,得到更加复杂的决策边界</p>
+<h3 id="Cost-Function"><a href="#Cost-Function" class="headerlink" title="Cost Function"></a>Cost Function</h3><p>如果我们和线性回归一样,定义代价函数为:<br>    $J\left( {\theta_{0}},{\theta_{1}}…{\theta_{n}} \right)=\frac{1}{2m}\sum_{i=1}^{m}(h_{\theta }(x^{(i)})-y^{(i)})^{2}$<br>那么将我们的$h_\theta(X)$ (非线性函数 non-linear function)代入,将会得到一个非凸函数,有许多的局部最小值,我们使用梯度下降就不能保证收敛到全局最小值,如下图所示:<br><img src="/images/4 NG EX2/convex.jpg" width="50%" height="50%"> </p>
+<p>因此我们的代价函数定义为:<br>$J_{\theta} = \frac{1}{m}\sum_{i=1}^{m}cost(h_{\theta}(x^{(i)}),y)$<br>其中<br>$cost(h_{\theta}(x),y)=\left\{\begin{matrix}<br>-log(h_{\theta}(x)) .. if..y=1<br>\\<br>-log(1-h_{\theta}(x))  .. if ..y=0<br>\end{matrix}\right.$</p>
+<p>下图画出了cost的图像<br><img src="/images/4 NG EX2/cost.jpg" width="50%" height="50%"> </p>
+<p>下面我们讨论这个公式的意义<br><strong>y = 1</strong>时</p>
+<ul>
+<li>cost = 0 if y = 1,$h_{\theta}(x)=1$<br>  但是 当$h_{\theta}(x)=1 \rightarrow 0$时,$cost \rightarrow  \infty $</li>
+<li>也就是: if $h_{\theta}(x)=0$(预测$P(y=1|x;\theta) =0$,但是实际上样本分类为y=1,这样我们将进行惩罚,penalize learning algorithm by a very large cost</li>
+</ul>
+<p>同理 y=0(样本正确分类是0)时,当$h_{\theta}(x)=1 \rightarrow 0$时,预测$P(y=1|x;\theta) =1$,$cost \rightarrow  \infty $(设置无穷大的cost)</p>
+<p>总结下,就是下面的意思(可以结合上面的图像来看):<br>$cost=0, if h_{\theta}(x) = y$<br>$cost \rightarrow \infty, if y=0 and h_{\theta}(x) \rightarrow 1$<br>$cost \rightarrow \infty, if y=1 and h_{\theta}(x) \rightarrow 0$<br>这样我们通过减少cost,就能找到目标$\theta$啦<br>同时<strong>我们这里的cost能够保证$J(\theta)$是凸函数</strong>(NG老师貌似讲了一个极大似然估计然后说是凸的,这里我是一只鸵鸟跳过)</p>
+<p>下面是cost的简单写法:<br>$cost = -y^{i}log(h_{\theta}(X^{(i)}))-(1-y^{i})log(1-h_{\theta}(x^{(i)}))$<br>可以验证y=1或者0代入时就是刚刚前面的cost<br>那么我们有<br>$J_{\theta} = \frac{1}{m}\sum_{i=1}^{m}[-y^{i}log(h_{\theta}(X^{(i)}))-(1-y^{i})log(1-h_{\theta}(x^{(i)}))]$<br>其梯度定义为:<br>$\frac{\partial J(\theta)}{\partial \theta_{j}} = \frac{1}{m}\sum_{i=1}^{m}(h_{\theta}(x^{(i)})-y^{(i)})x_{j}^{(i)})$<br>求偏导数的求导过程如下,比较麻烦我直接贴图,不用markdown公式了,不过推导起来难度不大。<br><img src="/images/4 NG EX2/grad.png" width="50%" height="50%"> </p>
+<p>算出来梯度后,我们就可以使用梯度下降法来优化$\theta$了。</p>
+<h3 id="梯度下降法的向量化写法"><a href="#梯度下降法的向量化写法" class="headerlink" title="梯度下降法的向量化写法"></a>梯度下降法的向量化写法</h3><p>在实际的代码实现中,我们一般把每个特征写成行向量(n个维度),m个样本组成了$X_{m \times n}$矩阵,我们会将$\theta$写成列向量$\theta_{n \times 1}$<br>这样有<br>$h = g(X\theta)$</p>
+<p>$J_{\theta} = \frac{1}{m}\sum_{i=1}^{m}[-y^{i}log(h_{\theta}(X^{(i)}))-(1-y^{i})log(1-h_{\theta}(x^{(i)}))]$</p>
+<p>Grandient Descent:<br>repeat{<br>    $\theta_{j} := \theta_{j} - \alpha \cdot \frac{\partial J(\theta)}{\partial \theta_{j}} $<br>}</p>
+<p>其中<br>$\frac{\partial J(\theta)}{\partial \theta_{j}} = \frac{1}{m}\sum_{i=1}^{m}(h_{\theta}(x^{(i)})-y^{(i)})x_{j}^{(i)})$</p>
+<p><strong>更新$\theta$的向量化表示:</strong><br>$\theta := \theta - \frac{\alpha}{m} \cdot X^{T} \cdot (g(X\theta)-\vec{y})$</p>
+<h3 id="使用matlab或者python的优化算法来优化-theta"><a href="#使用matlab或者python的优化算法来优化-theta" class="headerlink" title="使用matlab或者python的优化算法来优化$\theta$"></a>使用matlab或者python的优化算法来优化$\theta$</h3><p>梯度下降法是一种常用的优化算法,但是还存在其他的优化算法如:</p>
+<ul>
+<li><del>Gradient descent</del></li>
+<li>Conjugate gradien</li>
+<li>BFGS</li>
+<li>L-BFGS</li>
+</ul>
+<p>相比较梯度下降,这些算法的有点在于:</p>
+<ul>
+<li>不需要我们人工的选择$\alpha$</li>
+<li>通常会比梯度下降计算的快</li>
+</ul>
+<p>但是这些Advanced optimization也更加复杂,算法的性能与实现的好坏有关系<br>这些算法理解起来难度比较大,但是这些复杂的理论就交给数学家们去研究吧,我们当一只鸵鸟,会用即可,不需要知道其内部实现</p>
+<h3 id="Multi-class-classification-One-Vs-All"><a href="#Multi-class-classification-One-Vs-All" class="headerlink" title="Multi-class classification One-Vs-All"></a>Multi-class classification One-Vs-All</h3><p>对于多分类问题,我们可以每次将一类样本当作一类,其他所有样本当作另外一类,c类样本的话总共需要c个分类器,当我们用来预测时,只需要将新的样本输入,然后选择c个分类器中概率最大的那个</p>
+<p>训练逻辑回归分类器$h_{\theta}^{(i)}(x)$<br>对于每一类$i$ 来预测$y=i$的概率<br>对新的$x$,我们有$class = max_{i}(h_{\theta}^{(i)}(x))$</p>
+<p>下面是具体的代码实现</p>
+<h2 id="python代码实现"><a href="#python代码实现" class="headerlink" title="python代码实现"></a>python代码实现</h2><h3 id="读入数据并可视化"><a href="#读入数据并可视化" class="headerlink" title="读入数据并可视化"></a>读入数据并可视化</h3><p>学生两次考试的成绩和最后是否被录取的结果来训练回归模型(分类),再用它来做预测。</p>
+<ol>
+<li><p>先读入数据,并且输出数据前几行</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">path &#x3D; &#39;ex2data1.txt&#39;</span><br><span class="line">data &#x3D; pd.read_csv(path,header&#x3D;None,names&#x3D;[&#39;Exam 1&#39;,&#39;Exam 2&#39;,&#39;Admitted&#39;])</span><br><span class="line">print(data.head())</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>找到分类为1和分类为0的,并用不同颜色将他们画出来</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">def plotData(positive,negative):</span><br><span class="line">    fg,ax &#x3D; plt.subplots(figsize &#x3D; (12,8))</span><br><span class="line">    ax.scatter(positive[&#39;Exam 1&#39;],positive[&#39;Exam 2&#39;],s&#x3D;50,c&#x3D;&#39;y&#39;,marker&#x3D;&#39;o&#39;,label&#x3D;&#39;Admitted&#39;)</span><br><span class="line">    ax.scatter(negative[&#39;Exam 1&#39;],negative[&#39;Exam 2&#39;],s&#x3D;50,c&#x3D;&#39;r&#39;,marker&#x3D;&#39;o&#39;,label&#x3D;&#39;Not Admitted&#39;)</span><br><span class="line"></span><br><span class="line">    ax.legend()</span><br><span class="line">    ax.set_xlabel(&#39;Exam 1 Score&#39;)</span><br><span class="line">    ax.set_ylabel(&#39;Exam 2 Score&#39;)</span><br><span class="line">    plt.show()</span><br><span class="line"></span><br><span class="line">positive &#x3D; data[data[&#39;Admitted&#39;].isin([1])]</span><br><span class="line">negative &#x3D; data[data[&#39;Admitted&#39;].isin([0])]</span><br><span class="line">plotData(positive,negative)</span><br></pre></td></tr></table></figure>
+<p><img src="/images/4 NG EX2/data1.png" width="50%" height="50%"> </p>
+<p>仔细观察图像,这两类样本之间存在清晰的决策边界,因此我们可以训练逻辑回归模型。</p>
+<h3 id="sigmoid函数"><a href="#sigmoid函数" class="headerlink" title="sigmoid函数"></a>sigmoid函数</h3><p>$h_\theta(X)=g(\theta^{T}X)$<br>$g(z)= \frac{1}{1 + e^{-z}}$<br>其代码实现为:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">def sigmoid(z):</span><br><span class="line">    return 1&#x2F;(1+np.exp(-z))</span><br></pre></td></tr></table></figure>
+<p>我们可以画出sigmoid函数的图像来看看我们的函数是否写的正确:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">def checkSigmoid():</span><br><span class="line">    fig,ax &#x3D; plt.subplots(figsize&#x3D;(12,8))</span><br><span class="line">    nums &#x3D; np.arange(-10,10,step&#x3D;0.1)</span><br><span class="line">    ax.plot(nums,sigmoid(nums),&#39;r&#39;)</span><br><span class="line">    plt.show()</span><br></pre></td></tr></table></figure>
+<p><img src="/images/4 NG EX2/sigmoid.png" width="50%" height="50%"><br>从图像来看,我们的sigmoid函数写的是没有问题的</p>
+</li>
+</ol>
+<h3 id="计算代价函数和梯度"><a href="#计算代价函数和梯度" class="headerlink" title="计算代价函数和梯度"></a>计算代价函数和梯度</h3><p>$J_{\theta} = \frac{1}{m}\sum_{i=1}^{m}[-y^{i}log(h_{\theta}(X^{(i)}))-(1-y^{i})log(1-h_{\theta}(x^{(i)}))]$</p>
+<p>$\frac{\partial J(\theta)}{\partial \theta_{j}} = \frac{1}{m}\sum_{i=1}^{m}(h_{\theta}(x^{(i)})-y^{(i)})x_{j}^{(i)})$</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">def costFunction(theta,X,y):</span><br><span class="line">    h &#x3D; sigmoid(X.dot(theta.T))</span><br><span class="line">    J &#x3D;(- y.T .dot(np.log(h))-(1-y).T.dot(np.log(1-h) ))&#x2F;len(X)</span><br><span class="line">    return J</span><br><span class="line"></span><br><span class="line">def gradFunction(theta,X,y):</span><br><span class="line">    grad &#x3D; np.zeros(len(theta))</span><br><span class="line">    theta &#x3D; theta.reshape(1,len(theta))</span><br><span class="line">    h &#x3D; sigmoid(X.dot(theta.T))</span><br><span class="line">    grad &#x3D; X.T.dot ((h-y)) &#x2F; len(X)</span><br><span class="line">    return grad</span><br></pre></td></tr></table></figure>
+<p>定义完这两个函数,我们设置数据,进行验证<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">data.insert(0, &#39;Ones&#39;, 1)</span><br><span class="line">cols &#x3D; data.shape[1]</span><br><span class="line">X &#x3D; data.iloc[:,0:cols-1]</span><br><span class="line">y &#x3D; data.iloc[:,cols-1:cols]</span><br><span class="line">X &#x3D; np.array(X.values)</span><br><span class="line">y &#x3D; np.array(y.values)</span><br><span class="line">theta &#x3D; np.zeros(3)</span><br></pre></td></tr></table></figure><br>这里是直接使用<strong>numpy的array数组</strong>,因为在后面使用python的优化函数时候,遇到了维数问题报错((100, 1)和(100,),我建议别转成矩阵,直接用array来计算</p>
+<blockquote>
+<p>Basically you are running up against the fact that np.matrix is not fully supported by many functions in numpy and scipy that expect an np.ndarray. I highly recommend you switch from using np.matrix to np.ndarray - use of np.matrix is officially discouraged, and will probably be deprecated in the not-too-distant future.<a href="https://stackoverrun.com/cn/q/9331088" target="_blank" rel="noopener">可以看这个解释</a></p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">print(costFunction(theta,X,y),gradFunction(theta,X,y))</span><br></pre></td></tr></table></figure>
+<p>调用函数后,出现下面的结果,就说明我们计算代价函数和梯度的代码没有问题了(第一个是$J_{\theta}$,第二个是$\frac{\partial J(\theta)}{\partial \theta_{j}}$<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">[0.69314718] </span><br><span class="line">[[ -0.1       ]</span><br><span class="line"> [-12.00921659]</span><br><span class="line"> [-11.26284221]]</span><br></pre></td></tr></table></figure></p>
+<h3 id="优化-theta"><a href="#优化-theta" class="headerlink" title="优化$\theta$"></a>优化$\theta$</h3><p>在NG老师的练习中,是使用一个称为“fminunc”的Octave函数是用来优化函数来计算成本和梯度参数。由于我们使用Python,我们可以用SciPy的“optimize”函数来优化。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">import scipy.optimize as opt</span><br><span class="line">result &#x3D; opt.fmin_tnc(func&#x3D;costFunction,x0&#x3D;theta,fprime&#x3D;gradFunction,args&#x3D;(X,y))</span><br><span class="line">print(result)</span><br><span class="line">print(costFunction(result[0],X,y))</span><br></pre></td></tr></table></figure>
+<p>上面的opt函数有一些注意点:</p>
+<ul>
+<li>costFunction和gradFunction这两个函数的定义上注意先让theta在前面,再定义参数X,y,下面的x0是传入我们初始的$\theta$,我们的目标就是要找到最优的$\theta$,让$J_{\theta}$最小</li>
+<li>最后的args就是我们前面应该要传入cost和grad函数的参数</li>
+<li>注意维度问题(前面已经提过,我建议使用array,不一定非要用matrix)</li>
+<li>返回值中第一个就是我们的目标$\theta$</li>
+</ul>
+<p>上面的代码执行后,应该是下面的结果:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">(array([-25.1613186 ,   0.20623159,   0.20147149]), 36, 0)</span><br><span class="line">[0.2034977]</span><br></pre></td></tr></table></figure><br>其中上面第二行是使用优化后的$\theta$计算的$J_{\theta}$</p>
+<p>接下来我们就可以使用$\theta$画出决策边界了:<br>决策边界是一条直线,我们只需要输入两个端点,即可画出直线<br>这里X坐标取得是X数据中x1的最大值或者最小值+-2<br>Y坐标的话是根据<br>$h_{\theta}(X) = \theta_{0} + \theta{1}x_{1} + \theta{2}x_{2}$来推得:<br>$x_{2} = \frac{ -\theta_{0}-\theta{1}x_{1}}{\theta{2}}$<br>$x_{2}$就是我们点的Y坐标<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">theta_min &#x3D; result[0]</span><br><span class="line">pointX &#x3D; np.array([np.min(X[:,1])-2,np.max(X[:,2])+2]) </span><br><span class="line">pointY &#x3D; (- theta_min[0] - theta_min[1] * pointX)&#x2F;theta_min[2]</span><br><span class="line">fig,ax &#x3D; plt.subplots(figsize&#x3D;(12,8))</span><br><span class="line">ax.plot(pointX,pointY,linewidth&#x3D;5)</span><br><span class="line">ax.scatter(positive[&#39;Exam 1&#39;],positive[&#39;Exam 2&#39;],s&#x3D;50,c&#x3D;&#39;y&#39;,marker&#x3D;&#39;o&#39;,label&#x3D;&#39;Admitted&#39;)</span><br><span class="line">ax.scatter(negative[&#39;Exam 1&#39;],negative[&#39;Exam 2&#39;],s&#x3D;50,c&#x3D;&#39;r&#39;,marker&#x3D;&#39;o&#39;,label&#x3D;&#39;Not Admitted&#39;)</span><br><span class="line">ax.legend()</span><br><span class="line">ax.set_xlabel(&#39;Exam 1 Score&#39;)</span><br><span class="line">ax.set_ylabel(&#39;Exam 2 Score&#39;)</span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure><br>根据上面的代码,我们可以画出下面的图像:<br> <img src="/images/4 NG EX2/boundary.png" width="50%" height="50%"> </p>
+<h3 id="predict"><a href="#predict" class="headerlink" title="predict"></a>predict</h3><p> 接下来我们就可以定义预测函数用于新的数据来测试了,下面是使用原有的数据集来计算accuracy<br> <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"> def predict(theta,X):</span><br><span class="line">    probality &#x3D; sigmoid(X.dot(theta.T))</span><br><span class="line">    return [1 if x &gt;&#x3D; 0.5 else 0 for x in probality]</span><br><span class="line"></span><br><span class="line">theta_min &#x3D; result[0]</span><br><span class="line">predictions &#x3D; predict(theta_min,X)</span><br><span class="line">correct &#x3D; [1 if (a &#x3D;&#x3D; 1 and b &#x3D;&#x3D; 1) or (a &#x3D;&#x3D; 0 and  b &#x3D;&#x3D; 0) else 0 for (a,b) in zip(predictions,y)]</span><br><span class="line"></span><br><span class="line">accuracy &#x3D; sum(map(int,correct)) * 100 &#x2F;len(correct)</span><br><span class="line">print(&#39;accuracy &#x3D; &#123;0:.2f&#125;%&#39;.format(accuracy))</span><br></pre></td></tr></table></figure><br>上述代码运行后,得到的结果为:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">accuracy &#x3D; 89.00%</span><br></pre></td></tr></table></figure></p>
+<h3 id="完整代码"><a href="#完整代码" class="headerlink" title="完整代码"></a>完整代码</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br></pre></td><td class="code"><pre><span class="line">import numpy as np </span><br><span class="line">import pandas as pd </span><br><span class="line">import matplotlib.pyplot as plt </span><br><span class="line">import scipy.optimize as opt</span><br><span class="line">import pdb</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">def sigmoid(z):</span><br><span class="line">    return 1&#x2F;(1+np.exp(-z))</span><br><span class="line"></span><br><span class="line">def plotData(positive,negative):</span><br><span class="line">    fg,ax &#x3D; plt.subplots(figsize &#x3D; (12,8))</span><br><span class="line">    ax.scatter(positive[&#39;Exam 1&#39;],positive[&#39;Exam 2&#39;],s&#x3D;50,c&#x3D;&#39;y&#39;,marker&#x3D;&#39;o&#39;,label&#x3D;&#39;Admitted&#39;)</span><br><span class="line">    ax.scatter(negative[&#39;Exam 1&#39;],negative[&#39;Exam 2&#39;],s&#x3D;50,c&#x3D;&#39;r&#39;,marker&#x3D;&#39;o&#39;,label&#x3D;&#39;Not Admitted&#39;)</span><br><span class="line"></span><br><span class="line">    ax.legend()</span><br><span class="line">    ax.set_xlabel(&#39;Exam 1 Score&#39;)</span><br><span class="line">    ax.set_ylabel(&#39;Exam 2 Score&#39;)</span><br><span class="line">    plt.show()</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">def checkSigmoid():</span><br><span class="line">    fig,ax &#x3D; plt.subplots(figsize&#x3D;(12,8))</span><br><span class="line">    nums &#x3D; np.arange(-10,10,step&#x3D;0.1)</span><br><span class="line">    ax.plot(nums,sigmoid(nums),&#39;r&#39;)</span><br><span class="line">    plt.show()</span><br><span class="line"></span><br><span class="line">def costFunction(theta,X,y):</span><br><span class="line"></span><br><span class="line">    h &#x3D; sigmoid(X.dot(theta.T))</span><br><span class="line">    J &#x3D;(- y.T .dot(np.log(h))-(1-y).T.dot(np.log(1-h) ))&#x2F;len(X)</span><br><span class="line"></span><br><span class="line">    return J</span><br><span class="line"></span><br><span class="line">def gradFunction(theta,X,y):</span><br><span class="line">    grad &#x3D; np.zeros(len(theta))</span><br><span class="line">    theta &#x3D; theta.reshape(1,len(theta))</span><br><span class="line">    h &#x3D; sigmoid(X.dot(theta.T))</span><br><span class="line">    grad &#x3D; X.T.dot ((h-y)) &#x2F; len(X)</span><br><span class="line">    return grad</span><br><span class="line"></span><br><span class="line">def predict(theta,X):</span><br><span class="line">    probality &#x3D; sigmoid(X.dot(theta.T))</span><br><span class="line">    return [1 if x &gt;&#x3D; 0.5 else 0 for x in probality]</span><br><span class="line"></span><br><span class="line">def main():</span><br><span class="line"></span><br><span class="line">    path &#x3D; &#39;ex2data1.txt&#39;</span><br><span class="line">    data &#x3D; pd.read_csv(path,header&#x3D;None,names&#x3D;[&#39;Exam 1&#39;,&#39;Exam 2&#39;,&#39;Admitted&#39;])</span><br><span class="line">    print(data.head())</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    positive &#x3D; data[data[&#39;Admitted&#39;].isin([1])]</span><br><span class="line">    negative &#x3D; data[data[&#39;Admitted&#39;].isin([0])]</span><br><span class="line"></span><br><span class="line">    # plotData(positive,negative)</span><br><span class="line">    # checkSigmoid()</span><br><span class="line">   </span><br><span class="line">    data.insert(0, &#39;Ones&#39;, 1)</span><br><span class="line">    cols &#x3D; data.shape[1]</span><br><span class="line">    X &#x3D; data.iloc[:,0:cols-1]</span><br><span class="line">    y &#x3D; data.iloc[:,cols-1:cols]</span><br><span class="line">    X &#x3D; np.array(X.values)</span><br><span class="line">    y &#x3D; np.array(y.values)</span><br><span class="line">    theta &#x3D; np.zeros(3)</span><br><span class="line">    # print(costFunction(theta,X,y),gradFunction(theta,X,y))</span><br><span class="line">    result &#x3D; opt.fmin_tnc(func&#x3D;costFunction,x0&#x3D;theta,fprime&#x3D;gradFunction,args&#x3D;(X,y))</span><br><span class="line"></span><br><span class="line">    # print(costFunction(result[0],X,y))</span><br><span class="line"></span><br><span class="line">    theta_min &#x3D; result[0]</span><br><span class="line">    </span><br><span class="line">    predictions &#x3D; predict(theta_min,X)</span><br><span class="line"></span><br><span class="line">    correct &#x3D; [1 if (a &#x3D;&#x3D; 1 and b &#x3D;&#x3D; 1) or (a &#x3D;&#x3D; 0 and  b &#x3D;&#x3D; 0) else 0 for (a,b) in zip(predictions,y)]</span><br><span class="line">    </span><br><span class="line">    accuracy &#x3D; sum(map(int,correct)) * 100 &#x2F;len(correct)</span><br><span class="line">    print(&#39;accuracy &#x3D; &#123;0:.2f&#125;%&#39;.format(accuracy)) </span><br><span class="line"></span><br><span class="line">    #下面是画决策边界</span><br><span class="line">    # print([np.max(X[:,1],axis&#x3D;0),np.max(X[:,2],axis&#x3D;0))]</span><br><span class="line">    pointX &#x3D; np.array([np.min(X[:,1])-2,np.max(X[:,2])+2]) </span><br><span class="line">    print(pointX)</span><br><span class="line">    pointY &#x3D; (- theta_min[0] - theta_min[1] * pointX)&#x2F;theta_min[2]</span><br><span class="line">    print(pointY)</span><br><span class="line"></span><br><span class="line">    fig,ax &#x3D; plt.subplots(figsize&#x3D;(12,8))</span><br><span class="line">    ax.plot(pointX,pointY,linewidth&#x3D;5)</span><br><span class="line">    ax.scatter(positive[&#39;Exam 1&#39;],positive[&#39;Exam 2&#39;],s&#x3D;50,c&#x3D;&#39;y&#39;,marker&#x3D;&#39;o&#39;,label&#x3D;&#39;Admitted&#39;)</span><br><span class="line">    ax.scatter(negative[&#39;Exam 1&#39;],negative[&#39;Exam 2&#39;],s&#x3D;50,c&#x3D;&#39;r&#39;,marker&#x3D;&#39;o&#39;,label&#x3D;&#39;Not Admitted&#39;)</span><br><span class="line">    ax.legend()</span><br><span class="line">    ax.set_xlabel(&#39;Exam 1 Score&#39;)</span><br><span class="line">    ax.set_ylabel(&#39;Exam 2 Score&#39;)</span><br><span class="line">    plt.show()</span><br><span class="line">    </span><br><span class="line"></span><br><span class="line">main()</span><br></pre></td></tr></table></figure>
+<h2 id="References"><a href="#References" class="headerlink" title="References"></a>References</h2><ol>
+<li><a href="https://github.com/fengdu78/Coursera-ML-AndrewNg-Notes" target="_blank" rel="noopener">黄海广博士的笔记GitHub</a></li>
+<li><a href="https://blog.csdn.net/Cowry5/article/details/80247569" target="_blank" rel="noopener">第二个作业的边界绘制参考了这篇csdn博客</a></li>
+</ol>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+      <div>
+        <ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者：</strong>
+    符说八道
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://blog.tyfuu.net/2020/11/03/NG%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0EX2(%E9%80%BB%E8%BE%91%E5%9B%9E%E5%BD%921)/" title="NG机器学习EX2(逻辑回归1)">http://blog.tyfuu.net/2020/11/03/NG%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0EX2(%E9%80%BB%E8%BE%91%E5%9B%9E%E5%BD%921)/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>
+    本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 3.0</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/%E5%88%86%E7%B1%BB/" rel="tag"># 分类</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020/10/27/K-Means%E7%AE%97%E6%B3%95%E5%AE%9E%E7%8E%B0/" rel="next" title="K-Means算法实现">
+                <i class="fa fa-chevron-left"></i> K-Means算法实现
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+    </div>
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.JPG"
+                alt="符说八道" />
+            
+              <p class="site-author-name" itemprop="name">符说八道</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+
+                <a href="/archives">
+                  <span class="site-state-item-count">4</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">2</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">4</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+
+
+
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#逻辑回归总结"><span class="nav-number">1.</span> <span class="nav-text">逻辑回归总结</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Logistic-Regression-for-Classification"><span class="nav-number">1.1.</span> <span class="nav-text">Logistic Regression for Classification</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Hypothesis-Representation"><span class="nav-number">1.2.</span> <span class="nav-text">Hypothesis Representation</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Decision-boundary"><span class="nav-number">1.3.</span> <span class="nav-text">Decision boundary</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Cost-Function"><span class="nav-number">1.4.</span> <span class="nav-text">Cost Function</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#梯度下降法的向量化写法"><span class="nav-number">1.5.</span> <span class="nav-text">梯度下降法的向量化写法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#使用matlab或者python的优化算法来优化-theta"><span class="nav-number">1.6.</span> <span class="nav-text">使用matlab或者python的优化算法来优化$\theta$</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Multi-class-classification-One-Vs-All"><span class="nav-number">1.7.</span> <span class="nav-text">Multi-class classification One-Vs-All</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#python代码实现"><span class="nav-number">2.</span> <span class="nav-text">python代码实现</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#读入数据并可视化"><span class="nav-number">2.1.</span> <span class="nav-text">读入数据并可视化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#sigmoid函数"><span class="nav-number">2.2.</span> <span class="nav-text">sigmoid函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#计算代价函数和梯度"><span class="nav-number">2.3.</span> <span class="nav-text">计算代价函数和梯度</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#优化-theta"><span class="nav-number">2.4.</span> <span class="nav-text">优化$\theta$</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#predict"><span class="nav-number">2.5.</span> <span class="nav-text">predict</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#完整代码"><span class="nav-number">2.6.</span> <span class="nav-text">完整代码</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#References"><span class="nav-number">3.</span> <span class="nav-text">References</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+
+
+
+
+
+
+<script type="text/javascript" charset="utf-8" src="/js/tagcloud.js"></script>
+<script type="text/javascript" charset="utf-8" src="/js/tagcanvas.js"></script>
+<div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div id="myCanvasContainer" class="widget tagcloud">
+        <canvas width="200" height="200" id="resCanvas" style="width:100%">
+            <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%88%86%E7%B1%BB/" rel="tag">分类</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%9B%9E%E5%BD%92/" rel="tag">回归</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%81%9A%E7%B1%BB/" rel="tag">聚类</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%99%8D%E7%BB%B4/" rel="tag">降维</a><span class="tag-list-count">1</span></li></ul>
+        </canvas>
+    </div>
+</div>
+
+
+
+
+
+
+
+    </div>
+  </aside>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">符说八道</span>
+
+  
+</div>
+
+
+  
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Gemini</a> v5.1.4</div>
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src="//unpkg.com/valine/dist/Valine.min.js"></script>
+  
+  <script type="text/javascript">
+    var GUEST = ['nick','mail','link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item=>{
+      return GUEST.indexOf(item)>-1;
+    });
+    new Valine({
+        el: '#comments' ,
+        verify: false,
+        notify: false,
+        appId: 'oa1IsRTpNYlsx2T8E5BQLcD5-gzGzoHsz',
+        appKey: 'tfEiyXjLfbAO6U0refNaYHmO',
+        placeholder: '请多指教（留下邮箱可以收到回复通知哦',
+        avatar:'mm',
+        guest_info:guest,
+        pageSize:'10' || 10,
+    });
+  </script>
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.4.js"></script>
+  <script>AV.initialize("oa1IsRTpNYlsx2T8E5BQLcD5-gzGzoHsz", "tfEiyXjLfbAO6U0refNaYHmO");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"log":false,"model":{"jsonPath":"/live2dw/assets/hijiki.model.json"},"display":{"position":"right","width":150,"height":300},"mobile":{"show":true},"react":{"opacity":0.7}});</script></body>
+</html>

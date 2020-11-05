@@ -75,7 +75,7 @@
 
 
 
-  <meta name="keywords" content="k-means," />
+  <meta name="keywords" content="聚类," />
 
 
 
@@ -89,18 +89,18 @@
 <meta name="description" content="本篇博客的主要内容有：  K-means算法 python代码实现 任意选择K(类别)聚类 选取最佳的k,画出聚类后的图像分布 计算准则函数J,画出J的变化图像 完整python代码">
 <meta property="og:type" content="article">
 <meta property="og:title" content="K-Means算法实现">
-<meta property="og:url" content="http://example.com/2020/10/27/K-Means%E7%AE%97%E6%B3%95%E5%AE%9E%E7%8E%B0/index.html">
+<meta property="og:url" content="http://blog.tyfuu.net/2020/10/27/K-Means%E7%AE%97%E6%B3%95%E5%AE%9E%E7%8E%B0/index.html">
 <meta property="og:site_name" content="just do I T">
 <meta property="og:description" content="本篇博客的主要内容有：  K-means算法 python代码实现 任意选择K(类别)聚类 选取最佳的k,画出聚类后的图像分布 计算准则函数J,画出J的变化图像 完整python代码">
-<meta property="og:image" content="http://example.com/images/3%20kmeans/data.png">
-<meta property="og:image" content="http://example.com/images/3%20kmeans/k3.png">
-<meta property="og:image" content="http://example.com/images/3%20kmeans/j%20vs%20k.png">
+<meta property="og:image" content="http://blog.tyfuu.net/images/3%20kmeans/data.png">
+<meta property="og:image" content="http://blog.tyfuu.net/images/3%20kmeans/k3.png">
+<meta property="og:image" content="http://blog.tyfuu.net/images/3%20kmeans/j%20vs%20k.png">
 <meta property="article:published_time" content="2020-10-27T11:01:54.000Z">
-<meta property="article:modified_time" content="2020-10-31T08:00:39.191Z">
+<meta property="article:modified_time" content="2020-11-05T10:44:23.755Z">
 <meta property="article:author" content="符说八道">
-<meta property="article:tag" content="k-means">
+<meta property="article:tag" content="聚类">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://example.com/images/3%20kmeans/data.png">
+<meta name="twitter:image" content="http://blog.tyfuu.net/images/3%20kmeans/data.png">
 
 
 
@@ -130,7 +130,7 @@
 
 
 
-  <link rel="canonical" href="http://example.com/2020/10/27/K-Means算法实现/"/>
+  <link rel="canonical" href="http://blog.tyfuu.net/2020/10/27/K-Means算法实现/"/>
 
 
 
@@ -297,7 +297,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2020/10/27/K-Means%E7%AE%97%E6%B3%95%E5%AE%9E%E7%8E%B0/">
+    <link itemprop="mainEntityOfPage" href="http://blog.tyfuu.net/2020/10/27/K-Means%E7%AE%97%E6%B3%95%E5%AE%9E%E7%8E%B0/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="符说八道">
@@ -499,7 +499,7 @@
 <p>下面是取不同k值的j的变化.这里的J是距离平方的和</p>
 <p> <img src="/images/3 kmeans/j vs k.png" width="50%" height="50%"></p>
 <p>一般来说,如果样本集的合理聚类数为K类，当类别数从1增加到K时准则函数迅速减小，当类别数超过K时，准则函数虽然继续减少但会呈现平缓趋势。 所以<strong>K一般会选择在拐点</strong><br>上图中K=3的时候是比较合适的点(在K&gt;3之后下降缓慢)。</p>
-<p><strong>K均值的结果受到所选聚类中心的个数和其初始位置的影响较大,实际应用中需要试探不同的K值和选择不同的聚类中心起始值。(这里我直接去前K个样本)</strong></p>
+<p><strong>K均值的结果受到所选聚类中心的个数和其初始位置的影响较大,实际应用中需要试探不同的K值和选择不同的聚类中心起始值。(这里我直接取了前K个样本)</strong></p>
 <h2 id="完整代码"><a href="#完整代码" class="headerlink" title="完整代码"></a>完整代码</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br></pre></td><td class="code"><pre><span class="line">import numpy as np</span><br><span class="line">import pandas as pd</span><br><span class="line">import matplotlib.pyplot as plt</span><br><span class="line">import warnings</span><br><span class="line"></span><br><span class="line">def calDist(X,center):</span><br><span class="line">    return np.linalg.norm(X - center,2,1)</span><br><span class="line"></span><br><span class="line">def kmeans(X,k):</span><br><span class="line">    np.seterr(invalid&#x3D;&#39;ignore&#39;)</span><br><span class="line">    centers &#x3D; X[:k,:]</span><br><span class="line">    newCenters &#x3D; np.zeros(centers.shape)</span><br><span class="line">    clusters &#x3D; np.zeros(len(X))</span><br><span class="line">    while True:</span><br><span class="line">        for i in range(len(X)):</span><br><span class="line">            d &#x3D; calDist(X[i], centers)</span><br><span class="line">            cluster &#x3D; np.argmin(d) </span><br><span class="line">            clusters[i] &#x3D; cluster</span><br><span class="line">        for i in range(k):</span><br><span class="line">            points &#x3D; [X[j] for j in range(len(X)) if clusters[j] &#x3D;&#x3D; i]</span><br><span class="line">            newCenters[i] &#x3D; np.mean(points, axis&#x3D;0)</span><br><span class="line">        if (centers &#x3D;&#x3D; newCenters).all():</span><br><span class="line">            break </span><br><span class="line">        else:</span><br><span class="line">            centers &#x3D; newCenters</span><br><span class="line">    return centers,clusters</span><br><span class="line"></span><br><span class="line">def plotPoints(X,centers,clusters,k):</span><br><span class="line">    colors &#x3D; [&#39;r&#39;, &#39;g&#39;, &#39;b&#39;, &#39;y&#39;, &#39;c&#39;, &#39;m&#39;]</span><br><span class="line">    fig, ax &#x3D; plt.subplots()</span><br><span class="line">    for i in range(k):</span><br><span class="line">        points &#x3D; np.array([X[j] for j in range(len(X)) if clusters[j] &#x3D;&#x3D; i])</span><br><span class="line">        points &#x3D; points.flatten()</span><br><span class="line">        points &#x3D; np.reshape(points,(int(len(points)&#x2F;2),2))</span><br><span class="line">        print(points[:,0],points[:,1])      </span><br><span class="line">        ax.scatter(points[:,0],points[:,1], s&#x3D;7, c&#x3D;colors[i])</span><br><span class="line">    ax.scatter(centers[:, 0], centers[:, 1], marker&#x3D;&#39;*&#39;, s&#x3D;10, c&#x3D;&#39;y&#39;)</span><br><span class="line">    plt.show()</span><br><span class="line"></span><br><span class="line">def main():</span><br><span class="line">    path &#x3D;  &#39;data.txt&#39;</span><br><span class="line">    data &#x3D; pd.read_csv(path, header&#x3D;None, names&#x3D;[&#39;x1&#39;, &#39;x2&#39;])</span><br><span class="line">    X &#x3D; data</span><br><span class="line">    X &#x3D; np.matrix(X.values)</span><br><span class="line">    J &#x3D; np.zeros([11,1])</span><br><span class="line">    with warnings.catch_warnings():</span><br><span class="line">        warnings.filterwarnings(&#39;error&#39;)</span><br><span class="line">        for k in range(1,11):</span><br><span class="line">            try:</span><br><span class="line">                centers,clusters &#x3D; kmeans(X,k)</span><br><span class="line">                for i in range(len(X)):</span><br><span class="line">                    d &#x3D; calDist(X[i],centers[int(clusters[i])])</span><br><span class="line">                    J[k] &#x3D; J[k] + (d**2)              </span><br><span class="line">            except:</span><br><span class="line">                print(&quot;None&quot;)      </span><br><span class="line">    fig, ax &#x3D; plt.subplots(figsize&#x3D;(12,8))</span><br><span class="line">    ax.plot(range(1,11), J[1:], &#39;b&#39;)</span><br><span class="line">    # ax.scatter(3,J[3],&#39;r&#39;)</span><br><span class="line">    for i_x, i_y in zip(range(1,11), J[1:]):</span><br><span class="line">        plt.text(i_x, i_y, &#39;(&#123;&#125;, &#123;&#125;)&#39;.format(i_x, i_y[0]))</span><br><span class="line">    ax.scatter(range(1,11),J[1:])</span><br><span class="line">    ax.set_xlabel(&#39;k&#39;)</span><br><span class="line">    ax.set_ylabel(&#39;J&#39;)</span><br><span class="line">    ax.set_title(&#39;J vs k&#39;)</span><br><span class="line">    plt.show()</span><br><span class="line">main()</span><br></pre></td></tr></table></figure>
 <h2 id="References"><a href="#References" class="headerlink" title="References"></a>References</h2><ol>
 <li><a href="https://www.cnblogs.com/shenfeng/p/kmeans_demo.html" target="_blank" rel="noopener">K-Means算法的Python实现</a></li>
@@ -525,7 +525,7 @@
   </li>
   <li class="post-copyright-link">
     <strong>本文链接：</strong>
-    <a href="http://example.com/2020/10/27/K-Means%E7%AE%97%E6%B3%95%E5%AE%9E%E7%8E%B0/" title="K-Means算法实现">http://example.com/2020/10/27/K-Means%E7%AE%97%E6%B3%95%E5%AE%9E%E7%8E%B0/</a>
+    <a href="http://blog.tyfuu.net/2020/10/27/K-Means%E7%AE%97%E6%B3%95%E5%AE%9E%E7%8E%B0/" title="K-Means算法实现">http://blog.tyfuu.net/2020/10/27/K-Means%E7%AE%97%E6%B3%95%E5%AE%9E%E7%8E%B0/</a>
   </li>
   <li class="post-copyright-license">
     <strong>版权声明： </strong>
@@ -540,7 +540,7 @@
       
         <div class="post-tags">
           
-            <a href="/tags/k-means/" rel="tag"># k-means</a>
+            <a href="/tags/%E8%81%9A%E7%B1%BB/" rel="tag"># 聚类</a>
           
         </div>
       
@@ -553,8 +553,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2020/10/24/NG%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0ex1/" rel="next" title="NG机器学习ex1">
-                <i class="fa fa-chevron-left"></i> NG机器学习ex1
+              <a href="/2020/10/24/NG%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0EX1(%E7%BA%BF%E6%80%A7%E5%9B%9E%E5%BD%92)/" rel="next" title="NG机器学习EX1(线性回归)">
+                <i class="fa fa-chevron-left"></i> NG机器学习EX1(线性回归)
               </a>
             
           </div>
@@ -562,6 +562,10 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2020/11/03/NG%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0EX2(%E9%80%BB%E8%BE%91%E5%9B%9E%E5%BD%921)/" rel="prev" title="NG机器学习EX2(逻辑回归1)">
+                NG机器学习EX2(逻辑回归1) <i class="fa fa-chevron-right"></i>
+              </a>
             
           </div>
         </div>
@@ -644,7 +648,7 @@
               <div class="site-state-item site-state-posts">
 
                 <a href="/archives">
-                  <span class="site-state-item-count">3</span>
+                  <span class="site-state-item-count">4</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -725,7 +729,7 @@
     <h3 class="widget-title">Tag Cloud</h3>
     <div id="myCanvasContainer" class="widget tagcloud">
         <canvas width="200" height="200" id="resCanvas" style="width:100%">
-            <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/k-means/" rel="tag">k-means</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%A2%AF%E5%BA%A6%E4%B8%8B%E9%99%8D/" rel="tag">梯度下降</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%BA%BF%E6%80%A7%E5%9B%9E%E5%BD%92/" rel="tag">线性回归</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%99%8D%E7%BB%B4/" rel="tag">降维</a><span class="tag-list-count">1</span></li></ul>
+            <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%88%86%E7%B1%BB/" rel="tag">分类</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%9B%9E%E5%BD%92/" rel="tag">回归</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%81%9A%E7%B1%BB/" rel="tag">聚类</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%99%8D%E7%BB%B4/" rel="tag">降维</a><span class="tag-list-count">1</span></li></ul>
         </canvas>
     </div>
 </div>
