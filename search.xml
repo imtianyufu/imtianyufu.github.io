@@ -1,114 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title>PCA学习笔记(含推导过程)</title>
-    <url>/2020/10/18/PCA%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0(%E5%90%AB%E6%8E%A8%E5%AF%BC%E8%BF%87%E7%A8%8B)/</url>
-    <content><![CDATA[<p>本篇博客的主要内容有：</p>
-<ol>
-<li>降维</li>
-<li>PCA的数学基础</li>
-<li>PCA的两种思想推导<ul>
-<li>基于最大投影方差</li>
-<li>基于最小重构距离</li>
-</ul>
-</li>
-<li>PCA的计算过程</li>
-</ol>
-<hr>
-<a id="more"></a>
-<h2 id="降维"><a href="#降维" class="headerlink" title="降维"></a>降维</h2><p>降维属于<strong>无监督学习</strong>，可以用来解决训练中<strong>过拟合</strong>和<strong>维数灾难</strong>问题。</p>
-<ol>
-<li><p><strong>维数灾难</strong> 导致数据稀疏性/过拟合<br>一个直观的理解是：假设我们有十个样本<br>特征维数为1D时，当特征空间是长度为5的线段时，样本密度是10/5=2。<br>特征维数为2D时，特征空间大小为$5^{2}$，样本密度为10/25=0.4。<br>特征维数为3D时，特征空间大小为$5^{3}$，样本密度为10/125=0.08<br>如果我们继续增加特征，特征空间的维数就会不断增长，变得越来越稀疏。由于这种稀疏性，当特征的数量无穷大时，训练样本位于最佳超平面错误一侧的可能性无穷小，因此找到可分离超平面就变得容易得多。事实上，增加特征数量使得高维空间线性可分，相当于在低维空间内训练一个复杂的非线性分类器。不过，这个非线性分类器学习了训练数据中的specific instances and exceptions，这就直接导致导致了<strong>过拟合</strong></p>
-</li>
-<li><p><strong>过拟合(overfitting)</strong> 使用太多特征将会导致过拟合，泛化能力差<br><strong>overfitting</strong>: The classifier starts learning exceptions that are specific to the training data and do not generalize well when new data is encountered.<br>虽然在较低维度下分类器的性能表现的可能不如在高维空间中的好，但是对于未见过的数据却表现了良好的泛化能力，也就是说，使用更少的特征，我们的分类器可以<strong>避免过拟合</strong>，进而<strong>避免维数灾难</strong></p>
-</li>
-<li><p>维数灾难不同视角一<br>假设每个样本的特征值都是唯一的，并且每个特征的范围都是[0-1]<br>在1D时，如果我们想要将训练数据覆盖特征范围的20%时，我们需要所有样本的20%作为训练数据<br>在2D时，0.45^2=0.2，因此我们需要所有样本的45%作为训练数据<br>在3D时，0.58^3=0.2，因为我们需要所有样本的58%作为训练样本<br>也就是说，随着特征维数的增加，为了覆盖特征值值域的20%，我们需要增加更多的训练样本，当<strong>训练样本数量固定时，增加更多的特征维数，就容易导致过拟合</strong></p>
-</li>
-<li><p>维数灾难中不同视角二<br>维数灾难导致<strong>训练样本的分布不均</strong> 在中心位置的数据比在其周围的数据分布更加的稀疏，更多的数据将会分布在超立方体的角落。<br>可以这样来理解，设我们的立方体的边长为1。<br>不管维数多少，我们的超立方体的体积都为1<br>超球体的体积计算公式为：<br>$V_{超球体} = K \cdot  r ^{D}$   （r为小于1的数）<br>当D-&gt;无穷大时，V-&gt;0，这部分说明了分类问题中的“维数灾难”：<strong>在高维特征空间中，大多数的训练样本位于超立方体的角落。</strong></p>
-</li>
-<li><p>维数灾难中不同视角三<br>想象我们有一个圆环，其外环半径为1，内环半径为$1-\varepsilon$<br>可以求得：<br>$V_{外} = K \cdot 1 ^{D} = K$<br>$V_{环} =V_{外} - V_{内} =  K - K \cdot (1-\varepsilon )^{D}$<br>从而有：<br>$\frac{V_{外}}{V_{内}}  =  1 - (1-\varepsilon ) ^{D}$<br>$\lim_{D \to \infty }\frac{V_{外}}{V_{内}} = 1$<br><strong>随着维数的增加，我们在三维空间中的几何直觉会在考虑高维空间中不起作用。</strong> 一个球体的大部分体积都聚集在表面附近的薄球壳上面。</p>
-</li>
-<li><p>降维的方法分类<br>对于数据降维的方法有</p>
-<ul>
-<li>直接降维(特征选择)</li>
-<li>线性降维(PCA等)</li>
-<li>非线性降维(流行学习等)<br>下面将开始介绍PCA降维的思想。</li>
-</ul>
-</li>
-</ol>
-<h2 id="PCA的基础概念"><a href="#PCA的基础概念" class="headerlink" title="PCA的基础概念"></a>PCA的基础概念</h2><ol>
-<li><p>求和向量$1_{n}$<br>对于任何一个向量x，其所有元素之和都等于x与求和向量的内积</p>
-</li>
-<li><p>中心化矩阵(centering matrix)<br>$H = I_{N} - \frac{1}{N}\cdot 1_{N}\cdot 1_{N}^{T}$<br>对于任意的向量x,$H\cdot x$表示将原数据向量的各个元素减去n个数据的均值的结果,直观上理解就是将数据往中心原点移动,中心化后的数据均值为0。<br>中心化矩阵有两个基本性质：</p>
-</li>
-</ol>
-<ul>
-<li>$H^{T} = H$</li>
-<li>$H^{n} = H$<br>以上两个将会在推导PCoA中使用到</li>
-</ul>
-<ol>
-<li><p>Data:<br>$X_{N\times P} = \begin{pmatrix}<br>x_{1}&amp; x_{2} &amp; …  &amp; x_{n}<br>\end{pmatrix}^{T}$<br>表示有N个数据，每个数据是P维的</p>
-</li>
-<li><p>Sample Mean:<br>$\bar{X} = \frac{1}{N} \sum_{i=1}^{N}x_{i}$</p>
-</li>
-<li><p>Sample Covariance<br>对于一维数据，我们有：<br>$S = \frac{1}{N} \sum_{i=1}^{N}(x_{i}-\bar{x})^{2} = \frac{1}{N}\cdot X^{T}\cdot 1_{N}$<br>对于p维数据，我们有：<br>$S_{p\times p} = \frac{1}{N} \sum_{i=1}^{N}(x_{i}-\bar{x})\cdot (x_{i}-\bar{x})^{T} = \frac{1}{N}\cdot X^{T}\cdot H\cdot X$</p>
-</li>
-<li><p>计算向量在某个方向上的投影<br>假设有两个向量$\vec{a},\vec{b}$,则$\vec{a}$在$\vec{b}$上面的投影$P_{1} = |\vec{a}| \cdot  \cos \theta$<br>同时我们有$\vec{a}\cdot \vec{b} = \left | \vec{a} \right |\cdot \left | \vec{b} \right |\cdot \cos \theta$<br>因此，当$\left | \vec{b} \right | = 1$时,<br>$\vec{a}\cdot \vec{b} =  \left | \vec{a} \right |\cdot\cos \theta = P_{2}$<br>我们可以看到,当$\left | \vec{b} \right | = 1$,$P_{1} = P_{2}$<br>因此算投影可以直接算向量点积,在数学中我们一般写成下面的形式: $P = a^{T} \cdot b$<br>s.t. $\left | \vec{b} \right | = 1$</p>
-</li>
-</ol>
-<h2 id="PCA的思想与推导过程"><a href="#PCA的思想与推导过程" class="headerlink" title="PCA的思想与推导过程"></a>PCA的思想与推导过程</h2><p>PCA的主要内容可以用一句话来概括，那就是：<strong>一个中心，两个基本点</strong><br><strong>一个中心</strong>：是对原始特征空间的重构，将一组可能是线性相关的数据通过正交变换，变成线性无关的数据(即去除数据的线性相关性)，当重构的空间维数小于原始特征空间维数时，就达到了降维的目的。<br><strong>两个基本点</strong>：</p>
-<ul>
-<li>最大投影方差思想</li>
-<li>最小重构距离思想</li>
-</ul>
-<h3 id="基于最大投影方差思想的推导过程"><a href="#基于最大投影方差思想的推导过程" class="headerlink" title="基于最大投影方差思想的推导过程"></a>基于最大投影方差思想的推导过程</h3><p>最大投影方差指：<br>将样本投影到新的坐标下，数据能够尽可能的分开(也就是方差尽可能大)，这样就能尽可能的将降低数据维度的同时更好的保留原始数据的特性，更好的区分原始数据。<br>我们先计算将数据降至1维，投影方向$\vec{u_{1}}$</p>
-<p>$j = \overrightarrow{(x_{i}-\bar{x})^{T}}\cdot \vec{u_{1}}$<br>s.t. $\vec{|u_{1}|}=1(u_{1}^{T} \cdot u_{1}=1)$<br>实际上投影是一个数:以$u_{1}$为基底时，在$u_{1}$方向上的坐标<br>那么投影方差应该表示为：<br>$J = \frac{1}{N}\sum_{i=1}^{N}\begin{Bmatrix}<br>(x_{i}-\bar{x})^{T}\cdot u_{1}<br>\end{Bmatrix}^{2}$<br>(这里要注意,因为前面已经中心化,均值已经为0了,所以直接把投影做平方累加就好)<br>$= \frac{1}{N}\sum_{i=1}^{N}u_{1}^{T}\cdot (x_{i}-\bar{x})\cdot (x_{i}-\bar{x})^{T}\cdot u_{1}$<br>$=u_{1}^{T}\cdot \bigl(\begin{smallmatrix}<br>\frac{1}{N}\sum_{i=1}^{N}<br>(x_{i}-\bar{x})\cdot (x_{i}-\bar{x})^{T}<br>\end{smallmatrix}\bigr)\cdot u_{1}$<br>$= u_{1}^{T}\cdot S \cdot u_{1}$</p>
-<p>到这里我们就得到了J的表示函数，就将问题转为求：<br>$\check{u_{1}} = argmax ( u_{1}^{T}\cdot S \cdot u_{1})$<br>s.t. $u_{1}^{T} \cdot u_{1} = 1$</p>
-<p>根据拉格朗日乘子法<br>$\alpha (u_{1},\lambda ) = u_{1}^{T}\cdot S \cdot u_{1})  + \lambda \cdot (1-u_{1}^{T}\cdot u_{1})$<br>有<br>$\frac{\partial \alpha}{\partial u_{1}} = 2\cdot S\cdot u_{1} - \lambda \cdot 2\cdot u_{1}=0$<br>$Su_{1} = \lambda u_{1}$</p>
-<p>这里面涉及到矩阵求导，请参考：<br><a href="https://zhuanlan.zhihu.com/p/24709748" target="_blank" rel="noopener">矩阵求导术</a></p>
-<p>实际上式子推导到这里，我们可以得出结论：<br>$\lambda$即特征值，$u_{1}$即特征向量<br>也就是说，我们的投影方向应该是S的特征向量的方向<br>再接着我们将上面的式子左乘$u_{1}^{T}$可以得到：<br>$u_{1}^{T}\cdot S \cdot u_{1} = J = \lambda$<br>注意这里$\lambda$刚好就是等于我们的$J$<br>也就是说，如果将数据降至一维，那么我们的$\check{u_{1}} = argmax ( u_{1}^{T}\cdot S \cdot u_{1}) $ 极大值就是$\lambda$<br>即$u_{1}$是S最大特征值对应的特征向量时，投影方差取到极大值，我们称$u_{1}$为<strong>第一主成分</strong><br>那么接下来我们就先获得方差最大的1维，生成该维的补空间；，继续在补空间中获得方差最大的1维，继续生成新的补空间，依次循环下去得到q维的空间，我们就可以降至q维了。<br>S的特征向量，就可以认为是<strong>主成分</strong></p>
-<h3 id="基于最小重构距离思想的推导过程"><a href="#基于最小重构距离思想的推导过程" class="headerlink" title="基于最小重构距离思想的推导过程"></a>基于最小重构距离思想的推导过程</h3><p>最小重构距离指：<br>恢复到原始数据的代价最小(当我们考虑最大投影方差时，其实也可以任务数据尽可能的分散，那么恢复成原始数据的代价就更小，如果数据都重合在了一起，那么想要恢复数据，也就是重构，就更加困难了)</p>
-<ol>
-<li><p>在新基底(以S的特征向量为基底)的向量表示<br>$\vec{x_{i}} = \sum_{k=1}^{p}(\vec{x_{i}^{T}}\cdot \vec{u_{k}} )\cdot \vec{u_{k}}$<br>为了简化描述，我们先假设数据已经中心化，注意这里的<strong>原始数据是p维的</strong></p>
-</li>
-<li><p>降至<strong>q维</strong>的向量表示<br>$\vec{\hat{x_{i}}} = \sum_{k=1}^{q}(\vec{x_{i}^{T}}\cdot \vec{u_{k}} )\cdot \vec{u_{k}}$</p>
-</li>
-<li><p>最小重构代价计算<br>$J = \frac{1}{N} \sum_{i=1}^{N}\parallel \vec{x_{i}}-\hat{x_{i}} \parallel^{2}$</p>
-<p>$= \frac{1}{N} \sum_{i=1}^{N}\parallel   \sum_{k=q+1}^{p}(\vec{x_{i}^{T}} \cdot \vec{u_{k}} )\cdot \vec{u_{k}}   \parallel^{2}$</p>
-<p>$= \frac{1}{N} \sum_{i=1}^{N} \sum_{k=q+1}^{p}(x_{i}^{T}\cdot u_{k})^{2}$<br>前面我们假设数据已经中心化，现在我们代入真正的数据<br>$J= \frac{1}{N} \sum_{i=1}^{N} \sum_{k=q+1}^{p}\begin{Bmatrix}<br>(x_{i}^{T}-\bar{x})\cdot u_{k}<br>\end{Bmatrix}^{2}$</p>
-</li>
-</ol>
-<p>$J= \sum_{k=q+1}^{p}\sum_{i=1}^{N} \frac{1}{N}  \begin{Bmatrix}<br>(x_{i}^{T}-\bar{x})\cdot u_{k}<br>\end{Bmatrix}^{2}$</p>
-<p>$J=\sum_{k=q+1}^{p}u_{k}^{T}\cdot S \cdot u_{k}$<br>s.t. $u_{k}^{T}\cdot u_{k}=1$</p>
-<p>到这里我们的推导已经基本上完成了，下面是我们的优化目标：让J最小<br>$J = argmin (\sum_{k=q+1}^{p}u_{k}^{T}\cdot S \cdot u_{k})$<br>s.t. $u_{k}^{T}\cdot u_{k}=1$<br>在这里我们可以发现，这个优化目标与最大方差的优化目标形式是一样的，只不过一个是求最大的$\vec{u}$，一个是降至k维后余下向量的$\vec{u}$<br>要求最小的J的话,应该求最小的特征值，那么剩下的特征值就是前q维的主成分了。</p>
-<h2 id="PCA的计算过程-IPO"><a href="#PCA的计算过程-IPO" class="headerlink" title="PCA的计算过程(IPO)"></a>PCA的计算过程(IPO)</h2><p>input:  $X_{N \times p}$,降至d维<br>Process:</p>
-<ol>
-<li>中心化 $X:= H \cdot X$ </li>
-<li>计算样本的协方差矩阵S</li>
-<li>对S做特征值分解</li>
-<li>取前d大个特征值所对应的特征向量 $u_{1},u_{2},…u_{d}$(列向量)组成投影矩阵$P=(u_{1}u_{2}…u_{d})$</li>
-</ol>
-<p>Output: $X_{N \times d} =  X_{N \times p} \cdot P_{p \times d}$</p>
-<p>这里还有一个小细节,就是西瓜书中计算新的坐标时是采用:<br> $X_{d \times N} = P^{T}_{d \times p} \cdot X_{p \times N}$<br> 最后得出来的结果是一样的.<br> 网上的很多文章对这个都解释的不太清楚,这里从矩阵线性变换的角度来理解看看:<br> 首先,计算一个列向量$x$在新基下面的坐标是这样计算的:<br> $x^{‘}: P^{-1} \cdot x$<br> 而如果将列向量组成矩阵,那么计算应该是这样的:<br> $X_{d \times N} = P^{-1}_{d \times p} \cdot X_{p \times N}$<br> 但是,如果是标准正交基的话,有:<br> $P^{-1} = P^{T}$<br> 这样就变成西瓜书上面的:<br>  $X_{d \times N} = P^{T}_{d \times p} \cdot X_{p \times N}$</p>
-<p>关于PCA的内容还有一个是关于PCA的计算优化PCoA，使用SVD分解，以及scikit learn中的PCA源码就是使用PCoA，这个先挖坑待填。</p>
-<hr>
-<h2 id="References"><a href="#References" class="headerlink" title="References"></a>References</h2><ol>
-<li><a href="https://www.visiondummy.com/2014/04/curse-dimensionality-affect-classification/" target="_blank" rel="noopener">Vincent Spruyt. The Curse of Dimensionality in classification. Computer vision for dummies. 2014.</a></li>
-<li>西瓜书</li>
-<li>PRML</li>
-<li><a href="https://www.cnblogs.com/yanxingang/p/10776475.html" target="_blank" rel="noopener">求和向量和中心矩阵</a></li>
-<li><a href="https://zhuanlan.zhihu.com/p/24709748" target="_blank" rel="noopener">矩阵求导术</a></li>
-<li><a href="https://www.bilibili.com/video/BV1aE411o7qd?t=4&amp;p=4" target="_blank" rel="noopener">白板推导系列</a></li>
-</ol>
-]]></content>
-      <categories>
-        <category>ML</category>
-      </categories>
-      <tags>
-        <tag>降维</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>K-Means算法实现</title>
     <url>/2020/10/27/K-Means%E7%AE%97%E6%B3%95%E5%AE%9E%E7%8E%B0/</url>
     <content><![CDATA[<p>本篇博客的主要内容有：</p>
@@ -238,7 +130,7 @@
 <h2 id="正规方程-Normal-equation"><a href="#正规方程-Normal-equation" class="headerlink" title="正规方程(Normal equation)"></a>正规方程(Normal equation)</h2><p>$\theta = (X^{T}X)^{-1}X^{T} \vec{y}$<br>直接使用这个公式就可以计算出让$J(\theta)$取值最小的$\theta$<br>注意<strong>使用正规方程计算不需要对X进行feature scaling</strong><br>由上面的式子我们可以看出,正规方程主要工作量是在于计算:<br>$(X^{T}X)^{-1}$,计算机计算逆矩阵大约是$O(n^{3})$<br>一般情况下我们是不会出现$(X^{T}X)^{-1}$不存在(逆矩阵不存在)的情况<br>如果出现不可逆的情况,可以考虑:</p>
 <ul>
 <li><strong>Redundant features</strong>:有冗余特征,他们是线性相关的,这时候可以考虑去除冗余特征</li>
-<li><strong>too many features</strong>:假设我们有m个样本,n个特征。如果$m&lt;n$,可能情况是m个样本不够来拟合n个特征的$\theta$,所以可以考虑减少特征数量,还有一种办法是<strong>regularization</strong>,它可以让我们在很少的样本时拟合很多的特征(这个方法吴恩达老师只是简单的介绍,具体应该会在后面的课程中讲述)</li>
+<li><strong>too many features</strong>:假设我们有m个样本,n个特征。如果$m&lt;n$,可能情况是m个样本不够来拟合n个特征的$\theta$,所以可以考虑减少特征数量,还有一种办法是<strong>regularization</strong>,它可以让我们在很少的样本时拟合很多的特征(这个方法吴恩达老师只是简单的介绍,具体应该会在后面的课程中讲述)<br>第三周课程更新:<br>(通过添加正则化项,我们还解决了存在不可逆矩阵的问题)</li>
 </ul>
 <p>下面是具体的代码实现<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">def normalEqn(X, y):</span><br><span class="line">    theta &#x3D; np.linalg.inv(X.T@X)@X.T@y#X.T@X等价于X.T.dot(X)</span><br><span class="line">    return theta</span><br></pre></td></tr></table></figure><br>这里也需要注意一下,<strong>使用正规方程求出来的$\theta_{1}$和我们用梯度下降法求出来的$\theta_{2}$可能是不一样的</strong><br>可以从等高线图来理解,或者老师课上的可视化代价函数,可能有多个$\theta$使得代价函数的最小的。<br>关于正规方程的推导过程我将会在另外的博客中进行说明,因为里面同样涉及到矩阵求导,还有PCA的优化求导,以及我的PR课上老师要求的一个求导小练习一起做个总结。<br>最后是梯度下降与正规方程的比较</p>
 <h2 id="梯度下降-VS-正规方程"><a href="#梯度下降-VS-正规方程" class="headerlink" title="梯度下降 VS 正规方程"></a>梯度下降 VS 正规方程</h2><div class="table-container">
@@ -303,8 +195,8 @@
 </ul>
 <p>同理 y=0(样本正确分类是0)时,当$h_{\theta}(x)=1 \rightarrow 0$时,预测$P(y=1|x;\theta) =1$,$cost \rightarrow  \infty $(设置无穷大的cost)</p>
 <p>总结下,就是下面的意思(可以结合上面的图像来看):<br>$cost=0, if h_{\theta}(x) = y$<br>$cost \rightarrow \infty, if y=0 and h_{\theta}(x) \rightarrow 1$<br>$cost \rightarrow \infty, if y=1 and h_{\theta}(x) \rightarrow 0$<br>这样我们通过减少cost,就能找到目标$\theta$啦<br>同时<strong>我们这里的cost能够保证$J(\theta)$是凸函数</strong>(NG老师貌似讲了一个极大似然估计然后说是凸的,这里我是一只鸵鸟跳过)</p>
-<p>下面是cost的简单写法:<br>$cost = -y^{i}log(h_{\theta}(X^{(i)}))-(1-y^{i})log(1-h_{\theta}(x^{(i)}))$<br>可以验证y=1或者0代入时就是刚刚前面的cost<br>那么我们有<br>$J_{\theta} = \frac{1}{m}\sum_{i=1}^{m}[-y^{i}log(h_{\theta}(X^{(i)}))-(1-y^{i})log(1-h_{\theta}(x^{(i)}))]$<br>其梯度定义为:<br>$\frac{\partial J(\theta)}{\partial \theta_{j}} = \frac{1}{m}\sum_{i=1}^{m}(h_{\theta}(x^{(i)})-y^{(i)})x_{j}^{(i)})$<br>求偏导数的求导过程如下,比较麻烦我直接贴图,不用markdown公式了,不过推导起来难度不大。<br><img src="/images/4 NG EX2/grad.png" width="50%" height="50%"> </p>
-<p>算出来梯度后,我们就可以使用梯度下降法来优化$\theta$了。</p>
+<p>下面是cost的简单写法:<br>$cost = -y^{i}log(h_{\theta}(X^{(i)}))-(1-y^{i})log(1-h_{\theta}(x^{(i)}))$<br>可以验证y=1或者0代入时就是刚刚前面的cost<br>那么我们有<br>$J(\theta) = \frac{1}{m}\sum_{i=1}^{m}[-y^{i}log(h_{\theta}(X^{(i)}))-(1-y^{i})log(1-h_{\theta}(x^{(i)}))]$<br>其梯度定义为:<br>$\frac{\partial J(\theta)}{\partial \theta_{j}} = \frac{1}{m}\sum_{i=1}^{m}(h_{\theta}(x^{(i)})-y^{(i)})x_{j}^{(i)}$<br>求偏导数的求导过程如下,比较麻烦我直接贴图,不用markdown公式了,不过推导起来难度不大。<br><img src="/images/4 NG EX2/grad.png" width="50%" height="50%"> </p>
+<p>算出来梯度后,我们会发现,逻辑回归和线性回归的梯度是一样的形式,但是由于$h_{\theta}(x)$是不一样的,所以梯度是不一样的(<del>这可能就是为啥叫逻辑<strong>回归</strong>的原因?</del>)<br>接下来我们就可以使用梯度下降法来优化$\theta$了。</p>
 <h3 id="梯度下降法的向量化写法"><a href="#梯度下降法的向量化写法" class="headerlink" title="梯度下降法的向量化写法"></a>梯度下降法的向量化写法</h3><p>在实际的代码实现中,我们一般把每个特征写成行向量(n个维度),m个样本组成了$X_{m \times n}$矩阵,我们会将$\theta$写成列向量$\theta_{n \times 1}$<br>这样有<br>$h = g(X\theta)$</p>
 <p>$J_{\theta} = \frac{1}{m}\sum_{i=1}^{m}[-y^{i}log(h_{\theta}(X^{(i)}))-(1-y^{i})log(1-h_{\theta}(x^{(i)}))]$</p>
 <p>Grandient Descent:<br>repeat{<br>    $\theta_{j} := \theta_{j} - \alpha \cdot \frac{\partial J(\theta)}{\partial \theta_{j}} $<br>}</p>
@@ -366,7 +258,202 @@
 <h3 id="完整代码"><a href="#完整代码" class="headerlink" title="完整代码"></a>完整代码</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">import numpy as np </span><br><span class="line">import pandas as pd </span><br><span class="line">import matplotlib.pyplot as plt </span><br><span class="line">import scipy.optimize as opt</span><br><span class="line">import pdb</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">def sigmoid(z):</span><br><span class="line">    return 1&#x2F;(1+np.exp(-z))</span><br><span class="line"></span><br><span class="line">def plotData(positive,negative):</span><br><span class="line">    fg,ax &#x3D; plt.subplots(figsize &#x3D; (12,8))</span><br><span class="line">    ax.scatter(positive[&#39;Exam 1&#39;],positive[&#39;Exam 2&#39;],s&#x3D;50,c&#x3D;&#39;y&#39;,marker&#x3D;&#39;o&#39;,label&#x3D;&#39;Admitted&#39;)</span><br><span class="line">    ax.scatter(negative[&#39;Exam 1&#39;],negative[&#39;Exam 2&#39;],s&#x3D;50,c&#x3D;&#39;r&#39;,marker&#x3D;&#39;o&#39;,label&#x3D;&#39;Not Admitted&#39;)</span><br><span class="line"></span><br><span class="line">    ax.legend()</span><br><span class="line">    ax.set_xlabel(&#39;Exam 1 Score&#39;)</span><br><span class="line">    ax.set_ylabel(&#39;Exam 2 Score&#39;)</span><br><span class="line">    plt.show()</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">def checkSigmoid():</span><br><span class="line">    fig,ax &#x3D; plt.subplots(figsize&#x3D;(12,8))</span><br><span class="line">    nums &#x3D; np.arange(-10,10,step&#x3D;0.1)</span><br><span class="line">    ax.plot(nums,sigmoid(nums),&#39;r&#39;)</span><br><span class="line">    plt.show()</span><br><span class="line"></span><br><span class="line">def costFunction(theta,X,y):</span><br><span class="line"></span><br><span class="line">    h &#x3D; sigmoid(X.dot(theta.T))</span><br><span class="line">    J &#x3D;(- y.T .dot(np.log(h))-(1-y).T.dot(np.log(1-h) ))&#x2F;len(X)</span><br><span class="line"></span><br><span class="line">    return J</span><br><span class="line"></span><br><span class="line">def gradFunction(theta,X,y):</span><br><span class="line">    grad &#x3D; np.zeros(len(theta))</span><br><span class="line">    theta &#x3D; theta.reshape(1,len(theta))</span><br><span class="line">    h &#x3D; sigmoid(X.dot(theta.T))</span><br><span class="line">    grad &#x3D; X.T.dot ((h-y)) &#x2F; len(X)</span><br><span class="line">    return grad</span><br><span class="line"></span><br><span class="line">def predict(theta,X):</span><br><span class="line">    probality &#x3D; sigmoid(X.dot(theta.T))</span><br><span class="line">    return [1 if x &gt;&#x3D; 0.5 else 0 for x in probality]</span><br><span class="line"></span><br><span class="line">def main():</span><br><span class="line"></span><br><span class="line">    path &#x3D; &#39;ex2data1.txt&#39;</span><br><span class="line">    data &#x3D; pd.read_csv(path,header&#x3D;None,names&#x3D;[&#39;Exam 1&#39;,&#39;Exam 2&#39;,&#39;Admitted&#39;])</span><br><span class="line">    print(data.head())</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    positive &#x3D; data[data[&#39;Admitted&#39;].isin([1])]</span><br><span class="line">    negative &#x3D; data[data[&#39;Admitted&#39;].isin([0])]</span><br><span class="line"></span><br><span class="line">    # plotData(positive,negative)</span><br><span class="line">    # checkSigmoid()</span><br><span class="line">   </span><br><span class="line">    data.insert(0, &#39;Ones&#39;, 1)</span><br><span class="line">    cols &#x3D; data.shape[1]</span><br><span class="line">    X &#x3D; data.iloc[:,0:cols-1]</span><br><span class="line">    y &#x3D; data.iloc[:,cols-1:cols]</span><br><span class="line">    X &#x3D; np.array(X.values)</span><br><span class="line">    y &#x3D; np.array(y.values)</span><br><span class="line">    theta &#x3D; np.zeros(3)</span><br><span class="line">    # print(costFunction(theta,X,y),gradFunction(theta,X,y))</span><br><span class="line">    result &#x3D; opt.fmin_tnc(func&#x3D;costFunction,x0&#x3D;theta,fprime&#x3D;gradFunction,args&#x3D;(X,y))</span><br><span class="line"></span><br><span class="line">    # print(costFunction(result[0],X,y))</span><br><span class="line"></span><br><span class="line">    theta_min &#x3D; result[0]</span><br><span class="line">    </span><br><span class="line">    predictions &#x3D; predict(theta_min,X)</span><br><span class="line"></span><br><span class="line">    correct &#x3D; [1 if (a &#x3D;&#x3D; 1 and b &#x3D;&#x3D; 1) or (a &#x3D;&#x3D; 0 and  b &#x3D;&#x3D; 0) else 0 for (a,b) in zip(predictions,y)]</span><br><span class="line">    </span><br><span class="line">    accuracy &#x3D; sum(map(int,correct)) * 100 &#x2F;len(correct)</span><br><span class="line">    print(&#39;accuracy &#x3D; &#123;0:.2f&#125;%&#39;.format(accuracy)) </span><br><span class="line"></span><br><span class="line">    #下面是画决策边界</span><br><span class="line">    # print([np.max(X[:,1],axis&#x3D;0),np.max(X[:,2],axis&#x3D;0))]</span><br><span class="line">    pointX &#x3D; np.array([np.min(X[:,1])-2,np.max(X[:,2])+2]) </span><br><span class="line">    print(pointX)</span><br><span class="line">    pointY &#x3D; (- theta_min[0] - theta_min[1] * pointX)&#x2F;theta_min[2]</span><br><span class="line">    print(pointY)</span><br><span class="line"></span><br><span class="line">    fig,ax &#x3D; plt.subplots(figsize&#x3D;(12,8))</span><br><span class="line">    ax.plot(pointX,pointY,linewidth&#x3D;5)</span><br><span class="line">    ax.scatter(positive[&#39;Exam 1&#39;],positive[&#39;Exam 2&#39;],s&#x3D;50,c&#x3D;&#39;y&#39;,marker&#x3D;&#39;o&#39;,label&#x3D;&#39;Admitted&#39;)</span><br><span class="line">    ax.scatter(negative[&#39;Exam 1&#39;],negative[&#39;Exam 2&#39;],s&#x3D;50,c&#x3D;&#39;r&#39;,marker&#x3D;&#39;o&#39;,label&#x3D;&#39;Not Admitted&#39;)</span><br><span class="line">    ax.legend()</span><br><span class="line">    ax.set_xlabel(&#39;Exam 1 Score&#39;)</span><br><span class="line">    ax.set_ylabel(&#39;Exam 2 Score&#39;)</span><br><span class="line">    plt.show()</span><br><span class="line">    </span><br><span class="line"></span><br><span class="line">main()</span><br></pre></td></tr></table></figure>
 <h2 id="References"><a href="#References" class="headerlink" title="References"></a>References</h2><ol>
 <li><a href="https://github.com/fengdu78/Coursera-ML-AndrewNg-Notes" target="_blank" rel="noopener">黄海广博士的笔记GitHub</a></li>
-<li><a href="https://blog.csdn.net/Cowry5/article/details/80247569" target="_blank" rel="noopener">第二个作业的边界绘制参考了这篇csdn博客</a></li>
+</ol>
+]]></content>
+      <categories>
+        <category>NG-ML</category>
+      </categories>
+      <tags>
+        <tag>分类</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>PCA学习笔记(含推导过程)</title>
+    <url>/2020/10/18/PCA%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0(%E5%90%AB%E6%8E%A8%E5%AF%BC%E8%BF%87%E7%A8%8B)/</url>
+    <content><![CDATA[<p>本篇博客的主要内容有：</p>
+<ol>
+<li>降维</li>
+<li>PCA的数学基础</li>
+<li>PCA的两种思想推导<ul>
+<li>基于最大投影方差</li>
+<li>基于最小重构距离</li>
+</ul>
+</li>
+<li>PCA的计算过程</li>
+</ol>
+<hr>
+<a id="more"></a>
+<h2 id="降维"><a href="#降维" class="headerlink" title="降维"></a>降维</h2><p>降维属于<strong>无监督学习</strong>，可以用来解决训练中<strong>过拟合</strong>和<strong>维数灾难</strong>问题。</p>
+<ol>
+<li><p><strong>维数灾难</strong> 导致数据稀疏性/过拟合<br>一个直观的理解是：假设我们有十个样本<br>特征维数为1D时，当特征空间是长度为5的线段时，样本密度是10/5=2。<br>特征维数为2D时，特征空间大小为$5^{2}$，样本密度为10/25=0.4。<br>特征维数为3D时，特征空间大小为$5^{3}$，样本密度为10/125=0.08<br>如果我们继续增加特征，特征空间的维数就会不断增长，变得越来越稀疏。由于这种稀疏性，当特征的数量无穷大时，训练样本位于最佳超平面错误一侧的可能性无穷小，因此找到可分离超平面就变得容易得多。事实上，增加特征数量使得高维空间线性可分，相当于在低维空间内训练一个复杂的非线性分类器。不过，这个非线性分类器学习了训练数据中的specific instances and exceptions，这就直接导致导致了<strong>过拟合</strong></p>
+</li>
+<li><p><strong>过拟合(overfitting)</strong> 使用太多特征将会导致过拟合，泛化能力差<br><strong>overfitting</strong>: The classifier starts learning exceptions that are specific to the training data and do not generalize well when new data is encountered.<br>虽然在较低维度下分类器的性能表现的可能不如在高维空间中的好，但是对于未见过的数据却表现了良好的泛化能力，也就是说，使用更少的特征，我们的分类器可以<strong>避免过拟合</strong>，进而<strong>避免维数灾难</strong></p>
+</li>
+<li><p>维数灾难不同视角一<br>假设每个样本的特征值都是唯一的，并且每个特征的范围都是[0-1]<br>在1D时，如果我们想要将训练数据覆盖特征范围的20%时，我们需要所有样本的20%作为训练数据<br>在2D时，0.45^2=0.2，因此我们需要所有样本的45%作为训练数据<br>在3D时，0.58^3=0.2，因为我们需要所有样本的58%作为训练样本<br>也就是说，随着特征维数的增加，为了覆盖特征值值域的20%，我们需要增加更多的训练样本，当<strong>训练样本数量固定时，增加更多的特征维数，就容易导致过拟合</strong></p>
+</li>
+<li><p>维数灾难中不同视角二<br>维数灾难导致<strong>训练样本的分布不均</strong> 在中心位置的数据比在其周围的数据分布更加的稀疏，更多的数据将会分布在超立方体的角落。<br>可以这样来理解，设我们的立方体的边长为1。<br>不管维数多少，我们的超立方体的体积都为1<br>超球体的体积计算公式为：<br>$V_{超球体} = K \cdot  r ^{D}$   （r为小于1的数）<br>当D-&gt;无穷大时，V-&gt;0，这部分说明了分类问题中的“维数灾难”：<strong>在高维特征空间中，大多数的训练样本位于超立方体的角落。</strong></p>
+</li>
+<li><p>维数灾难中不同视角三<br>想象我们有一个圆环，其外环半径为1，内环半径为$1-\varepsilon$<br>可以求得：<br>$V_{外} = K \cdot 1 ^{D} = K$<br>$V_{环} =V_{外} - V_{内} =  K - K \cdot (1-\varepsilon )^{D}$<br>从而有：<br>$\frac{V_{外}}{V_{内}}  =  1 - (1-\varepsilon ) ^{D}$<br>$\lim_{D \to \infty }\frac{V_{外}}{V_{内}} = 1$<br><strong>随着维数的增加，我们在三维空间中的几何直觉会在考虑高维空间中不起作用。</strong> 一个球体的大部分体积都聚集在表面附近的薄球壳上面。</p>
+</li>
+<li><p>降维的方法分类<br>对于数据降维的方法有</p>
+<ul>
+<li>直接降维(特征选择)</li>
+<li>线性降维(PCA等)</li>
+<li>非线性降维(流行学习等)<br>下面将开始介绍PCA降维的思想。</li>
+</ul>
+</li>
+</ol>
+<h2 id="PCA的基础概念"><a href="#PCA的基础概念" class="headerlink" title="PCA的基础概念"></a>PCA的基础概念</h2><ol>
+<li><p>求和向量$1_{n}$<br>对于任何一个向量x，其所有元素之和都等于x与求和向量的内积</p>
+</li>
+<li><p>中心化矩阵(centering matrix)<br>$H = I_{N} - \frac{1}{N}\cdot 1_{N}\cdot 1_{N}^{T}$<br>对于任意的向量x,$H\cdot x$表示将原数据向量的各个元素减去n个数据的均值的结果,直观上理解就是将数据往中心原点移动,中心化后的数据均值为0。<br>中心化矩阵有两个基本性质：</p>
+</li>
+</ol>
+<ul>
+<li>$H^{T} = H$</li>
+<li>$H^{n} = H$<br>以上两个将会在推导PCoA中使用到</li>
+</ul>
+<ol>
+<li><p>Data:<br>$X_{N\times P} = \begin{pmatrix}<br>x_{1}&amp; x_{2} &amp; …  &amp; x_{n}<br>\end{pmatrix}^{T}$<br>表示有N个数据，每个数据是P维的</p>
+</li>
+<li><p>Sample Mean:<br>$\bar{X} = \frac{1}{N} \sum_{i=1}^{N}x_{i}$</p>
+</li>
+<li><p>Sample Covariance<br>对于一维数据，我们有：<br>$S = \frac{1}{N} \sum_{i=1}^{N}(x_{i}-\bar{x})^{2} = \frac{1}{N}\cdot X^{T}\cdot 1_{N}$<br>对于p维数据，我们有：<br>$S_{p\times p} = \frac{1}{N} \sum_{i=1}^{N}(x_{i}-\bar{x})\cdot (x_{i}-\bar{x})^{T} = \frac{1}{N}\cdot X^{T}\cdot H\cdot X$</p>
+</li>
+<li><p>计算向量在某个方向上的投影<br>假设有两个向量$\vec{a},\vec{b}$,则$\vec{a}$在$\vec{b}$上面的投影$P_{1} = |\vec{a}| \cdot  \cos \theta$<br>同时我们有$\vec{a}\cdot \vec{b} = \left | \vec{a} \right |\cdot \left | \vec{b} \right |\cdot \cos \theta$<br>因此，当$\left | \vec{b} \right | = 1$时,<br>$\vec{a}\cdot \vec{b} =  \left | \vec{a} \right |\cdot\cos \theta = P_{2}$<br>我们可以看到,当$\left | \vec{b} \right | = 1$,$P_{1} = P_{2}$<br>因此算投影可以直接算向量点积,在数学中我们一般写成下面的形式: $P = a^{T} \cdot b$<br>s.t. $\left | \vec{b} \right | = 1$</p>
+</li>
+</ol>
+<h2 id="PCA的思想与推导过程"><a href="#PCA的思想与推导过程" class="headerlink" title="PCA的思想与推导过程"></a>PCA的思想与推导过程</h2><p>PCA的主要内容可以用一句话来概括，那就是：<strong>一个中心，两个基本点</strong><br><strong>一个中心</strong>：是对原始特征空间的重构，将一组可能是线性相关的数据通过正交变换，变成线性无关的数据(即去除数据的线性相关性)，当重构的空间维数小于原始特征空间维数时，就达到了降维的目的。<br><strong>两个基本点</strong>：</p>
+<ul>
+<li>最大投影方差思想</li>
+<li>最小重构距离思想</li>
+</ul>
+<h3 id="基于最大投影方差思想的推导过程"><a href="#基于最大投影方差思想的推导过程" class="headerlink" title="基于最大投影方差思想的推导过程"></a>基于最大投影方差思想的推导过程</h3><p>最大投影方差指：<br>将样本投影到新的坐标下，数据能够尽可能的分开(也就是方差尽可能大)，这样就能尽可能的将降低数据维度的同时更好的保留原始数据的特性，更好的区分原始数据。<br>我们先计算将数据降至1维，投影方向$\vec{u_{1}}$</p>
+<p>$j = \overrightarrow{(x_{i}-\bar{x})^{T}}\cdot \vec{u_{1}}$<br>s.t. $\vec{|u_{1}|}=1(u_{1}^{T} \cdot u_{1}=1)$<br>实际上投影是一个数:以$u_{1}$为基底时，在$u_{1}$方向上的坐标<br>那么投影方差应该表示为：<br>$J = \frac{1}{N}\sum_{i=1}^{N}\begin{Bmatrix}<br>(x_{i}-\bar{x})^{T}\cdot u_{1}<br>\end{Bmatrix}^{2}$<br>(这里要注意,因为前面已经中心化,均值已经为0了,所以直接把投影做平方累加就好)<br>$= \frac{1}{N}\sum_{i=1}^{N}u_{1}^{T}\cdot (x_{i}-\bar{x})\cdot (x_{i}-\bar{x})^{T}\cdot u_{1}$<br>$=u_{1}^{T}\cdot \bigl(\begin{smallmatrix}<br>\frac{1}{N}\sum_{i=1}^{N}<br>(x_{i}-\bar{x})\cdot (x_{i}-\bar{x})^{T}<br>\end{smallmatrix}\bigr)\cdot u_{1}$<br>$= u_{1}^{T}\cdot S \cdot u_{1}$</p>
+<p>到这里我们就得到了J的表示函数，就将问题转为求：<br>$\check{u_{1}} = argmax ( u_{1}^{T}\cdot S \cdot u_{1})$<br>s.t. $u_{1}^{T} \cdot u_{1} = 1$</p>
+<p>根据拉格朗日乘子法<br>$\alpha (u_{1},\lambda ) = u_{1}^{T}\cdot S \cdot u_{1})  + \lambda \cdot (1-u_{1}^{T}\cdot u_{1})$<br>有<br>$\frac{\partial \alpha}{\partial u_{1}} = 2\cdot S\cdot u_{1} - \lambda \cdot 2\cdot u_{1}=0$<br>$Su_{1} = \lambda u_{1}$</p>
+<p>这里面涉及到矩阵求导，请参考：<br><a href="https://zhuanlan.zhihu.com/p/24709748" target="_blank" rel="noopener">矩阵求导术</a></p>
+<p>实际上式子推导到这里，我们可以得出结论：<br>$\lambda$即特征值，$u_{1}$即特征向量<br>也就是说，我们的投影方向应该是S的特征向量的方向<br>再接着我们将上面的式子左乘$u_{1}^{T}$可以得到：<br>$u_{1}^{T}\cdot S \cdot u_{1} = J = \lambda$<br>注意这里$\lambda$刚好就是等于我们的$J$<br>也就是说，如果将数据降至一维，那么我们的$\check{u_{1}} = argmax ( u_{1}^{T}\cdot S \cdot u_{1}) $ 极大值就是$\lambda$<br>即$u_{1}$是S最大特征值对应的特征向量时，投影方差取到极大值，我们称$u_{1}$为<strong>第一主成分</strong><br>那么接下来我们就先获得方差最大的1维，生成该维的补空间；，继续在补空间中获得方差最大的1维，继续生成新的补空间，依次循环下去得到q维的空间，我们就可以降至q维了。<br>S的特征向量，就可以认为是<strong>主成分</strong></p>
+<h3 id="基于最小重构距离思想的推导过程"><a href="#基于最小重构距离思想的推导过程" class="headerlink" title="基于最小重构距离思想的推导过程"></a>基于最小重构距离思想的推导过程</h3><p>最小重构距离指：<br>恢复到原始数据的代价最小(当我们考虑最大投影方差时，其实也可以任务数据尽可能的分散，那么恢复成原始数据的代价就更小，如果数据都重合在了一起，那么想要恢复数据，也就是重构，就更加困难了)</p>
+<ol>
+<li><p>在新基底(以S的特征向量为基底)的向量表示<br>$\vec{x_{i}} = \sum_{k=1}^{p}(\vec{x_{i}^{T}}\cdot \vec{u_{k}} )\cdot \vec{u_{k}}$<br>为了简化描述，我们先假设数据已经中心化，注意这里的<strong>原始数据是p维的</strong></p>
+</li>
+<li><p>降至<strong>q维</strong>的向量表示<br>$\vec{\hat{x_{i}}} = \sum_{k=1}^{q}(\vec{x_{i}^{T}}\cdot \vec{u_{k}} )\cdot \vec{u_{k}}$</p>
+</li>
+<li><p>最小重构代价计算<br>$J = \frac{1}{N} \sum_{i=1}^{N}\parallel \vec{x_{i}}-\hat{x_{i}} \parallel^{2}$</p>
+<p>$= \frac{1}{N} \sum_{i=1}^{N}\parallel   \sum_{k=q+1}^{p}(\vec{x_{i}^{T}} \cdot \vec{u_{k}} )\cdot \vec{u_{k}}   \parallel^{2}$</p>
+<p>$= \frac{1}{N} \sum_{i=1}^{N} \sum_{k=q+1}^{p}(x_{i}^{T}\cdot u_{k})^{2}$<br>前面我们假设数据已经中心化，现在我们代入真正的数据<br>$J= \frac{1}{N} \sum_{i=1}^{N} \sum_{k=q+1}^{p}\begin{Bmatrix}<br>(x_{i}^{T}-\bar{x})\cdot u_{k}<br>\end{Bmatrix}^{2}$</p>
+</li>
+</ol>
+<p>$J= \sum_{k=q+1}^{p}\sum_{i=1}^{N} \frac{1}{N}  \begin{Bmatrix}<br>(x_{i}^{T}-\bar{x})\cdot u_{k}<br>\end{Bmatrix}^{2}$</p>
+<p>$J=\sum_{k=q+1}^{p}u_{k}^{T}\cdot S \cdot u_{k}$<br>s.t. $u_{k}^{T}\cdot u_{k}=1$</p>
+<p>到这里我们的推导已经基本上完成了，下面是我们的优化目标：让J最小<br>$J = argmin (\sum_{k=q+1}^{p}u_{k}^{T}\cdot S \cdot u_{k})$<br>s.t. $u_{k}^{T}\cdot u_{k}=1$<br>在这里我们可以发现，这个优化目标与最大方差的优化目标形式是一样的，只不过一个是求最大的$\vec{u}$，一个是降至k维后余下向量的$\vec{u}$<br>要求最小的J的话,应该求最小的特征值，那么剩下的特征值就是前q维的主成分了。</p>
+<h2 id="PCA的计算过程-IPO"><a href="#PCA的计算过程-IPO" class="headerlink" title="PCA的计算过程(IPO)"></a>PCA的计算过程(IPO)</h2><p>input:  $X_{N \times p}$,降至d维<br>Process:</p>
+<ol>
+<li>中心化 $X:= H \cdot X$ </li>
+<li>计算样本的协方差矩阵S</li>
+<li>对S做特征值分解</li>
+<li>取前d大个特征值所对应的特征向量 $u_{1},u_{2},…u_{d}$(列向量)组成投影矩阵$P=(u_{1}u_{2}…u_{d})$</li>
+</ol>
+<p>Output: $X_{N \times d} =  X_{N \times p} \cdot P_{p \times d}$</p>
+<p>这里还有一个小细节,就是西瓜书中计算新的坐标时是采用:<br> $X_{d \times N} = P^{T}_{d \times p} \cdot X_{p \times N}$<br> 最后得出来的结果是一样的.<br> 网上的很多文章对这个都解释的不太清楚,这里从矩阵线性变换的角度来理解看看:<br> 首先,计算一个列向量$x$在新基下面的坐标是这样计算的:<br> $x^{‘}: P^{-1} \cdot x$<br> 而如果将列向量组成矩阵,那么计算应该是这样的:<br> $X_{d \times N} = P^{-1}_{d \times p} \cdot X_{p \times N}$<br> 但是,如果是标准正交基的话,有:<br> $P^{-1} = P^{T}$<br> 这样就变成西瓜书上面的:<br>  $X_{d \times N} = P^{T}_{d \times p} \cdot X_{p \times N}$</p>
+<p>关于PCA的内容还有一个是关于PCA的计算优化PCoA，使用SVD分解，以及scikit learn中的PCA源码就是使用PCoA，这个先挖坑待填。</p>
+<hr>
+<h2 id="References"><a href="#References" class="headerlink" title="References"></a>References</h2><ol>
+<li><a href="https://www.visiondummy.com/2014/04/curse-dimensionality-affect-classification/" target="_blank" rel="noopener">Vincent Spruyt. The Curse of Dimensionality in classification. Computer vision for dummies. 2014.</a></li>
+<li>西瓜书</li>
+<li>PRML</li>
+<li><a href="https://www.cnblogs.com/yanxingang/p/10776475.html" target="_blank" rel="noopener">求和向量和中心矩阵</a></li>
+<li><a href="https://zhuanlan.zhihu.com/p/24709748" target="_blank" rel="noopener">矩阵求导术</a></li>
+<li><a href="https://www.bilibili.com/video/BV1aE411o7qd?t=4&amp;p=4" target="_blank" rel="noopener">白板推导系列</a></li>
+</ol>
+]]></content>
+      <categories>
+        <category>ML</category>
+      </categories>
+      <tags>
+        <tag>降维</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>NG机器学习EX2(逻辑回归2)</title>
+    <url>/2020/11/06/NG%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0EX2-%E9%80%BB%E8%BE%91%E5%9B%9E%E5%BD%922/</url>
+    <content><![CDATA[<p>本篇博客的主要内容有：</p>
+<ol>
+<li>Regularization理论知识</li>
+<li>python代码实现EX2的第二个练习</li>
+</ol>
+<hr>
+<a id="more"></a>
+<h2 id="Regularization理论知识"><a href="#Regularization理论知识" class="headerlink" title="Regularization理论知识"></a>Regularization理论知识</h2><h3 id="the-problem-of-overfitting"><a href="#the-problem-of-overfitting" class="headerlink" title="the problem of overfitting"></a>the problem of overfitting</h3><p> 在线性回归模型中</p>
+<p><img src="/images/4 NG EX2/underOverfit.png" width="50%" height="50%"> </p>
+<ul>
+<li>第一个模型是一个线性模型,欠拟合(高偏差 high bias),不能很好地适应我们的训练集。它认为房屋的价格会随着size呈线性变化,但是实际上是不会的。</li>
+<li>第三个模型是一个四次方的模型,过于强调拟合原始数据,而丢失了算法的本质:预测新数据。若给出一个新的值使之预测,它将表现的很差,是过拟合(高方差 high variance)，虽然能非常好地适应我们的训练集但在新输入变量进行预测时可能会效果不好;</li>
+<li>中间的模型似乎最合适。</li>
+</ul>
+<p>逻辑回归模型中也是同样的问题</p>
+<p><img src="/images/4 NG EX2/underOverfit2.png" width="50%" height="50%"></p>
+<p><strong>Underfitting,or high bias,</strong> is when the form of our hypothesis function h maps poorly to the trend of the data.<br>It is usually caused by a function that is too simple or uses too few features.</p>
+<p><strong>overfitting, or high variance,</strong> is caused by a hypothesis function that fits the available data but does not generalize well to predict new data. It is usually caused by a complicated function that creates a lot of unnecessary curves and angles unrelated to the data.</p>
+<p>过拟合问题的解决方法:</p>
+<ul>
+<li><p>Reduce the number of features:<br>Manually select which features to keep.<br>Use a model selection algorithm (比如说PCA).</p>
+</li>
+<li><p>Regularization<br>Keep all the features, but reduce the magnitude of parameters $\theta_{j}$<br>Regularization works well when we have a lot of slightly useful features.</p>
+</li>
+</ul>
+<p>也就是说,使用Regularization方法,我们可以保留所有的特征(这些特征对模型训练尽管不是起着关键作用,但是也能做出一定的贡献),又同时能<strong>解决过拟合问题</strong></p>
+<h3 id="cost-function"><a href="#cost-function" class="headerlink" title="cost function"></a>cost function</h3><p>线性回归中我们发生过拟合的模型是:<br>$h_{\theta}(x) = \theta_{0} + \theta_{1}x + \theta_{2}x^{2} + \theta_{3}x^{3} + \theta_{4}x^{4}$<br>如果我们penalize  $\theta_{3},\theta_{4}$ 并且让他们非常的小,那么我们的拟合曲线就会变得是一个最高次为2的曲线(3,4次由于系数为0将会变得忽略不计)<br><img src="/images/4 NG EX2/smooth.png" width="50%" height="50%"><br>如上图,这样我们的曲线将会更加的光滑,不容易发生过拟合<br>所以如果我们将$\theta_{j}$加入我们的cost function,然后来最小化我们的cost时,就会同时最小化我们的$\theta_{j}$</p>
+<p>下面是cost function的重新定义:<br>$J\left( {\theta_{0}},{\theta_{1}}…{\theta_{n}} \right)=\frac{1}{2m} [\sum_{i=1}^{m}(h_{\theta }(x^{(i)})-y^{(i)})^{2} + \lambda \sum_{j=1}^{n}\theta_{j}^{2}]$</p>
+<p><strong>根据习惯,我们将从$\theta_{1}$开始惩罚,而不是$\theta_{0}$</strong><br>也就是说,我们在原来的cost上面加了一个$\lambda \sum_{j=1}^{n}\theta_{j}^{2}$(正则项),通过优化cost,我们也会让$\theta_{j}$更小,进而$h_{\theta}(x)$也会更加光滑(可以从前面$\theta_{3},\theta_{4}$的例子上直观感受到)</p>
+<p>具体来说,如果我们令 λ 的值很大的话,为了使cost尽可能的小,所有的$\theta$值(不包括$\theta_{0}$)都会在一定程度上减小。<br>但若$\theta$的值太大了所有的 $\theta$值(不包括$\theta_{0}$),都会趋近于0,这样我们所得到的只能是一条平行于x轴的直线($h_{\theta}(x)=\theta_{0}$),这样我们的模型就会有过强的bias,有过高的偏差,认为预测的价格一直都是等于$\theta_{0}$,换句话说,过大的$\lambda$平滑了太多的$h_{\theta}(x)$,导致了欠拟合(underfitting)</p>
+<p>所以对于正则化，<strong>我们要取一个合理的$\lambda$的值</strong>，这样才能更好的应用正则化</p>
+<p>$\lambda$在这里是用来平衡我们的两个不同目标:</p>
+<ul>
+<li>让我们的模型能够更好的拟合数据</li>
+<li>同时让我们的$\theta_{j}$更小,来平滑$h_{\theta}(x)$,进而避免过拟合</li>
+</ul>
+<p>$\lambda$是rugularization parameter,它<strong>决定了我们的参数成本将被扩大到多少</strong></p>
+<p>也就是说,<strong>我们通过在cost中增加额外的正则项(参数成本),使得$h_{\theta}(x)$变得平滑(减少$h_{\theta}(x)$中某些项的权重),而没有减少特征数目或者改变$h_{\theta}(x)$的形式进而避免过拟合</strong></p>
+<h3 id="regularized-logistic-regression"><a href="#regularized-logistic-regression" class="headerlink" title="regularized logistic regression"></a>regularized logistic regression</h3><p>$J(\theta) = \frac{1}{m}\sum_{i=1}^{m}[-y^{i}log(h_{\theta}(X^{(i)}))-(1-y^{i})log(1-h_{\theta}(x^{(i)}))] + \frac{\lambda}{2m} \sum_{j=1}^{n}\theta_{j}^{2}$<br>其梯度定义为:<br>$\frac{\partial J(\theta)}{\partial \theta_{0}} = \frac{1}{m}\sum_{i=1}^{m}(h_{\theta}(x^{(i)})-y^{(i)})x_{0}^{(i)}$</p>
+<p>$\frac{\partial J(\theta)}{\partial \theta_{j=1,2…n}} = \frac{1}{m}\sum_{i=1}^{m}(h_{\theta}(x^{(i)})-y^{(i)})x_{j}^{(i)} + \frac{\lambda}{m}\theta_{j}$</p>
+<p>那么如果使用梯度下降的话,</p>
+<p>Grandient Descent:<br>repeat{<br>    $\theta_{j} := \theta_{j} - \alpha \cdot \frac{\partial J(\theta)}{\partial \theta_{j}} $<br>}<br>依旧是上面这个,但是需要注意$\theta_{0}$是<strong>没有正则化项的</strong></p>
+<h2 id="python代码实现"><a href="#python代码实现" class="headerlink" title="python代码实现"></a>python代码实现</h2><p>这部分,我们使用加入正则项提升逻辑回归算法,正则化是cost函数中的一个术语,它使算法更倾向于“更简单”的模型(在这种情况下，模型将更小的系数)。有助于减少过拟合，提高模型的泛化能力。</p>
+<blockquote>
+<p>设想你是工厂的生产主管，你有一些芯片在两次测试中的测试结果。对于这两次测试，你想决定是否芯片要被接受或抛弃。为了帮助你做出艰难的决定，你拥有过去芯片的测试数据集，从其中你可以构建一个逻辑回归模型</p>
+</blockquote>
+<h3 id="读入数据并可视化"><a href="#读入数据并可视化" class="headerlink" title="读入数据并可视化"></a>读入数据并可视化</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">def plotData(data2):</span><br><span class="line">    positive &#x3D; data2[data2[&#39;Accepted&#39;].isin([1])]</span><br><span class="line">    negative &#x3D; data2[data2[&#39;Accepted&#39;].isin([0])]</span><br><span class="line">    # print(positive)</span><br><span class="line"></span><br><span class="line">    fig,ax &#x3D; plt.subplots(figsize&#x3D;(12,8))</span><br><span class="line">    ax.scatter(positive[&#39;Test 1&#39;],positive[&#39;Test 2&#39;],s&#x3D;100,c&#x3D;&#39;black&#39;,marker&#x3D;&#39;+&#39;,label &#x3D; &#39;Accepted&#39;)</span><br><span class="line">    ax.scatter(negative[&#39;Test 1&#39;], negative[&#39;Test 2&#39;], s&#x3D;50, c&#x3D;&#39;y&#39;, marker&#x3D;&#39;o&#39;, label&#x3D;&#39;Rejected&#39;)</span><br><span class="line">    ax.legend()</span><br><span class="line">    ax.set_xlabel(&#39;Test 1 Score&#39;)</span><br><span class="line">    ax.set_ylabel(&#39;Test 2 Score&#39;)</span><br><span class="line">    #plt.show()</span><br><span class="line">path &#x3D; &#39;ex2data2.txt&#39;</span><br><span class="line">data2 &#x3D; pd.read_csv(path,header&#x3D;None,names&#x3D;[&#39;Test 1&#39;,&#39;Test 2&#39;,&#39;Accepted&#39;])</span><br><span class="line">plotData(data2)</span><br></pre></td></tr></table></figure>
+<p><img src="/images/4 NG EX2/data2.png" width="50%" height="50%"><br>这个数据比第一个练习的复杂得多,没有线性决策边界来的分开两类数据</p>
+<h3 id="Feature-Mapping"><a href="#Feature-Mapping" class="headerlink" title="Feature Mapping"></a>Feature Mapping</h3><p>如上图所示,如果我们直接使用线性回归是没有办法很好的达到好分类效果的,因为<strong>逻辑回归只能去找到一个线性决策边界</strong><br>有一种解决办法是:create more features from each data point(根据输入的数据创造更多的特征),我们使用一个特征映射函数,将数据映射映射到所有的多项式项中，最高可达到六次幂</p>
+<p>$mapFeature(x) = \begin{bmatrix}<br>1<br>\\<br>x_{1}<br>\\<br>x_{2}<br>\\<br>x_{1}^{2}<br>\\<br>x_{1}x_{2}<br>\\<br>x_{2}^{2}<br>\\<br>x_{1}^{3}<br>\\<br>x_{1}^{2}x_{2}<br>\\<br>x_{1}x_{2}^{2}<br>\\<br>x_{2}^{3}<br>\\<br>…<br>\\<br>x_{1}x_{2}^{5}<br>\\<br>x_{2}^{6}<br>\end{bmatrix}<br>$</p>
+<p>通过这样的映射,我们的特征向量,原本只有2D,被转换为了28D的向量。这样我们的逻辑回归分类器通过训练更高维的特征向量,将会有更加复杂的决策边界(非线性)<br>下面是特征映射函数的实现:<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">def mapFeature(x1,x2,degree&#x3D;6):</span><br><span class="line">    # degree &#x3D; 6</span><br><span class="line">    data &#x3D; &#123;&#125;</span><br><span class="line">    for i in range(1,degree+1):</span><br><span class="line">        for j in range(0,i+1):</span><br><span class="line">            # data2[&#39;F&#39;+str(i)+str(j)] &#x3D; np.power(x1,i-j)*np.power(x2,j)</span><br><span class="line">            data[&quot;f&#123;&#125;&#123;&#125;&quot;.format(i - j, j)] &#x3D; np.power(x1, i - j) * np.power(x2, j)</span><br><span class="line">    data &#x3D; pd.DataFrame(data)</span><br><span class="line">    data.insert(0,&#39;Ones&#39;,1) </span><br><span class="line">    return data</span><br><span class="line"></span><br><span class="line">degree &#x3D; 6</span><br><span class="line">x1 &#x3D; data2[&#39;Test 1&#39;]</span><br><span class="line">x2 &#x3D; data2[&#39;Test 2&#39;]</span><br><span class="line">X2 &#x3D; np.array(mapFeature(x1,x2,degree))</span><br><span class="line">y2 &#x3D; np.array(data2.iloc[:,2:3])</span><br><span class="line">theta2 &#x3D; np.zeros(X2.shape[1])</span><br><span class="line">lambdaa &#x3D; 1</span><br><span class="line"># lambdaa &#x3D; 100</span><br><span class="line">print(X2[0:5])</span><br><span class="line">print(y2[0:5])</span><br></pre></td></tr></table></figure><br>通过这个函数,我们的第一个数据将会是:<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">[ 1.00000000e+00  5.12670000e-02  6.99560000e-01  2.62830529e-03</span><br><span class="line">   3.58643425e-02  4.89384194e-01  1.34745327e-04  1.83865725e-03</span><br><span class="line">   2.50892595e-02  3.42353606e-01  6.90798869e-06  9.42624411e-05</span><br><span class="line">   1.28625106e-03  1.75514423e-02  2.39496889e-01  3.54151856e-07</span><br><span class="line">   4.83255257e-06  6.59422333e-05  8.99809795e-04  1.22782870e-02</span><br><span class="line">   1.67542444e-01  1.81563032e-08  2.47750473e-07  3.38066048e-06</span><br><span class="line">   4.61305487e-05  6.29470940e-04  8.58939846e-03  1.17205992e-01]</span><br></pre></td></tr></table></figure><br>具有28个维度</p>
+<h3 id="计算代价函数和梯度"><a href="#计算代价函数和梯度" class="headerlink" title="计算代价函数和梯度"></a>计算代价函数和梯度</h3><p>sigmoid函数在第一个练习中已经实现了,现在我们需要做的,是更新代价函数和梯度,加入正则化项。<br>$J(\theta) = \frac{1}{m}\sum_{i=1}^{m}[-y^{i}log(h_{\theta}(X^{(i)}))-(1-y^{i})log(1-h_{\theta}(x^{(i)}))] + \frac{\lambda}{2m} \sum_{j=1}^{n}\theta_{j}^{2}$<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">def costFunction(theta,X,y,lambdaa):</span><br><span class="line"></span><br><span class="line">    h &#x3D; sigmoid(X.dot(theta.T))</span><br><span class="line">    J &#x3D;(- y.T .dot(np.log(h))-(1-y).T.dot(np.log(1-h) ))&#x2F;len(X)</span><br><span class="line">    reg &#x3D; theta[2:].T .dot(theta[2:] )* lambdaa &#x2F; (2*len(X))</span><br><span class="line">    J &#x3D; J + reg</span><br><span class="line">    return J</span><br></pre></td></tr></table></figure></p>
+<p>$\frac{\partial J(\theta)}{\partial \theta_{0}} = \frac{1}{m}\sum_{i=1}^{m}(h_{\theta}(x^{(i)})-y^{(i)})x_{0}^{(i)}$</p>
+<p>$\frac{\partial J(\theta)}{\partial \theta_{j=1,2…n}} = \frac{1}{m}\sum_{i=1}^{m}(h_{\theta}(x^{(i)})-y^{(i)})x_{j}^{(i)} + \frac{\lambda}{m}\theta_{j}$</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">def gradFunction(theta,X,y,lambdaa):</span><br><span class="line">    grad &#x3D; np.zeros(len(theta))</span><br><span class="line">    theta &#x3D; theta.reshape(1,len(theta))</span><br><span class="line">    h &#x3D; sigmoid(X.dot(theta.T))</span><br><span class="line">    reg &#x3D; lambdaa * theta &#x2F; len(X)</span><br><span class="line">    grad &#x3D; X.T.dot ((h-y)) &#x2F; len(X) + reg.T</span><br><span class="line">    return grad</span><br></pre></td></tr></table></figure>
+<h3 id="predict"><a href="#predict" class="headerlink" title="predict"></a>predict</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">def predict(theta,X):</span><br><span class="line">    probality &#x3D; sigmoid(X.dot(theta.T))</span><br><span class="line">    return [1 if x &gt;&#x3D; 0.5 else 0 for x in probality]</span><br><span class="line"></span><br><span class="line">result2 &#x3D; opt.fmin_tnc(func&#x3D;costFunction, x0&#x3D;theta2, fprime&#x3D;gradFunction, args&#x3D;(X2, y2, lambdaa))</span><br><span class="line">theta_min &#x3D; result2[0]</span><br><span class="line">predictions &#x3D; predict(theta_min,X2)</span><br><span class="line">correct &#x3D; [1 if (a &#x3D;&#x3D; 1 and b &#x3D;&#x3D; 1) or (a &#x3D;&#x3D; 0 and  b &#x3D;&#x3D; 0) else 0 for (a,b) in zip(predictions,y2)]</span><br><span class="line"></span><br><span class="line">accuracy &#x3D; sum(map(int,correct)) * 100 &#x2F;len(correct)</span><br><span class="line">print(&#39;accuracy &#x3D; &#123;0:.2f&#125;%&#39;.format(accuracy))</span><br></pre></td></tr></table></figure>
+<p>算出来的结果为:<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">accuracy &#x3D; 83.05%</span><br></pre></td></tr></table></figure></p>
+<h3 id="decision-boundary"><a href="#decision-boundary" class="headerlink" title="decision boundary"></a>decision boundary</h3><p>下面代码有些不好理解:<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">#返回num个均匀分布的样本，在[start, stop]</span><br><span class="line">x &#x3D; np.linspace(-1, 1.5, 250)</span><br><span class="line"></span><br><span class="line">#   [X,Y] &#x3D; meshgrid(x,y)</span><br><span class="line"># 将向量x和y定义的区域转换成矩阵X和Y,</span><br><span class="line"># 其中矩阵X的行向量是向量x的简单复制，而矩阵Y的列向量是向量y的简单复制</span><br><span class="line"># 假设x是长度为m的向量，y是长度为n的向量，则最终生成的矩阵X和Y的维度都是 nm（注意不是mn）</span><br><span class="line"></span><br><span class="line">xx, yy &#x3D; np.meshgrid(x, x)</span><br><span class="line"></span><br><span class="line">#下面计算这250个点的z值(也就是等高线的z值,z值相同的连成线,就可以形成边界)</span><br><span class="line">z &#x3D; np.array(mapFeature(xx.ravel(), yy.ravel(), 6))</span><br><span class="line">#上面的xx.ravel()和yy.ravel()都是250*250&#x3D;62500维度的向量,将他们映射为(62500,28)</span><br><span class="line">z &#x3D; z @ theta_min # z是(62500,1)</span><br><span class="line">z &#x3D; z.reshape(xx.shape)</span><br><span class="line">#reshape后,变成了(250,250),这样相当于有250个点的z值</span><br><span class="line"></span><br><span class="line">plotData(data2)</span><br><span class="line"># contour画出等高线</span><br><span class="line">plt.contour(xx, yy, z, 0)</span><br><span class="line">plt.ylim(-.8, 1.2)</span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure><br>画出来的决策边界长下面这样:</p>
+<p><img src="/images/4 NG EX2/boundary2.png" width="50%" height="50%"></p>
+<p>上图是$\lambda=1$</p>
+<p>我们还可以尝试使用不同的$\lambda$来看看效果:</p>
+<ul>
+<li>$lambda=0$<br><img src="/images/4 NG EX2/lambda=0.png" width="50%" height="50%"></li>
+</ul>
+<p>这是我们没有正则化的结果(过拟合)</p>
+<ul>
+<li><p>$lambda=100$<br><img src="/images/4 NG EX2/lambda=100.png" width="50%" height="50%"></p>
+</li>
+<li><p>$lambda=1000$<br><img src="/images/4 NG EX2/lambda=1000.png" width="50%" height="50%"></p>
+</li>
+</ul>
+<p>当$lambda=100$否则$lambda=1000$ 实际上已经发生了欠拟合。</p>
+<h3 id="完整代码"><a href="#完整代码" class="headerlink" title="完整代码"></a>完整代码</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">import numpy as np </span><br><span class="line">import pandas as pd </span><br><span class="line">import matplotlib.pyplot as plt </span><br><span class="line">import scipy.optimize as opt </span><br><span class="line"></span><br><span class="line">def sigmoid(z):</span><br><span class="line">    return 1&#x2F;(1+np.exp(-z))</span><br><span class="line"></span><br><span class="line">def costFunction(theta,X,y,lambdaa):</span><br><span class="line">    h &#x3D; sigmoid(X.dot(theta.T))</span><br><span class="line">    J &#x3D;(- y.T .dot(np.log(h))-(1-y).T.dot(np.log(1-h) ))&#x2F;len(X)</span><br><span class="line">    reg &#x3D; theta[2:].T .dot(theta[2:] )* lambdaa &#x2F; (2*len(X))</span><br><span class="line">    J &#x3D; J + reg</span><br><span class="line">    return J</span><br><span class="line"></span><br><span class="line">def gradFunction(theta,X,y,lambdaa):</span><br><span class="line">    grad &#x3D; np.zeros(len(theta))</span><br><span class="line">    theta &#x3D; theta.reshape(1,len(theta))</span><br><span class="line">    h &#x3D; sigmoid(X.dot(theta.T))</span><br><span class="line">    reg &#x3D; lambdaa * theta &#x2F; len(X)</span><br><span class="line">    grad &#x3D; X.T.dot ((h-y)) &#x2F; len(X) + reg.T</span><br><span class="line">    return grad</span><br><span class="line"></span><br><span class="line">def mapFeature(x1,x2,degree&#x3D;6):</span><br><span class="line">    # degree &#x3D; 6</span><br><span class="line">    data &#x3D; &#123;&#125;</span><br><span class="line">    for i in range(1,degree+1):</span><br><span class="line">        for j in range(0,i+1):</span><br><span class="line">            # data2[&#39;F&#39;+str(i)+str(j)] &#x3D; np.power(x1,i-j)*np.power(x2,j)</span><br><span class="line">            data[&quot;f&#123;&#125;&#123;&#125;&quot;.format(i - j, j)] &#x3D; np.power(x1, i - j) * np.power(x2, j)</span><br><span class="line">    data &#x3D; pd.DataFrame(data)</span><br><span class="line">    data.insert(0,&#39;Ones&#39;,1) </span><br><span class="line">    return data</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">def predict(theta,X):</span><br><span class="line">    probality &#x3D; sigmoid(X.dot(theta.T))</span><br><span class="line">    return [1 if x &gt;&#x3D; 0.5 else 0 for x in probality]</span><br><span class="line">   </span><br><span class="line">def plotData(data2):</span><br><span class="line">    positive &#x3D; data2[data2[&#39;Accepted&#39;].isin([1])]</span><br><span class="line">    negative &#x3D; data2[data2[&#39;Accepted&#39;].isin([0])]</span><br><span class="line">    # print(positive)</span><br><span class="line"></span><br><span class="line">    fig,ax &#x3D; plt.subplots(figsize&#x3D;(12,8))</span><br><span class="line">    ax.scatter(positive[&#39;Test 1&#39;],positive[&#39;Test 2&#39;],s&#x3D;100,c&#x3D;&#39;black&#39;,marker&#x3D;&#39;+&#39;,label &#x3D; &#39;Accepted&#39;)</span><br><span class="line">    ax.scatter(negative[&#39;Test 1&#39;], negative[&#39;Test 2&#39;], s&#x3D;50, c&#x3D;&#39;y&#39;, marker&#x3D;&#39;o&#39;, label&#x3D;&#39;Rejected&#39;)</span><br><span class="line">    ax.legend()</span><br><span class="line">    ax.set_xlabel(&#39;Test 1 Score&#39;)</span><br><span class="line">    ax.set_ylabel(&#39;Test 2 Score&#39;)</span><br><span class="line">    # plt.show()</span><br><span class="line"></span><br><span class="line">def main():</span><br><span class="line">    path &#x3D; &#39;ex2data2.txt&#39;</span><br><span class="line">    data2 &#x3D; pd.read_csv(path,header&#x3D;None,names&#x3D;[&#39;Test 1&#39;,&#39;Test 2&#39;,&#39;Accepted&#39;])</span><br><span class="line">    print(data2.head())</span><br><span class="line">    # plotData(data2)</span><br><span class="line"></span><br><span class="line">    degree &#x3D; 6</span><br><span class="line">    x1 &#x3D; data2[&#39;Test 1&#39;]</span><br><span class="line">    x2 &#x3D; data2[&#39;Test 2&#39;]</span><br><span class="line">    </span><br><span class="line">    X2 &#x3D; np.array(mapFeature(x1,x2))</span><br><span class="line">    y2 &#x3D; np.array(data2.iloc[:,2:3])</span><br><span class="line">    theta2 &#x3D; np.zeros(X2.shape[1])</span><br><span class="line">    lambdaa &#x3D; 1</span><br><span class="line">    #lambdaa &#x3D; 1000</span><br><span class="line"></span><br><span class="line">    #print(costFunction(theta2,X2,y2,lambdaa))</span><br><span class="line">    #print(gradFunction(theta2,X2,y2,lambdaa))</span><br><span class="line">    result2 &#x3D; opt.fmin_tnc(func&#x3D;costFunction, x0&#x3D;theta2, fprime&#x3D;gradFunction, args&#x3D;(X2, y2, lambdaa))</span><br><span class="line"></span><br><span class="line">    theta_min &#x3D; result2[0]</span><br><span class="line">    predictions &#x3D; predict(theta_min,X2)</span><br><span class="line">    correct &#x3D; [1 if (a &#x3D;&#x3D; 1 and b &#x3D;&#x3D; 1) or (a &#x3D;&#x3D; 0 and  b &#x3D;&#x3D; 0) else 0 for (a,b) in zip(predictions,y2)]</span><br><span class="line">    </span><br><span class="line">    accuracy &#x3D; sum(map(int,correct)) * 100 &#x2F;len(correct)</span><br><span class="line">    print(&#39;accuracy &#x3D; &#123;0:.2f&#125;%&#39;.format(accuracy)) </span><br><span class="line"></span><br><span class="line">    x &#x3D; np.linspace(-1, 1.5, 250)</span><br><span class="line">    xx, yy &#x3D; np.meshgrid(x, x)</span><br><span class="line">    z &#x3D; np.array(mapFeature(xx.ravel(), yy.ravel(), 6))</span><br><span class="line">    z &#x3D; z @ theta_min</span><br><span class="line">    z &#x3D; z.reshape(xx.shape)</span><br><span class="line"></span><br><span class="line">    plotData(data2)</span><br><span class="line">    plt.contour(xx, yy, z, 0)</span><br><span class="line">    plt.ylim(-.8, 1.2)</span><br><span class="line">    plt.show()</span><br><span class="line">    </span><br><span class="line">main()</span><br></pre></td></tr></table></figure>
+<h2 id="References"><a href="#References" class="headerlink" title="References"></a>References</h2><ol>
+<li><a href="https://github.com/fengdu78/Coursera-ML-AndrewNg-Notes" target="_blank" rel="noopener">黄海广博士的笔记GitHub</a></li>
+<li><a href="https://blog.csdn.net/Cowry5/article/details/80247569" target="_blank" rel="noopener">边界绘制参考了这篇csdn博客</a></li>
 </ol>
 ]]></content>
       <categories>

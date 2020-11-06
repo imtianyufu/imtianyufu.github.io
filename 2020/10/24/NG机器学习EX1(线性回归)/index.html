@@ -99,7 +99,7 @@
 <meta property="og:image" content="http://blog.tyfuu.net/images/alpha.png">
 <meta property="og:image" content="http://blog.tyfuu.net/images/feature%20scaling.png">
 <meta property="article:published_time" content="2020-10-24T11:25:05.000Z">
-<meta property="article:modified_time" content="2020-11-05T10:43:59.455Z">
+<meta property="article:modified_time" content="2020-11-06T10:31:02.827Z">
 <meta property="article:author" content="符说八道">
 <meta property="article:tag" content="回归">
 <meta name="twitter:card" content="summary">
@@ -421,7 +421,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  9分钟
+                  10分钟
                 </span>
               
             </div>
@@ -492,7 +492,7 @@
 <h2 id="正规方程-Normal-equation"><a href="#正规方程-Normal-equation" class="headerlink" title="正规方程(Normal equation)"></a>正规方程(Normal equation)</h2><p>$\theta = (X^{T}X)^{-1}X^{T} \vec{y}$<br>直接使用这个公式就可以计算出让$J(\theta)$取值最小的$\theta$<br>注意<strong>使用正规方程计算不需要对X进行feature scaling</strong><br>由上面的式子我们可以看出,正规方程主要工作量是在于计算:<br>$(X^{T}X)^{-1}$,计算机计算逆矩阵大约是$O(n^{3})$<br>一般情况下我们是不会出现$(X^{T}X)^{-1}$不存在(逆矩阵不存在)的情况<br>如果出现不可逆的情况,可以考虑:</p>
 <ul>
 <li><strong>Redundant features</strong>:有冗余特征,他们是线性相关的,这时候可以考虑去除冗余特征</li>
-<li><strong>too many features</strong>:假设我们有m个样本,n个特征。如果$m&lt;n$,可能情况是m个样本不够来拟合n个特征的$\theta$,所以可以考虑减少特征数量,还有一种办法是<strong>regularization</strong>,它可以让我们在很少的样本时拟合很多的特征(这个方法吴恩达老师只是简单的介绍,具体应该会在后面的课程中讲述)</li>
+<li><strong>too many features</strong>:假设我们有m个样本,n个特征。如果$m&lt;n$,可能情况是m个样本不够来拟合n个特征的$\theta$,所以可以考虑减少特征数量,还有一种办法是<strong>regularization</strong>,它可以让我们在很少的样本时拟合很多的特征(这个方法吴恩达老师只是简单的介绍,具体应该会在后面的课程中讲述)<br>第三周课程更新:<br>(通过添加正则化项,我们还解决了存在不可逆矩阵的问题)</li>
 </ul>
 <p>下面是具体的代码实现<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">def normalEqn(X, y):</span><br><span class="line">    theta &#x3D; np.linalg.inv(X.T@X)@X.T@y#X.T@X等价于X.T.dot(X)</span><br><span class="line">    return theta</span><br></pre></td></tr></table></figure><br>这里也需要注意一下,<strong>使用正规方程求出来的$\theta_{1}$和我们用梯度下降法求出来的$\theta_{2}$可能是不一样的</strong><br>可以从等高线图来理解,或者老师课上的可视化代价函数,可能有多个$\theta$使得代价函数的最小的。<br>关于正规方程的推导过程我将会在另外的博客中进行说明,因为里面同样涉及到矩阵求导,还有PCA的优化求导,以及我的PR课上老师要求的一个求导小练习一起做个总结。<br>最后是梯度下降与正规方程的比较</p>
 <h2 id="梯度下降-VS-正规方程"><a href="#梯度下降-VS-正规方程" class="headerlink" title="梯度下降 VS 正规方程"></a>梯度下降 VS 正规方程</h2><div class="table-container">
@@ -665,12 +665,14 @@
 
             
               <div class="site-state-item site-state-posts">
-
-                <a href="/archives">
-                  <span class="site-state-item-count">4</span>
-                  <span class="site-state-item-name">日志</span>
-                </a>
-              </div>
+             
+               <a href="/archives/">
+               
+             
+                 <span class="site-state-item-count">5</span>
+                 <span class="site-state-item-name">日志</span>
+               </a>
+             </div>
             
 
             
@@ -748,7 +750,7 @@
     <h3 class="widget-title">Tag Cloud</h3>
     <div id="myCanvasContainer" class="widget tagcloud">
         <canvas width="200" height="200" id="resCanvas" style="width:100%">
-            <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%88%86%E7%B1%BB/" rel="tag">分类</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%9B%9E%E5%BD%92/" rel="tag">回归</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%81%9A%E7%B1%BB/" rel="tag">聚类</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%99%8D%E7%BB%B4/" rel="tag">降维</a><span class="tag-list-count">1</span></li></ul>
+            <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%88%86%E7%B1%BB/" rel="tag">分类</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%9B%9E%E5%BD%92/" rel="tag">回归</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%81%9A%E7%B1%BB/" rel="tag">聚类</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%99%8D%E7%BB%B4/" rel="tag">降维</a><span class="tag-list-count">1</span></li></ul>
         </canvas>
     </div>
 </div>

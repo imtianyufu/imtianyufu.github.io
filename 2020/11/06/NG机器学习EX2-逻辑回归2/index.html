@@ -1,0 +1,1448 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link href="/lib/pace/pace-theme-minimal.min.css?v=1.0.2" rel="stylesheet">
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="分类," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="本篇博客的主要内容有：  Regularization理论知识 python代码实现EX2的第二个练习">
+<meta property="og:type" content="article">
+<meta property="og:title" content="NG机器学习EX2(逻辑回归2)">
+<meta property="og:url" content="http://blog.tyfuu.net/2020/11/06/NG%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0EX2-%E9%80%BB%E8%BE%91%E5%9B%9E%E5%BD%922/index.html">
+<meta property="og:site_name" content="just do I T">
+<meta property="og:description" content="本篇博客的主要内容有：  Regularization理论知识 python代码实现EX2的第二个练习">
+<meta property="og:image" content="http://blog.tyfuu.net/images/4%20NG%20EX2/underOverfit.png">
+<meta property="og:image" content="http://blog.tyfuu.net/images/4%20NG%20EX2/underOverfit2.png">
+<meta property="og:image" content="http://blog.tyfuu.net/images/4%20NG%20EX2/smooth.png">
+<meta property="og:image" content="http://blog.tyfuu.net/images/4%20NG%20EX2/data2.png">
+<meta property="og:image" content="http://blog.tyfuu.net/images/4%20NG%20EX2/boundary2.png">
+<meta property="og:image" content="http://blog.tyfuu.net/images/4%20NG%20EX2/lambda=0.png">
+<meta property="og:image" content="http://blog.tyfuu.net/images/4%20NG%20EX2/lambda=100.png">
+<meta property="og:image" content="http://blog.tyfuu.net/images/4%20NG%20EX2/lambda=1000.png">
+<meta property="article:published_time" content="2020-11-06T02:12:32.000Z">
+<meta property="article:modified_time" content="2020-11-06T12:13:43.033Z">
+<meta property="article:author" content="符说八道">
+<meta property="article:tag" content="分类">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://blog.tyfuu.net/images/4%20NG%20EX2/underOverfit.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://blog.tyfuu.net/2020/11/06/NG机器学习EX2-逻辑回归2/"/>
+
+
+
+
+
+  <title>NG机器学习EX2(逻辑回归2) | just do I T</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta custom-logo">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">just do I T</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">我相信 坚持的力量</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://blog.tyfuu.net/2020/11/06/NG%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0EX2-%E9%80%BB%E8%BE%91%E5%9B%9E%E5%BD%922/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="符说八道">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.JPG">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="just do I T">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">NG机器学习EX2(逻辑回归2)</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-11-06T10:12:32+08:00">
+                2020-11-06
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/NG-ML/" itemprop="url" rel="index">
+                    <span itemprop="name">NG-ML</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2020/11/06/NG%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0EX2-%E9%80%BB%E8%BE%91%E5%9B%9E%E5%BD%922/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count valine-comment-count" data-xid="/2020/11/06/NG%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0EX2-%E9%80%BB%E8%BE%91%E5%9B%9E%E5%BD%922/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+             <span id="/2020/11/06/NG%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0EX2-%E9%80%BB%E8%BE%91%E5%9B%9E%E5%BD%922/" class="leancloud_visitors" data-flag-title="NG机器学习EX2(逻辑回归2)">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">热度&#58;</span>
+               
+                 <span class="leancloud-visitors-count"></span>
+                 <span>℃</span>
+             </span>
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  3.3k字
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  16分钟
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>本篇博客的主要内容有：</p>
+<ol>
+<li>Regularization理论知识</li>
+<li>python代码实现EX2的第二个练习</li>
+</ol>
+<hr>
+<a id="more"></a>
+<h2 id="Regularization理论知识"><a href="#Regularization理论知识" class="headerlink" title="Regularization理论知识"></a>Regularization理论知识</h2><h3 id="the-problem-of-overfitting"><a href="#the-problem-of-overfitting" class="headerlink" title="the problem of overfitting"></a>the problem of overfitting</h3><p> 在线性回归模型中</p>
+<p><img src="/images/4 NG EX2/underOverfit.png" width="50%" height="50%"> </p>
+<ul>
+<li>第一个模型是一个线性模型,欠拟合(高偏差 high bias),不能很好地适应我们的训练集。它认为房屋的价格会随着size呈线性变化,但是实际上是不会的。</li>
+<li>第三个模型是一个四次方的模型,过于强调拟合原始数据,而丢失了算法的本质:预测新数据。若给出一个新的值使之预测,它将表现的很差,是过拟合(高方差 high variance)，虽然能非常好地适应我们的训练集但在新输入变量进行预测时可能会效果不好;</li>
+<li>中间的模型似乎最合适。</li>
+</ul>
+<p>逻辑回归模型中也是同样的问题</p>
+<p><img src="/images/4 NG EX2/underOverfit2.png" width="50%" height="50%"></p>
+<p><strong>Underfitting,or high bias,</strong> is when the form of our hypothesis function h maps poorly to the trend of the data.<br>It is usually caused by a function that is too simple or uses too few features.</p>
+<p><strong>overfitting, or high variance,</strong> is caused by a hypothesis function that fits the available data but does not generalize well to predict new data. It is usually caused by a complicated function that creates a lot of unnecessary curves and angles unrelated to the data.</p>
+<p>过拟合问题的解决方法:</p>
+<ul>
+<li><p>Reduce the number of features:<br>Manually select which features to keep.<br>Use a model selection algorithm (比如说PCA).</p>
+</li>
+<li><p>Regularization<br>Keep all the features, but reduce the magnitude of parameters $\theta_{j}$<br>Regularization works well when we have a lot of slightly useful features.</p>
+</li>
+</ul>
+<p>也就是说,使用Regularization方法,我们可以保留所有的特征(这些特征对模型训练尽管不是起着关键作用,但是也能做出一定的贡献),又同时能<strong>解决过拟合问题</strong></p>
+<h3 id="cost-function"><a href="#cost-function" class="headerlink" title="cost function"></a>cost function</h3><p>线性回归中我们发生过拟合的模型是:<br>$h_{\theta}(x) = \theta_{0} + \theta_{1}x + \theta_{2}x^{2} + \theta_{3}x^{3} + \theta_{4}x^{4}$<br>如果我们penalize  $\theta_{3},\theta_{4}$ 并且让他们非常的小,那么我们的拟合曲线就会变得是一个最高次为2的曲线(3,4次由于系数为0将会变得忽略不计)<br><img src="/images/4 NG EX2/smooth.png" width="50%" height="50%"><br>如上图,这样我们的曲线将会更加的光滑,不容易发生过拟合<br>所以如果我们将$\theta_{j}$加入我们的cost function,然后来最小化我们的cost时,就会同时最小化我们的$\theta_{j}$</p>
+<p>下面是cost function的重新定义:<br>$J\left( {\theta_{0}},{\theta_{1}}…{\theta_{n}} \right)=\frac{1}{2m} [\sum_{i=1}^{m}(h_{\theta }(x^{(i)})-y^{(i)})^{2} + \lambda \sum_{j=1}^{n}\theta_{j}^{2}]$</p>
+<p><strong>根据习惯,我们将从$\theta_{1}$开始惩罚,而不是$\theta_{0}$</strong><br>也就是说,我们在原来的cost上面加了一个$\lambda \sum_{j=1}^{n}\theta_{j}^{2}$(正则项),通过优化cost,我们也会让$\theta_{j}$更小,进而$h_{\theta}(x)$也会更加光滑(可以从前面$\theta_{3},\theta_{4}$的例子上直观感受到)</p>
+<p>具体来说,如果我们令 λ 的值很大的话,为了使cost尽可能的小,所有的$\theta$值(不包括$\theta_{0}$)都会在一定程度上减小。<br>但若$\theta$的值太大了所有的 $\theta$值(不包括$\theta_{0}$),都会趋近于0,这样我们所得到的只能是一条平行于x轴的直线($h_{\theta}(x)=\theta_{0}$),这样我们的模型就会有过强的bias,有过高的偏差,认为预测的价格一直都是等于$\theta_{0}$,换句话说,过大的$\lambda$平滑了太多的$h_{\theta}(x)$,导致了欠拟合(underfitting)</p>
+<p>所以对于正则化，<strong>我们要取一个合理的$\lambda$的值</strong>，这样才能更好的应用正则化</p>
+<p>$\lambda$在这里是用来平衡我们的两个不同目标:</p>
+<ul>
+<li>让我们的模型能够更好的拟合数据</li>
+<li>同时让我们的$\theta_{j}$更小,来平滑$h_{\theta}(x)$,进而避免过拟合</li>
+</ul>
+<p>$\lambda$是rugularization parameter,它<strong>决定了我们的参数成本将被扩大到多少</strong></p>
+<p>也就是说,<strong>我们通过在cost中增加额外的正则项(参数成本),使得$h_{\theta}(x)$变得平滑(减少$h_{\theta}(x)$中某些项的权重),而没有减少特征数目或者改变$h_{\theta}(x)$的形式进而避免过拟合</strong></p>
+<h3 id="regularized-logistic-regression"><a href="#regularized-logistic-regression" class="headerlink" title="regularized logistic regression"></a>regularized logistic regression</h3><p>$J(\theta) = \frac{1}{m}\sum_{i=1}^{m}[-y^{i}log(h_{\theta}(X^{(i)}))-(1-y^{i})log(1-h_{\theta}(x^{(i)}))] + \frac{\lambda}{2m} \sum_{j=1}^{n}\theta_{j}^{2}$<br>其梯度定义为:<br>$\frac{\partial J(\theta)}{\partial \theta_{0}} = \frac{1}{m}\sum_{i=1}^{m}(h_{\theta}(x^{(i)})-y^{(i)})x_{0}^{(i)}$</p>
+<p>$\frac{\partial J(\theta)}{\partial \theta_{j=1,2…n}} = \frac{1}{m}\sum_{i=1}^{m}(h_{\theta}(x^{(i)})-y^{(i)})x_{j}^{(i)} + \frac{\lambda}{m}\theta_{j}$</p>
+<p>那么如果使用梯度下降的话,</p>
+<p>Grandient Descent:<br>repeat{<br>    $\theta_{j} := \theta_{j} - \alpha \cdot \frac{\partial J(\theta)}{\partial \theta_{j}} $<br>}<br>依旧是上面这个,但是需要注意$\theta_{0}$是<strong>没有正则化项的</strong></p>
+<h2 id="python代码实现"><a href="#python代码实现" class="headerlink" title="python代码实现"></a>python代码实现</h2><p>这部分,我们使用加入正则项提升逻辑回归算法,正则化是cost函数中的一个术语,它使算法更倾向于“更简单”的模型(在这种情况下，模型将更小的系数)。有助于减少过拟合，提高模型的泛化能力。</p>
+<blockquote>
+<p>设想你是工厂的生产主管，你有一些芯片在两次测试中的测试结果。对于这两次测试，你想决定是否芯片要被接受或抛弃。为了帮助你做出艰难的决定，你拥有过去芯片的测试数据集，从其中你可以构建一个逻辑回归模型</p>
+</blockquote>
+<h3 id="读入数据并可视化"><a href="#读入数据并可视化" class="headerlink" title="读入数据并可视化"></a>读入数据并可视化</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">def plotData(data2):</span><br><span class="line">    positive &#x3D; data2[data2[&#39;Accepted&#39;].isin([1])]</span><br><span class="line">    negative &#x3D; data2[data2[&#39;Accepted&#39;].isin([0])]</span><br><span class="line">    # print(positive)</span><br><span class="line"></span><br><span class="line">    fig,ax &#x3D; plt.subplots(figsize&#x3D;(12,8))</span><br><span class="line">    ax.scatter(positive[&#39;Test 1&#39;],positive[&#39;Test 2&#39;],s&#x3D;100,c&#x3D;&#39;black&#39;,marker&#x3D;&#39;+&#39;,label &#x3D; &#39;Accepted&#39;)</span><br><span class="line">    ax.scatter(negative[&#39;Test 1&#39;], negative[&#39;Test 2&#39;], s&#x3D;50, c&#x3D;&#39;y&#39;, marker&#x3D;&#39;o&#39;, label&#x3D;&#39;Rejected&#39;)</span><br><span class="line">    ax.legend()</span><br><span class="line">    ax.set_xlabel(&#39;Test 1 Score&#39;)</span><br><span class="line">    ax.set_ylabel(&#39;Test 2 Score&#39;)</span><br><span class="line">    #plt.show()</span><br><span class="line">path &#x3D; &#39;ex2data2.txt&#39;</span><br><span class="line">data2 &#x3D; pd.read_csv(path,header&#x3D;None,names&#x3D;[&#39;Test 1&#39;,&#39;Test 2&#39;,&#39;Accepted&#39;])</span><br><span class="line">plotData(data2)</span><br></pre></td></tr></table></figure>
+<p><img src="/images/4 NG EX2/data2.png" width="50%" height="50%"><br>这个数据比第一个练习的复杂得多,没有线性决策边界来的分开两类数据</p>
+<h3 id="Feature-Mapping"><a href="#Feature-Mapping" class="headerlink" title="Feature Mapping"></a>Feature Mapping</h3><p>如上图所示,如果我们直接使用线性回归是没有办法很好的达到好分类效果的,因为<strong>逻辑回归只能去找到一个线性决策边界</strong><br>有一种解决办法是:create more features from each data point(根据输入的数据创造更多的特征),我们使用一个特征映射函数,将数据映射映射到所有的多项式项中，最高可达到六次幂</p>
+<p>$mapFeature(x) = \begin{bmatrix}<br>1<br>\\<br>x_{1}<br>\\<br>x_{2}<br>\\<br>x_{1}^{2}<br>\\<br>x_{1}x_{2}<br>\\<br>x_{2}^{2}<br>\\<br>x_{1}^{3}<br>\\<br>x_{1}^{2}x_{2}<br>\\<br>x_{1}x_{2}^{2}<br>\\<br>x_{2}^{3}<br>\\<br>…<br>\\<br>x_{1}x_{2}^{5}<br>\\<br>x_{2}^{6}<br>\end{bmatrix}<br>$</p>
+<p>通过这样的映射,我们的特征向量,原本只有2D,被转换为了28D的向量。这样我们的逻辑回归分类器通过训练更高维的特征向量,将会有更加复杂的决策边界(非线性)<br>下面是特征映射函数的实现:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">def mapFeature(x1,x2,degree&#x3D;6):</span><br><span class="line">    # degree &#x3D; 6</span><br><span class="line">    data &#x3D; &#123;&#125;</span><br><span class="line">    for i in range(1,degree+1):</span><br><span class="line">        for j in range(0,i+1):</span><br><span class="line">            # data2[&#39;F&#39;+str(i)+str(j)] &#x3D; np.power(x1,i-j)*np.power(x2,j)</span><br><span class="line">            data[&quot;f&#123;&#125;&#123;&#125;&quot;.format(i - j, j)] &#x3D; np.power(x1, i - j) * np.power(x2, j)</span><br><span class="line">    data &#x3D; pd.DataFrame(data)</span><br><span class="line">    data.insert(0,&#39;Ones&#39;,1) </span><br><span class="line">    return data</span><br><span class="line"></span><br><span class="line">degree &#x3D; 6</span><br><span class="line">x1 &#x3D; data2[&#39;Test 1&#39;]</span><br><span class="line">x2 &#x3D; data2[&#39;Test 2&#39;]</span><br><span class="line">X2 &#x3D; np.array(mapFeature(x1,x2,degree))</span><br><span class="line">y2 &#x3D; np.array(data2.iloc[:,2:3])</span><br><span class="line">theta2 &#x3D; np.zeros(X2.shape[1])</span><br><span class="line">lambdaa &#x3D; 1</span><br><span class="line"># lambdaa &#x3D; 100</span><br><span class="line">print(X2[0:5])</span><br><span class="line">print(y2[0:5])</span><br></pre></td></tr></table></figure><br>通过这个函数,我们的第一个数据将会是:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">[ 1.00000000e+00  5.12670000e-02  6.99560000e-01  2.62830529e-03</span><br><span class="line">   3.58643425e-02  4.89384194e-01  1.34745327e-04  1.83865725e-03</span><br><span class="line">   2.50892595e-02  3.42353606e-01  6.90798869e-06  9.42624411e-05</span><br><span class="line">   1.28625106e-03  1.75514423e-02  2.39496889e-01  3.54151856e-07</span><br><span class="line">   4.83255257e-06  6.59422333e-05  8.99809795e-04  1.22782870e-02</span><br><span class="line">   1.67542444e-01  1.81563032e-08  2.47750473e-07  3.38066048e-06</span><br><span class="line">   4.61305487e-05  6.29470940e-04  8.58939846e-03  1.17205992e-01]</span><br></pre></td></tr></table></figure><br>具有28个维度</p>
+<h3 id="计算代价函数和梯度"><a href="#计算代价函数和梯度" class="headerlink" title="计算代价函数和梯度"></a>计算代价函数和梯度</h3><p>sigmoid函数在第一个练习中已经实现了,现在我们需要做的,是更新代价函数和梯度,加入正则化项。<br>$J(\theta) = \frac{1}{m}\sum_{i=1}^{m}[-y^{i}log(h_{\theta}(X^{(i)}))-(1-y^{i})log(1-h_{\theta}(x^{(i)}))] + \frac{\lambda}{2m} \sum_{j=1}^{n}\theta_{j}^{2}$<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">def costFunction(theta,X,y,lambdaa):</span><br><span class="line"></span><br><span class="line">    h &#x3D; sigmoid(X.dot(theta.T))</span><br><span class="line">    J &#x3D;(- y.T .dot(np.log(h))-(1-y).T.dot(np.log(1-h) ))&#x2F;len(X)</span><br><span class="line">    reg &#x3D; theta[2:].T .dot(theta[2:] )* lambdaa &#x2F; (2*len(X))</span><br><span class="line">    J &#x3D; J + reg</span><br><span class="line">    return J</span><br></pre></td></tr></table></figure></p>
+<p>$\frac{\partial J(\theta)}{\partial \theta_{0}} = \frac{1}{m}\sum_{i=1}^{m}(h_{\theta}(x^{(i)})-y^{(i)})x_{0}^{(i)}$</p>
+<p>$\frac{\partial J(\theta)}{\partial \theta_{j=1,2…n}} = \frac{1}{m}\sum_{i=1}^{m}(h_{\theta}(x^{(i)})-y^{(i)})x_{j}^{(i)} + \frac{\lambda}{m}\theta_{j}$</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">def gradFunction(theta,X,y,lambdaa):</span><br><span class="line">    grad &#x3D; np.zeros(len(theta))</span><br><span class="line">    theta &#x3D; theta.reshape(1,len(theta))</span><br><span class="line">    h &#x3D; sigmoid(X.dot(theta.T))</span><br><span class="line">    reg &#x3D; lambdaa * theta &#x2F; len(X)</span><br><span class="line">    grad &#x3D; X.T.dot ((h-y)) &#x2F; len(X) + reg.T</span><br><span class="line">    return grad</span><br></pre></td></tr></table></figure>
+<h3 id="predict"><a href="#predict" class="headerlink" title="predict"></a>predict</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">def predict(theta,X):</span><br><span class="line">    probality &#x3D; sigmoid(X.dot(theta.T))</span><br><span class="line">    return [1 if x &gt;&#x3D; 0.5 else 0 for x in probality]</span><br><span class="line"></span><br><span class="line">result2 &#x3D; opt.fmin_tnc(func&#x3D;costFunction, x0&#x3D;theta2, fprime&#x3D;gradFunction, args&#x3D;(X2, y2, lambdaa))</span><br><span class="line">theta_min &#x3D; result2[0]</span><br><span class="line">predictions &#x3D; predict(theta_min,X2)</span><br><span class="line">correct &#x3D; [1 if (a &#x3D;&#x3D; 1 and b &#x3D;&#x3D; 1) or (a &#x3D;&#x3D; 0 and  b &#x3D;&#x3D; 0) else 0 for (a,b) in zip(predictions,y2)]</span><br><span class="line"></span><br><span class="line">accuracy &#x3D; sum(map(int,correct)) * 100 &#x2F;len(correct)</span><br><span class="line">print(&#39;accuracy &#x3D; &#123;0:.2f&#125;%&#39;.format(accuracy))</span><br></pre></td></tr></table></figure>
+<p>算出来的结果为:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">accuracy &#x3D; 83.05%</span><br></pre></td></tr></table></figure></p>
+<h3 id="decision-boundary"><a href="#decision-boundary" class="headerlink" title="decision boundary"></a>decision boundary</h3><p>下面代码有些不好理解:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">#返回num个均匀分布的样本，在[start, stop]</span><br><span class="line">x &#x3D; np.linspace(-1, 1.5, 250)</span><br><span class="line"></span><br><span class="line">#   [X,Y] &#x3D; meshgrid(x,y)</span><br><span class="line"># 将向量x和y定义的区域转换成矩阵X和Y,</span><br><span class="line"># 其中矩阵X的行向量是向量x的简单复制，而矩阵Y的列向量是向量y的简单复制</span><br><span class="line"># 假设x是长度为m的向量，y是长度为n的向量，则最终生成的矩阵X和Y的维度都是 nm（注意不是mn）</span><br><span class="line"></span><br><span class="line">xx, yy &#x3D; np.meshgrid(x, x)</span><br><span class="line"></span><br><span class="line">#下面计算这250个点的z值(也就是等高线的z值,z值相同的连成线,就可以形成边界)</span><br><span class="line">z &#x3D; np.array(mapFeature(xx.ravel(), yy.ravel(), 6))</span><br><span class="line">#上面的xx.ravel()和yy.ravel()都是250*250&#x3D;62500维度的向量,将他们映射为(62500,28)</span><br><span class="line">z &#x3D; z @ theta_min # z是(62500,1)</span><br><span class="line">z &#x3D; z.reshape(xx.shape)</span><br><span class="line">#reshape后,变成了(250,250),这样相当于有250个点的z值</span><br><span class="line"></span><br><span class="line">plotData(data2)</span><br><span class="line"># contour画出等高线</span><br><span class="line">plt.contour(xx, yy, z, 0)</span><br><span class="line">plt.ylim(-.8, 1.2)</span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure><br>画出来的决策边界长下面这样:</p>
+<p><img src="/images/4 NG EX2/boundary2.png" width="50%" height="50%"></p>
+<p>上图是$\lambda=1$</p>
+<p>我们还可以尝试使用不同的$\lambda$来看看效果:</p>
+<ul>
+<li>$lambda=0$<br><img src="/images/4 NG EX2/lambda=0.png" width="50%" height="50%"></li>
+</ul>
+<p>这是我们没有正则化的结果(过拟合)</p>
+<ul>
+<li><p>$lambda=100$<br><img src="/images/4 NG EX2/lambda=100.png" width="50%" height="50%"></p>
+</li>
+<li><p>$lambda=1000$<br><img src="/images/4 NG EX2/lambda=1000.png" width="50%" height="50%"></p>
+</li>
+</ul>
+<p>当$lambda=100$否则$lambda=1000$ 实际上已经发生了欠拟合。</p>
+<h3 id="完整代码"><a href="#完整代码" class="headerlink" title="完整代码"></a>完整代码</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br></pre></td><td class="code"><pre><span class="line">import numpy as np </span><br><span class="line">import pandas as pd </span><br><span class="line">import matplotlib.pyplot as plt </span><br><span class="line">import scipy.optimize as opt </span><br><span class="line"></span><br><span class="line">def sigmoid(z):</span><br><span class="line">    return 1&#x2F;(1+np.exp(-z))</span><br><span class="line"></span><br><span class="line">def costFunction(theta,X,y,lambdaa):</span><br><span class="line">    h &#x3D; sigmoid(X.dot(theta.T))</span><br><span class="line">    J &#x3D;(- y.T .dot(np.log(h))-(1-y).T.dot(np.log(1-h) ))&#x2F;len(X)</span><br><span class="line">    reg &#x3D; theta[2:].T .dot(theta[2:] )* lambdaa &#x2F; (2*len(X))</span><br><span class="line">    J &#x3D; J + reg</span><br><span class="line">    return J</span><br><span class="line"></span><br><span class="line">def gradFunction(theta,X,y,lambdaa):</span><br><span class="line">    grad &#x3D; np.zeros(len(theta))</span><br><span class="line">    theta &#x3D; theta.reshape(1,len(theta))</span><br><span class="line">    h &#x3D; sigmoid(X.dot(theta.T))</span><br><span class="line">    reg &#x3D; lambdaa * theta &#x2F; len(X)</span><br><span class="line">    grad &#x3D; X.T.dot ((h-y)) &#x2F; len(X) + reg.T</span><br><span class="line">    return grad</span><br><span class="line"></span><br><span class="line">def mapFeature(x1,x2,degree&#x3D;6):</span><br><span class="line">    # degree &#x3D; 6</span><br><span class="line">    data &#x3D; &#123;&#125;</span><br><span class="line">    for i in range(1,degree+1):</span><br><span class="line">        for j in range(0,i+1):</span><br><span class="line">            # data2[&#39;F&#39;+str(i)+str(j)] &#x3D; np.power(x1,i-j)*np.power(x2,j)</span><br><span class="line">            data[&quot;f&#123;&#125;&#123;&#125;&quot;.format(i - j, j)] &#x3D; np.power(x1, i - j) * np.power(x2, j)</span><br><span class="line">    data &#x3D; pd.DataFrame(data)</span><br><span class="line">    data.insert(0,&#39;Ones&#39;,1) </span><br><span class="line">    return data</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">def predict(theta,X):</span><br><span class="line">    probality &#x3D; sigmoid(X.dot(theta.T))</span><br><span class="line">    return [1 if x &gt;&#x3D; 0.5 else 0 for x in probality]</span><br><span class="line">   </span><br><span class="line">def plotData(data2):</span><br><span class="line">    positive &#x3D; data2[data2[&#39;Accepted&#39;].isin([1])]</span><br><span class="line">    negative &#x3D; data2[data2[&#39;Accepted&#39;].isin([0])]</span><br><span class="line">    # print(positive)</span><br><span class="line"></span><br><span class="line">    fig,ax &#x3D; plt.subplots(figsize&#x3D;(12,8))</span><br><span class="line">    ax.scatter(positive[&#39;Test 1&#39;],positive[&#39;Test 2&#39;],s&#x3D;100,c&#x3D;&#39;black&#39;,marker&#x3D;&#39;+&#39;,label &#x3D; &#39;Accepted&#39;)</span><br><span class="line">    ax.scatter(negative[&#39;Test 1&#39;], negative[&#39;Test 2&#39;], s&#x3D;50, c&#x3D;&#39;y&#39;, marker&#x3D;&#39;o&#39;, label&#x3D;&#39;Rejected&#39;)</span><br><span class="line">    ax.legend()</span><br><span class="line">    ax.set_xlabel(&#39;Test 1 Score&#39;)</span><br><span class="line">    ax.set_ylabel(&#39;Test 2 Score&#39;)</span><br><span class="line">    # plt.show()</span><br><span class="line"></span><br><span class="line">def main():</span><br><span class="line">    path &#x3D; &#39;ex2data2.txt&#39;</span><br><span class="line">    data2 &#x3D; pd.read_csv(path,header&#x3D;None,names&#x3D;[&#39;Test 1&#39;,&#39;Test 2&#39;,&#39;Accepted&#39;])</span><br><span class="line">    print(data2.head())</span><br><span class="line">    # plotData(data2)</span><br><span class="line"></span><br><span class="line">    degree &#x3D; 6</span><br><span class="line">    x1 &#x3D; data2[&#39;Test 1&#39;]</span><br><span class="line">    x2 &#x3D; data2[&#39;Test 2&#39;]</span><br><span class="line">    </span><br><span class="line">    X2 &#x3D; np.array(mapFeature(x1,x2))</span><br><span class="line">    y2 &#x3D; np.array(data2.iloc[:,2:3])</span><br><span class="line">    theta2 &#x3D; np.zeros(X2.shape[1])</span><br><span class="line">    lambdaa &#x3D; 1</span><br><span class="line">    #lambdaa &#x3D; 1000</span><br><span class="line"></span><br><span class="line">    #print(costFunction(theta2,X2,y2,lambdaa))</span><br><span class="line">    #print(gradFunction(theta2,X2,y2,lambdaa))</span><br><span class="line">    result2 &#x3D; opt.fmin_tnc(func&#x3D;costFunction, x0&#x3D;theta2, fprime&#x3D;gradFunction, args&#x3D;(X2, y2, lambdaa))</span><br><span class="line"></span><br><span class="line">    theta_min &#x3D; result2[0]</span><br><span class="line">    predictions &#x3D; predict(theta_min,X2)</span><br><span class="line">    correct &#x3D; [1 if (a &#x3D;&#x3D; 1 and b &#x3D;&#x3D; 1) or (a &#x3D;&#x3D; 0 and  b &#x3D;&#x3D; 0) else 0 for (a,b) in zip(predictions,y2)]</span><br><span class="line">    </span><br><span class="line">    accuracy &#x3D; sum(map(int,correct)) * 100 &#x2F;len(correct)</span><br><span class="line">    print(&#39;accuracy &#x3D; &#123;0:.2f&#125;%&#39;.format(accuracy)) </span><br><span class="line"></span><br><span class="line">    x &#x3D; np.linspace(-1, 1.5, 250)</span><br><span class="line">    xx, yy &#x3D; np.meshgrid(x, x)</span><br><span class="line">    z &#x3D; np.array(mapFeature(xx.ravel(), yy.ravel(), 6))</span><br><span class="line">    z &#x3D; z @ theta_min</span><br><span class="line">    z &#x3D; z.reshape(xx.shape)</span><br><span class="line"></span><br><span class="line">    plotData(data2)</span><br><span class="line">    plt.contour(xx, yy, z, 0)</span><br><span class="line">    plt.ylim(-.8, 1.2)</span><br><span class="line">    plt.show()</span><br><span class="line">    </span><br><span class="line">main()</span><br></pre></td></tr></table></figure>
+<h2 id="References"><a href="#References" class="headerlink" title="References"></a>References</h2><ol>
+<li><a href="https://github.com/fengdu78/Coursera-ML-AndrewNg-Notes" target="_blank" rel="noopener">黄海广博士的笔记GitHub</a></li>
+<li><a href="https://blog.csdn.net/Cowry5/article/details/80247569" target="_blank" rel="noopener">边界绘制参考了这篇csdn博客</a></li>
+</ol>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+      <div>
+        <ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者：</strong>
+    符说八道
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://blog.tyfuu.net/2020/11/06/NG%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0EX2-%E9%80%BB%E8%BE%91%E5%9B%9E%E5%BD%922/" title="NG机器学习EX2(逻辑回归2)">http://blog.tyfuu.net/2020/11/06/NG%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0EX2-%E9%80%BB%E8%BE%91%E5%9B%9E%E5%BD%922/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>
+    本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 3.0</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/%E5%88%86%E7%B1%BB/" rel="tag"># 分类</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020/11/03/NG%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0EX2(%E9%80%BB%E8%BE%91%E5%9B%9E%E5%BD%921)/" rel="next" title="NG机器学习EX2(逻辑回归1)">
+                <i class="fa fa-chevron-left"></i> NG机器学习EX2(逻辑回归1)
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+    </div>
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.JPG"
+                alt="符说八道" />
+            
+              <p class="site-author-name" itemprop="name">符说八道</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+             
+               <a href="/archives/">
+               
+             
+                 <span class="site-state-item-count">5</span>
+                 <span class="site-state-item-name">日志</span>
+               </a>
+             </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">2</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">4</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+
+
+
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Regularization理论知识"><span class="nav-number">1.</span> <span class="nav-text">Regularization理论知识</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#the-problem-of-overfitting"><span class="nav-number">1.1.</span> <span class="nav-text">the problem of overfitting</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#cost-function"><span class="nav-number">1.2.</span> <span class="nav-text">cost function</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#regularized-logistic-regression"><span class="nav-number">1.3.</span> <span class="nav-text">regularized logistic regression</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#python代码实现"><span class="nav-number">2.</span> <span class="nav-text">python代码实现</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#读入数据并可视化"><span class="nav-number">2.1.</span> <span class="nav-text">读入数据并可视化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Feature-Mapping"><span class="nav-number">2.2.</span> <span class="nav-text">Feature Mapping</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#计算代价函数和梯度"><span class="nav-number">2.3.</span> <span class="nav-text">计算代价函数和梯度</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#predict"><span class="nav-number">2.4.</span> <span class="nav-text">predict</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#decision-boundary"><span class="nav-number">2.5.</span> <span class="nav-text">decision boundary</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#完整代码"><span class="nav-number">2.6.</span> <span class="nav-text">完整代码</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#References"><span class="nav-number">3.</span> <span class="nav-text">References</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+
+
+
+
+
+
+<script type="text/javascript" charset="utf-8" src="/js/tagcloud.js"></script>
+<script type="text/javascript" charset="utf-8" src="/js/tagcanvas.js"></script>
+<div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div id="myCanvasContainer" class="widget tagcloud">
+        <canvas width="200" height="200" id="resCanvas" style="width:100%">
+            <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%88%86%E7%B1%BB/" rel="tag">分类</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%9B%9E%E5%BD%92/" rel="tag">回归</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%81%9A%E7%B1%BB/" rel="tag">聚类</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%99%8D%E7%BB%B4/" rel="tag">降维</a><span class="tag-list-count">1</span></li></ul>
+        </canvas>
+    </div>
+</div>
+
+
+
+
+
+
+
+    </div>
+  </aside>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">符说八道</span>
+
+  
+</div>
+
+
+  
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Gemini</a> v5.1.4</div>
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src="//unpkg.com/valine/dist/Valine.min.js"></script>
+  
+  <script type="text/javascript">
+    var GUEST = ['nick','mail','link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item=>{
+      return GUEST.indexOf(item)>-1;
+    });
+    new Valine({
+        el: '#comments' ,
+        verify: false,
+        notify: false,
+        appId: 'oa1IsRTpNYlsx2T8E5BQLcD5-gzGzoHsz',
+        appKey: 'tfEiyXjLfbAO6U0refNaYHmO',
+        placeholder: '请多指教（留下邮箱可以收到回复通知哦',
+        avatar:'mm',
+        guest_info:guest,
+        pageSize:'10' || 10,
+    });
+  </script>
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.4.js"></script>
+  <script>AV.initialize("oa1IsRTpNYlsx2T8E5BQLcD5-gzGzoHsz", "tfEiyXjLfbAO6U0refNaYHmO");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"log":false,"model":{"jsonPath":"/live2dw/assets/hijiki.model.json"},"display":{"position":"right","width":150,"height":300},"mobile":{"show":true},"react":{"opacity":0.7}});</script></body>
+</html>
