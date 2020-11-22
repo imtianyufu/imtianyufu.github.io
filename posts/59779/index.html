@@ -1,0 +1,1451 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link href="/lib/pace/pace-theme-minimal.min.css?v=1.0.2" rel="stylesheet">
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="分类," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="本篇博客的主要内容有：  反向传播算法(BackPropagation) python代码实现EX4的练习(使用BackPropagation来学习优化代价函数)">
+<meta property="og:type" content="article">
+<meta property="og:title" content="吴恩达机器学习EX4(神经网络-反向传播算法)">
+<meta property="og:url" content="http://blog.tyfuu.net/posts/59779/index.html">
+<meta property="og:site_name" content="just do I T">
+<meta property="og:description" content="本篇博客的主要内容有：  反向传播算法(BackPropagation) python代码实现EX4的练习(使用BackPropagation来学习优化代价函数)">
+<meta property="og:image" content="http://blog.tyfuu.net/images/7%20NG%20EX4/ex4.png">
+<meta property="og:image" content="http://blog.tyfuu.net/images/7%20NG%20EX4/bp1.png">
+<meta property="og:image" content="http://blog.tyfuu.net/images/7%20NG%20EX4/bp2.png">
+<meta property="og:image" content="http://blog.tyfuu.net/images/7%20NG%20EX4/bp3.png">
+<meta property="og:image" content="http://blog.tyfuu.net/images/7%20NG%20EX4/gradientChecking.png">
+<meta property="og:image" content="http://blog.tyfuu.net/images/7%20NG%20EX4/zeroInit.png">
+<meta property="og:image" content="http://blog.tyfuu.net/images/7%20NG%20EX4/nn.png">
+<meta property="og:image" content="http://blog.tyfuu.net/images/7%20NG%20EX4/bp4.png">
+<meta property="og:image" content="http://blog.tyfuu.net/images/7%20NG%20EX4/gradientChecking2.png">
+<meta property="article:published_time" content="2020-11-21T13:44:19.000Z">
+<meta property="article:modified_time" content="2020-11-22T08:02:21.281Z">
+<meta property="article:author" content="符说八道">
+<meta property="article:tag" content="分类">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://blog.tyfuu.net/images/7%20NG%20EX4/ex4.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://blog.tyfuu.net/posts/59779/"/>
+
+
+
+
+
+  <title>吴恩达机器学习EX4(神经网络-反向传播算法) | just do I T</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta custom-logo">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">just do I T</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">我相信 坚持的力量</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://blog.tyfuu.net/posts/59779/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="符说八道">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.JPG">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="just do I T">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">吴恩达机器学习EX4(神经网络-反向传播算法)</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-11-21T21:44:19+08:00">
+                2020-11-21
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/NG-ML/" itemprop="url" rel="index">
+                    <span itemprop="name">NG-ML</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/posts/59779/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count valine-comment-count" data-xid="/posts/59779/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+             <span id="/posts/59779/" class="leancloud_visitors" data-flag-title="吴恩达机器学习EX4(神经网络-反向传播算法)">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">热度&#58;</span>
+               
+                 <span class="leancloud-visitors-count"></span>
+                 <span>℃</span>
+             </span>
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  1.1k字
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  4分钟
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>本篇博客的主要内容有：</p>
+<ol>
+<li>反向传播算法(BackPropagation)</li>
+<li>python代码实现EX4的练习(使用BackPropagation来学习优化代价函数)</li>
+</ol>
+<hr>
+<a id="more"></a>
+<p>这篇博客的主要来源是吴恩达老师的机器学习第五周的学习课程,还有一些内容参考自<a href="https://github.com/fengdu78/Coursera-ML-AndrewNg-Notes" target="_blank" rel="noopener">黄海广博士的笔记GitHub</a>,我先根据作业完成了matlab代码,并且学习将它用python来实现(博客中无matlab实现)。在学习的过程中我结合吴恩达老师的上课内容和matlab代码修改了一部分代码(个人认为可以优化的地方)。<br>这次的作业花了挺多的时间,首先是在于反向传播算法的学习(不是很好理解),接着实现matlab的代码花了一部分的时间,花较多的时间在python代码编写上(出现某个bug不能解决),好在最后还是顺利的完成了。<br><img src="/images/7 NG EX4/ex4.png" width="50%" height="50%"></p>
+<h2 id="Neural-Networks-Learning-反向传播算法-BackPropagation"><a href="#Neural-Networks-Learning-反向传播算法-BackPropagation" class="headerlink" title="Neural Networks: Learning:反向传播算法(BackPropagation)"></a>Neural Networks: Learning:反向传播算法(BackPropagation)</h2><h3 id="Cost-Funciton"><a href="#Cost-Funciton" class="headerlink" title="Cost Funciton"></a>Cost Funciton</h3><p>网络结构表示约定:</p>
+<ul>
+<li>L:网络的层数</li>
+<li>$s_{l}$: $l$层网络的单元数目(不包含添加的bias unit)</li>
+<li>$k$: 类别个数</li>
+</ul>
+<p>对于二分类问题(binary classification):<br>有1个 outp unit<br>那么我们就有</p>
+<ul>
+<li>$s_{l}$ = 1</li>
+<li>$k$ = 1</li>
+</ul>
+<p>对于多分类问题(Multi-class classific)(k classes)<br>有k output units<br>$y \epsilon R^{k}$<br>我们会将y写成例如下面的形式<br>$\begin{bmatrix}<br>1<br>\\<br>0<br>\\<br>0<br>\\<br>0<br>\end{bmatrix}$<br>表示为: 当样本有4个类别时,数字为1的索引表示该样本在第几类(具体的实现的话可以使用sklearn中的one-hot编码)</p>
+<p>对于代价函数的定于,我们有:<br>$J(\theta) =<br>\frac{1}{m}\sum_{i=1}^m<br>\sum_{k=1}^K<br>\left[ -y^{(i)}_k \log((h_{\theta}(x^{(i)})_k)- (1 -y^{(i)}_k) \log(1-(h_{\theta}(x^{(i)}))_k)  \right]<br>\\ \qquad<br>+\frac{\lambda}{2m}\sum_{l=1}^{L-1} \sum_{i=1}^{s_{l}}\sum_{j=1}^{s_{l+1}}{\left( \Theta_{j,i}^{(l)}\right)^2} $<br>这个式子看起来很复杂,实际上它和我们之前讨论的逻辑回归是一样的,只是我们多了求和。</p>
+<ol>
+<li><p>其中前面一项的求和可以这样理解:<br>假设我们只有一个样本,那么将样本输入,将会有k个output uint,实际上每个unit都是一个逻辑回归的$h_{\theta}(x)$,这样就有k个代价函数累加,m个样本的话就把每个样本的代价都求和即可</p>
+</li>
+<li><p>后一项的求和实际上就是把网络中的$\theta$(除了bias之前)的每一项都平方求和,这是正则项,和逻辑回归的也是类似的</p>
+</li>
+</ol>
+<h3 id="BackPropagation-Algorithm"><a href="#BackPropagation-Algorithm" class="headerlink" title="BackPropagation Algorithm"></a>BackPropagation Algorithm</h3><p>反向传播算法不容易理解,这里没有详细的介绍反向传播算法的思想,但是我会贴出一些图片或者链接(我推导的过程中参考的博客、视频等)<br>首先,我们的神经网络要学习,其优化目标就是:<br>$min_{\Theta}J(\Theta)$<br>那么我们就需要求得:</p>
+<ul>
+<li>$J(\Theta)$</li>
+<li>$\frac{\partial }{\partial  \Theta_{j,i}^{(l)}}J(\Theta)$<br>求出梯度后,我们就可以使用梯度下降或者别的优化算法来学习<br>具体的推导过程可以参考这个视频:<br><a href="https://www.bilibili.com/video/BV1GK4y1s76c?t=509" target="_blank" rel="noopener">斯坦福机器学习反向传播(Backpropagation)的数学推导</a><br>这位up貌似是中国人,但是录了英文视频,其中里面求出来的$\delta^{4}$up少了个负号,是因为他的代价函数那边少了一个负号<br>下面是couresa的社区提供的数学推导:<br><img src="/images/7 NG EX4/bp1.png" width="50%" height="50%"></li>
+</ul>
+<p>接下来你可以看看这个:<br><a href="https://blog.csdn.net/sheng_ai/article/details/19931347" target="_blank" rel="noopener">Back Propagation算法推导过程</a>这个相对来说更加抽象化的推导</p>
+<p>我还看了西瓜书的推导还有网上的一些博客,但是真正让我能够接受的就是前面这些了</p>
+<p>想要体会为什么是反向传播,可以参考下面的知乎回答:<br><a href="https://www.zhihu.com/question/27239198/answer/89853077" target="_blank" rel="noopener">如何直观地解释 backpropagation 算法？ - Anonymous的回答 - 知乎</a></p>
+<p>反向传播算法的计算过程如下:<br><img src="/images/7 NG EX4/bp2.png" width="50%" height="50%"></p>
+<p>总结来说,使用bp学习的过程如下:<br><img src="/images/7 NG EX4/bp3.png" width="50%" height="50%"></p>
+<h3 id="Gradient-Checking-梯度校验-验证bp算法实现是否正确"><a href="#Gradient-Checking-梯度校验-验证bp算法实现是否正确" class="headerlink" title="Gradient Checking(梯度校验,验证bp算法实现是否正确)"></a>Gradient Checking(梯度校验,验证bp算法实现是否正确)</h3><p>梯度校验实际上是使用数学上面偏导数的定义来求梯度,而反向传播实际上也是求梯度(偏导数),当我们的bp实现正确的时候,这两个梯度应该是相当接近的(误差<1e-9)
+bp算法实现步骤较多,容易出错,使用梯度校验非常重要!
+实现的是否,一般是先将每层的$\theta$合并成一个列向量,然后
+求$\frac{\partial}{\partial\theta_i}J(\theta)$
+<img src="/images/7 NG EX4/gradientChecking.png" width="50%" height="50%"><br>$f_i(\theta) \approx \frac{J(\theta^{(i+)})-J(\theta^{(i-)})}{2\epsilon}$<br>从上面的公式来看,实际上即为<strong>用偏导数的定义来求梯度</strong><br>具体实现的时候,计算每一个维度的$\theta$计算两次cost function(J),这使得计算量非常大,计算非常慢,这也是它不适合用来做为神经网络学习算法的原因之一,所以我们实现的时候,可以选择小型的网络来计算,当我们的bp算法正确实现的时候,就可以不再使用它了</p>
+<h3 id="Random-Initialization"><a href="#Random-Initialization" class="headerlink" title="Random Initialization"></a>Random Initialization</h3><p>对于$\Theta$的初始化,我们不能简单的全都赋值为0,如下图所示:<br><img src="/images/7 NG EX4/zeroInit.png" width="50%" height="50%"><br>如果我们令所有的$\theta$都为0(或者其他相同的值),那么我们的第二层所有激活单元都会有相同的值,最后bp中求得的$\delta$也都会是相同的值,那么我们的隐藏层可以认为是只有一个unit,这样网络结构就失去了意义,不同的unit学习不到不同的特征了,因此为了<strong>symmetry breaking</strong>,我们可以随机初始化每个参数在$[-\epsilon_{init},\epsilon_{init}]$范围之间,这个范围能够让<strong>每个参数值都较小并且能够让网络学习更加高效</strong></p>
+<p>$\epsilon_{init}$的值可以取为:<br>$\epsilon_{init} = \frac{\sqrt{6}}{\sqrt{L_{in}+L_{out}}}$<br>$L_{in} = s_l,L_{out} = s_{l+1}$</p>
+<h2 id="python代码实现"><a href="#python代码实现" class="headerlink" title="python代码实现"></a>python代码实现</h2><p>EX4中我们将再次处理手写数字数据集，我们将通过反向传播算法实现神经网络成本函数和梯度计算的非正则化和正则化版本,实现随机权重初始化和使用网络进行预测的方法。数据和EX3中是一样的</p>
+<h3 id="读入数据-定义sigmoid函数"><a href="#读入数据-定义sigmoid函数" class="headerlink" title="读入数据 定义sigmoid函数"></a>读入数据 定义sigmoid函数</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">import numpy as np</span><br><span class="line">import pandas as pd </span><br><span class="line">import matplotlib.pyplot as plt </span><br><span class="line">from scipy.io import loadmat</span><br><span class="line">import math</span><br><span class="line"></span><br><span class="line">def sigmoid(z):</span><br><span class="line">    return 1 &#x2F; (1 + np.exp(-z))</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">data &#x3D; loadmat(&#39;ex4data1.mat&#39;)</span><br><span class="line">#print(data)</span><br><span class="line">X &#x3D; data[&#39;X&#39;]</span><br><span class="line">y &#x3D; data[&#39;y&#39;]</span><br></pre></td></tr></table></figure>
+<h3 id="对y-labels-进行one-hot编码"><a href="#对y-labels-进行one-hot编码" class="headerlink" title="对y(labels)进行one-hot编码"></a>对y(labels)进行one-hot编码</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">from sklearn.preprocessing import OneHotEncoder</span><br><span class="line">encoder &#x3D; OneHotEncoder(sparse&#x3D;False,categories&#x3D;&#39;auto&#39;)</span><br><span class="line">y_onehot &#x3D; encoder.fit_transform(y)</span><br><span class="line">print(y_onehot[0:5])</span><br></pre></td></tr></table></figure>
+<p>前面五条数据是这样的<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">[[0. 0. 0. 0. 0. 0. 0. 0. 0. 1.]</span><br><span class="line"> [0. 0. 0. 0. 0. 0. 0. 0. 0. 1.]</span><br><span class="line"> [0. 0. 0. 0. 0. 0. 0. 0. 0. 1.]</span><br><span class="line"> [0. 0. 0. 0. 0. 0. 0. 0. 0. 1.]</span><br><span class="line"> [0. 0. 0. 0. 0. 0. 0. 0. 0. 1.]]</span><br></pre></td></tr></table></figure><br>也就是说,前面五个样本都是属于第10类</p>
+<p>我们的网络架构是下图所示:<br><img src="/images/7 NG EX4/nn.png" width="50%" height="50%"><br>input是400(20*20) + 1(bias)<br>hidden是25 + 1(bias)<br>output是10(对应10个类别)</p>
+<h3 id="前馈神经网络"><a href="#前馈神经网络" class="headerlink" title="前馈神经网络"></a>前馈神经网络</h3><p>我们先定义forward_propagation函数,用来计算a1,z2,a2,z3,h</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">def forward_propagation(X,Theta1,Theta2):</span><br><span class="line">    m &#x3D; X.shape[0]</span><br><span class="line">    a1 &#x3D; np.insert(X,0,values&#x3D;np.ones(m),axis&#x3D;1)# </span><br><span class="line">    z2 &#x3D; a1 @ Theta1.T  # 5000x401 * 401x25 &#x3D; 5000*25</span><br><span class="line">    a2 &#x3D; np.insert(sigmoid(z2),0,values&#x3D;np.ones(m),axis&#x3D;1) # 5000 * 26</span><br><span class="line">    z3 &#x3D; a2 @ Theta2.T </span><br><span class="line">    h &#x3D; sigmoid(z3)</span><br><span class="line">    return a1,z2,a2,z3,h</span><br><span class="line">    # return 5000 x 401, 5000 x 25, 5000 x 26,5000 x 10, 5000 x 10</span><br></pre></td></tr></table></figure>
+<h3 id="Cost-Function"><a href="#Cost-Function" class="headerlink" title="Cost Function"></a>Cost Function</h3><p>下面求$J$<br>$J(\theta) =<br>\frac{1}{m}\sum_{i=1}^m<br>\sum_{k=1}^K<br>\left[ -y^{(i)}_k \log((h_{\theta}(x^{(i)})_k)- (1 -y^{(i)}_k) \log(1-(h_{\theta}(x^{(i)}))_k)  \right]<br>\\ \qquad<br>+\frac{\lambda}{2m} \left[\sum_{j=1}^{25}<br>\sum_{k=1}^{400} {\left( \Theta_{j,k}^{(1)}\right)^2}+<br>\sum_{j=1}^{10}<br>\sum_{k=1}^{25} {\left( \Theta_{j,k}^{(2)}\right)^2}\right]$<br>循环里面的代码注释的是我自己写的,然后为注释的是参考黄博github的代码,有个问题就是我自己写的,在某些时候,会报log函数里面变成了0的情况(不懂是为啥)<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">def nn_cost_function(nn_params,input_size,hidden_size,num_labels,X,y,lambdaa):</span><br><span class="line">    m &#x3D; X.shape[0]</span><br><span class="line">    X &#x3D; np.array(X)</span><br><span class="line">    y &#x3D; np.array(y)</span><br><span class="line">    Theta1 &#x3D; np.array(np.reshape(nn_params[:hidden_size*(input_size+1)],(hidden_size,(input_size+1))))</span><br><span class="line">    Theta2 &#x3D; np.array(np.reshape(nn_params[hidden_size*(input_size+1):],(num_labels,(hidden_size+1))))</span><br><span class="line">    a1,z2,a2,z3,h &#x3D; forward_propagation(X,Theta1,Theta2)</span><br><span class="line">    J &#x3D; 0</span><br><span class="line">    for i in range(m):</span><br><span class="line">        # cost &#x3D; -y[i] @ np.log(h[i]) - (1-y[i]) @ np.log(1-h[i])</span><br><span class="line">        # J +&#x3D; cost</span><br><span class="line">        first_term &#x3D; np.multiply(-y[i,:], np.log(h[i,:]))</span><br><span class="line">        second_term &#x3D; np.multiply((1 - y[i,:]), np.log(1 - h[i,:]))</span><br><span class="line">        J +&#x3D; np.sum(first_term - second_term)</span><br><span class="line"></span><br><span class="line">    reg &#x3D; np.sum(np.power(Theta1[:,1:],2)) + np.sum(np.power(Theta2[:,1:],2))</span><br><span class="line">    J &#x3D; J &#x2F; m + reg *lambdaa &#x2F; (2 * m)</span><br><span class="line">    return J</span><br></pre></td></tr></table></figure><br>下面我们载入EX3的weights数据,用来验证我们的J计算是否正确<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">data2 &#x3D; loadmat(&#39;ex4weights.mat&#39;)</span><br><span class="line"></span><br><span class="line">Theta1 &#x3D; np.array(data2[&#39;Theta1&#39;])</span><br><span class="line">Theta2 &#x3D; np.array(data2[&#39;Theta2&#39;])</span><br><span class="line"># forward_propagation(X,Theta1,Theta2)</span><br><span class="line"></span><br><span class="line">input_size &#x3D; 400</span><br><span class="line">hidden_size &#x3D; 25</span><br><span class="line">num_labels &#x3D; 10</span><br><span class="line">lambdaa &#x3D; 0.5</span><br><span class="line">X &#x3D; np.array(X)</span><br><span class="line">y &#x3D; np.array(y)</span><br><span class="line">nn_params &#x3D; np.concatenate([Theta1.flatten(),Theta2.flatten()])</span><br><span class="line"># print(nn_params.shape) # 10285 * </span><br><span class="line"></span><br><span class="line"></span><br><span class="line">print(nn_cost_function(nn_params,input_size,hidden_size,num_labels,X,y_onehot,lambdaa))</span><br></pre></td></tr></table></figure><br><strong>实现的时候注意先实现未添加正则项的,再实现添加正则项的<br>使用练习中给出的Theta1,Theta2,算出来的J=0.28762916516131876(lambdaa=0)<br>使用练习中给出的Theta1,Theta2,算出来的J=0.3837698590909235(lambdaa=1) 添加了正则项</strong></p>
+<h3 id="定义sigmoid-gradient-rand-initialize-weights函数"><a href="#定义sigmoid-gradient-rand-initialize-weights函数" class="headerlink" title="定义sigmoid_gradient,rand_initialize_weights函数"></a>定义sigmoid_gradient,rand_initialize_weights函数</h3><p>$g’(z)=\frac{d}{dz}g(z) = g(z)(1-g(z))$<br>$\mathrm{sigmoid}(z)=g(z)=\frac{1}{1+e^{-z}}$</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">def sigmoid_gradient(z):</span><br><span class="line">    return np.multiply(sigmoid(z), (1-sigmoid(z)))</span><br><span class="line"></span><br><span class="line">def rand_initialize_weights(L_in, L_out):</span><br><span class="line">    epsilon_init &#x3D; math.sqrt(6)&#x2F;math.sqrt(L_in+L_out)</span><br><span class="line">    theta_init &#x3D; np.random.random ((L_out, L_in+1))*(2*epsilon_init)-epsilon_init</span><br><span class="line">    return theta_init</span><br></pre></td></tr></table></figure>
+<h3 id="bp算法"><a href="#bp算法" class="headerlink" title="bp算法"></a>bp算法</h3><p>bp算法的实现可以参考这张图:<br><img src="/images/7 NG EX4/bp4.png" width="50%" height="50%"><br>使用np.matrix好像可以用更短的代码实现,不过我使用了np.array,所以有些需要reshape,导致代码有点复杂<br>这里面我debug了好久的问题有两个:</p>
+<ol>
+<li>我将$\delta^{(2)} ×了 simgoid(而不是sigmoid_gradient)<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">delta2 &#x3D; np.multiply((Theta2.T @ delta3.T).T ,sigmoid_gradient(z2t))</span><br></pre></td></tr></table></figure></li>
+<li><p>在bp对每个样本循环的时候,为了调试,我只先求了第一个样本的,导致最后的梯度计算不对</p>
+</li>
+<li><p>正则化项注意验证</p>
+</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line">def back_propagation(nn_params,input_size,hidden_size,num_labels,X,y,lambdaa):</span><br><span class="line">    m &#x3D; X.shape[0]</span><br><span class="line">    X &#x3D; np.array(X)</span><br><span class="line">    y &#x3D; np.array(y)</span><br><span class="line">    Theta1 &#x3D; np.array(np.reshape(nn_params[:hidden_size*(input_size+1)],(hidden_size,(input_size+1))))</span><br><span class="line">    Theta2 &#x3D; np.array(np.reshape(nn_params[hidden_size*(input_size+1):],(num_labels,(hidden_size+1))))</span><br><span class="line">    a1,z2,a2,z3,h &#x3D; forward_propagation(X,Theta1,Theta2)</span><br><span class="line">    # print(a1.shape,z2.shape,a2.shape,z3.shape,h.shape)</span><br><span class="line">    J &#x3D; 0</span><br><span class="line">    for i in range(m):</span><br><span class="line">        first_term &#x3D; np.multiply(-y[i,:], np.log(h[i,:]))</span><br><span class="line">        second_term &#x3D; np.multiply((1 - y[i,:]), np.log(1 - h[i,:]))</span><br><span class="line">        J +&#x3D; np.sum(first_term - second_term)</span><br><span class="line">        # J +&#x3D; cost</span><br><span class="line"></span><br><span class="line">    reg &#x3D; np.sum(np.power(Theta1[:,1:],2)) + np.sum(np.power(Theta2[:,1:],2))</span><br><span class="line">    J &#x3D; J &#x2F; m + reg *lambdaa &#x2F; (2 * m)</span><br><span class="line"></span><br><span class="line">    Theta1_grad &#x3D; np.zeros(Theta1.shape)  # (25, 401)</span><br><span class="line">    Theta2_grad &#x3D; np.zeros(Theta2.shape)  # (10, 26)</span><br><span class="line">    # print(Theta1.shape,Theta2.shape)</span><br><span class="line">    for t in range(m):</span><br><span class="line">        a1t &#x3D; a1[t,:] # 1x401        </span><br><span class="line">        z2t &#x3D; z2[t,:] # 1 x 25</span><br><span class="line">        a2t &#x3D; a2[t,:]  # 1 x 26</span><br><span class="line">        ht &#x3D; h[t,:]  # 1 x 10</span><br><span class="line">        yt &#x3D; y[t,:]</span><br><span class="line"></span><br><span class="line">        delta3 &#x3D; ht - yt # 1 x 10</span><br><span class="line">        z2t &#x3D; np.insert(z2t,0,values&#x3D;np.ones(1)) # 1 * 26</span><br><span class="line">        delta2 &#x3D; np.multiply((Theta2.T @ delta3.T).T ,sigmoid_gradient(z2t)) # 26 x 10 , 10 x 1 &#x3D; 26 x 1 , (26 ,)</span><br><span class="line">        delta3 &#x3D;delta3.reshape(-1,1)</span><br><span class="line">        a2t &#x3D; a2t.reshape(-1,a2t.shape[0])</span><br><span class="line">        a1t &#x3D; a1t.reshape(-1,a1t.shape[0])</span><br><span class="line">        delta2 &#x3D; delta2[1:].reshape(-1,1)</span><br><span class="line">        Theta2_grad &#x3D; Theta2_grad + delta3 @ a2t</span><br><span class="line">        Theta1_grad &#x3D; Theta1_grad + delta2 @ a1t</span><br><span class="line">    Theta2_grad &#x2F;&#x3D; m</span><br><span class="line">    Theta1_grad &#x2F;&#x3D; m</span><br><span class="line">    Theta1_grad[:,1:] &#x3D; Theta1_grad[:,1:] + (Theta1[:,1:] * lambdaa) &#x2F;m</span><br><span class="line">    Theta2_grad[:,1:] &#x3D; Theta2_grad[:,1:] + (Theta2[:,1:] * lambdaa) &#x2F;m</span><br><span class="line">    grad &#x3D; np.concatenate((np.ravel(Theta1_grad), np.ravel(Theta2_grad) ))</span><br><span class="line">    print(J)</span><br><span class="line">    return J, grad</span><br></pre></td></tr></table></figure>
+<p>写好bp函数后,我们就应该使用gradient checking了</p>
+<h3 id=""><a href="#" class="headerlink" title=" "></a> </h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line">def check_nn_gradient(lambdaa &#x3D; 0):</span><br><span class="line">    input_size &#x3D; 3</span><br><span class="line">    hidden_size &#x3D; 5</span><br><span class="line">    num_labels &#x3D; 3</span><br><span class="line">    m &#x3D; 5</span><br><span class="line"></span><br><span class="line">    Theta1 &#x3D; rand_initialize_weights(input_size,hidden_size)</span><br><span class="line">    Theta2 &#x3D; rand_initialize_weights(hidden_size,num_labels)</span><br><span class="line"></span><br><span class="line">    X &#x3D; rand_initialize_weights(input_size-1,m)</span><br><span class="line">    y &#x3D;np.reshape( 1 + np.mod(np.arange(1,m+1),num_labels),(-1,1))</span><br><span class="line">    from sklearn.preprocessing import OneHotEncoder</span><br><span class="line">    encoder &#x3D; OneHotEncoder(sparse&#x3D;False,categories&#x3D;&#39;auto&#39;)</span><br><span class="line">    y_onehot &#x3D; encoder.fit_transform(y)</span><br><span class="line"></span><br><span class="line">    nn_params &#x3D; np.concatenate([Theta1.flatten(),Theta2.flatten()])</span><br><span class="line">    J,grad &#x3D; back_propagation(nn_params,input_size,hidden_size,num_labels,X,y_onehot,lambdaa)</span><br><span class="line"></span><br><span class="line">    np.set_printoptions(precision&#x3D;20)</span><br><span class="line">    size &#x3D; nn_params.size</span><br><span class="line">    numgrad &#x3D; np.zeros(size)</span><br><span class="line">    perturb &#x3D; np.zeros(size)</span><br><span class="line">    e &#x3D; 1e-4</span><br><span class="line">    for p in range(size):</span><br><span class="line">        perturb[p] &#x3D; e</span><br><span class="line">        loss1 &#x3D; nn_cost_function(nn_params-perturb,input_size,hidden_size,num_labels,X,y_onehot,lambdaa)</span><br><span class="line">        loss2 &#x3D; nn_cost_function(nn_params+perturb,input_size,hidden_size,num_labels,X,y_onehot,lambdaa)</span><br><span class="line">        numgrad[p] &#x3D; (loss2 - loss1) &#x2F; (2 * e)</span><br><span class="line">        perturb[p] &#x3D; 0</span><br><span class="line">    print(np.c_[grad,numgrad])</span><br></pre></td></tr></table></figure>
+<p>写代码的时候,需要注意的有,传入的X是已经插入了一列为1的,还是没有插入,我一般情况下使用在函数里面insert<br>下图可以看到,我们的梯度和bp的梯度基本上是接近的,说明我们的bp实现是正确的<br><img src="/images/7 NG EX4/gradientChecking2.png" width="50%" height="50%"><br><strong>注意$\lambda=0$是无正则项的验证,我们还需要验证$\lambda=1$情况,只有通过了梯度验证,我们才能继续</strong></p>
+<p>接下来就使用优化函数求最优$\Theta$,并且求准确率了</p>
+<h3 id="优化目标函数求准确率"><a href="#优化目标函数求准确率" class="headerlink" title="优化目标函数求准确率"></a>优化目标函数求准确率</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">from scipy.optimize import minimize</span><br><span class="line"></span><br><span class="line">Theta1 &#x3D; rand_initialize_weights(input_size,hidden_size)</span><br><span class="line">Theta2 &#x3D; rand_initialize_weights(hidden_size,num_labels)</span><br><span class="line">nn_params &#x3D; np.concatenate([Theta1.flatten(),Theta2.flatten()])</span><br><span class="line"># minimize the objective function</span><br><span class="line">fmin &#x3D; minimize(fun&#x3D;back_propagation, x0&#x3D;nn_params, args&#x3D;(input_size, hidden_size, num_labels, X, y_onehot, lambdaa), </span><br><span class="line">                method&#x3D;&#39;TNC&#39;, jac&#x3D;True, options&#x3D;&#123;&#39;maxiter&#39;: 200&#125;)</span><br><span class="line">print(fmin)</span><br><span class="line"></span><br><span class="line">theta1 &#x3D; np.array(np.reshape(fmin.x[:hidden_size * (input_size + 1)], (hidden_size, (input_size + 1))))</span><br><span class="line">theta2 &#x3D; np.array(np.reshape(fmin.x[hidden_size * (input_size + 1):], (num_labels, (hidden_size + 1))))</span><br><span class="line"></span><br><span class="line">a1, z2, a2, z3, h &#x3D; forward_propagation(X, theta1, theta2)</span><br><span class="line">y_pred &#x3D; np.array(np.argmax(h, axis&#x3D;1) + 1)</span><br><span class="line">print(y_pred)</span><br><span class="line">correct &#x3D; [1 if a &#x3D;&#x3D; b else 0 for (a, b) in zip(y_pred, y)]</span><br><span class="line">accuracy &#x3D; (sum(map(int, correct)) &#x2F; float(len(correct)))</span><br><span class="line">print (&#39;accuracy &#x3D; &#123;0&#125;%&#39;.format(accuracy * 100))</span><br></pre></td></tr></table></figure>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><ol>
+<li><p>关于numpy中的乘法<br>元素乘法：np.multiply(a,b)<br>矩阵乘法：np.dot(a,b) 或 np.matmul(a,b) 或 a.dot(b) 或直接用 a @ b !<br>唯独注意：*，在 np.array 中重载为元素乘法，在 np.matrix 中重载为矩阵乘法!</p>
+</li>
+<li><p>梯度验证和one-hot表示值得记录学习</p>
+</li>
+</ol>
+<h2 id="References"><a href="#References" class="headerlink" title="References"></a>References</h2><ol>
+<li><a href="https://github.com/fengdu78/Coursera-ML-AndrewNg-Notes" target="_blank" rel="noopener">黄海广博士的笔记GitHub</a></li>
+<li><a href="https://blog.csdn.net/qq_34229228/article/details/89482664" target="_blank" rel="noopener">梯度验证参考了这篇博客</a></li>
+</ol>
+<h2 id="完整代码"><a href="#完整代码" class="headerlink" title="完整代码"></a>完整代码</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br></pre></td><td class="code"><pre><span class="line">import numpy as np</span><br><span class="line">import pandas as pd </span><br><span class="line">import matplotlib.pyplot as plt </span><br><span class="line">from scipy.io import loadmat</span><br><span class="line">import math</span><br><span class="line"></span><br><span class="line">def sigmoid(z):</span><br><span class="line">    return 1 &#x2F; (1 + np.exp(-z))</span><br><span class="line"></span><br><span class="line"># Theta1 has size 25 x 401</span><br><span class="line"># Theta2 has size 10 x 26</span><br><span class="line">def forward_propagation(X,Theta1,Theta2):</span><br><span class="line">    m &#x3D; X.shape[0]</span><br><span class="line">    a1 &#x3D; np.insert(X,0,values&#x3D;np.ones(m),axis&#x3D;1)# </span><br><span class="line">    z2 &#x3D; a1 @ Theta1.T  # 5000x401 * 401x25 &#x3D; 5000*25</span><br><span class="line">    a2 &#x3D; np.insert(sigmoid(z2),0,values&#x3D;np.ones(m),axis&#x3D;1) # 5000 * 26</span><br><span class="line">    z3 &#x3D; a2 @ Theta2.T </span><br><span class="line">    h &#x3D; sigmoid(z3)</span><br><span class="line">    return a1,z2,a2,z3,h</span><br><span class="line">    # 5000 x 401, 5000 x 25, 5000 x 26,5000 x 10, 5000 x 10 </span><br><span class="line"></span><br><span class="line">def nn_cost_function(nn_params,input_size,hidden_size,num_labels,X,y,lambdaa):</span><br><span class="line">    m &#x3D; X.shape[0]</span><br><span class="line">    X &#x3D; np.array(X)</span><br><span class="line">    y &#x3D; np.array(y)</span><br><span class="line">    Theta1 &#x3D; np.array(np.reshape(nn_params[:hidden_size*(input_size+1)],(hidden_size,(input_size+1))))</span><br><span class="line">    Theta2 &#x3D; np.array(np.reshape(nn_params[hidden_size*(input_size+1):],(num_labels,(hidden_size+1))))</span><br><span class="line">    a1,z2,a2,z3,h &#x3D; forward_propagation(X,Theta1,Theta2)</span><br><span class="line">    J &#x3D; 0</span><br><span class="line">    for i in range(m):</span><br><span class="line">        # cost &#x3D; -y[i] @ np.log(h[i]) - (1-y[i]) @ np.log(1-h[i])</span><br><span class="line">        # J +&#x3D; cost</span><br><span class="line">        first_term &#x3D; np.multiply(-y[i,:], np.log(h[i,:]))</span><br><span class="line">        second_term &#x3D; np.multiply((1 - y[i,:]), np.log(1 - h[i,:]))</span><br><span class="line">        J +&#x3D; np.sum(first_term - second_term)</span><br><span class="line"></span><br><span class="line">    reg &#x3D; np.sum(np.power(Theta1[:,1:],2)) + np.sum(np.power(Theta2[:,1:],2))</span><br><span class="line">    J &#x3D; J &#x2F; m + reg *lambdaa &#x2F; (2 * m)</span><br><span class="line">    return J</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">def sigmoid_gradient(z):</span><br><span class="line">    return np.multiply(sigmoid(z), (1-sigmoid(z)))</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">def back_propagation(nn_params,input_size,hidden_size,num_labels,X,y,lambdaa):</span><br><span class="line">    m &#x3D; X.shape[0]</span><br><span class="line">    X &#x3D; np.array(X)</span><br><span class="line">    y &#x3D; np.array(y)</span><br><span class="line">    Theta1 &#x3D; np.array(np.reshape(nn_params[:hidden_size*(input_size+1)],(hidden_size,(input_size+1))))</span><br><span class="line">    Theta2 &#x3D; np.array(np.reshape(nn_params[hidden_size*(input_size+1):],(num_labels,(hidden_size+1))))</span><br><span class="line">    a1,z2,a2,z3,h &#x3D; forward_propagation(X,Theta1,Theta2)</span><br><span class="line">    J &#x3D; 0</span><br><span class="line">    for i in range(m):</span><br><span class="line">        first_term &#x3D; np.multiply(-y[i,:], np.log(h[i,:]))</span><br><span class="line">        second_term &#x3D; np.multiply((1 - y[i,:]), np.log(1 - h[i,:]))</span><br><span class="line">        J +&#x3D; np.sum(first_term - second_term)</span><br><span class="line">        # J +&#x3D; cost</span><br><span class="line"></span><br><span class="line">    reg &#x3D; np.sum(np.power(Theta1[:,1:],2)) + np.sum(np.power(Theta2[:,1:],2))</span><br><span class="line">    J &#x3D; J &#x2F; m + reg *lambdaa &#x2F; (2 * m)</span><br><span class="line"></span><br><span class="line">    Theta1_grad &#x3D; np.zeros(Theta1.shape)  # (25, 401)</span><br><span class="line">    Theta2_grad &#x3D; np.zeros(Theta2.shape)  # (10, 26)</span><br><span class="line">    # print(Theta1.shape,Theta2.shape)</span><br><span class="line">    for t in range(m):</span><br><span class="line">        a1t &#x3D; a1[t,:] # 1x401        </span><br><span class="line">        z2t &#x3D; z2[t,:] # 1 x 25</span><br><span class="line">        a2t &#x3D; a2[t,:]  # 1 x 26</span><br><span class="line">        ht &#x3D; h[t,:]  # 1 x 10</span><br><span class="line">        yt &#x3D; y[t,:]</span><br><span class="line"></span><br><span class="line">        delta3 &#x3D; ht - yt # 1 x 10</span><br><span class="line">        z2t &#x3D; np.insert(z2t,0,values&#x3D;np.ones(1)) # 1 * 26</span><br><span class="line">        delta2 &#x3D; np.multiply((Theta2.T @ delta3.T).T ,sigmoid_gradient(z2t)) # 26 x 10 , 10 x 1 &#x3D; 26 x 1 , (26 ,)</span><br><span class="line">        delta3 &#x3D;delta3.reshape(-1,1)</span><br><span class="line">        a2t &#x3D; a2t.reshape(-1,a2t.shape[0])</span><br><span class="line">        a1t &#x3D; a1t.reshape(-1,a1t.shape[0])</span><br><span class="line">        delta2 &#x3D; delta2[1:].reshape(-1,1)</span><br><span class="line">        Theta2_grad &#x3D; Theta2_grad + delta3 @ a2t</span><br><span class="line">        Theta1_grad &#x3D; Theta1_grad + delta2 @ a1t</span><br><span class="line">    Theta2_grad &#x2F;&#x3D; m</span><br><span class="line">    Theta1_grad &#x2F;&#x3D; m</span><br><span class="line">    Theta1_grad[:,1:] &#x3D; Theta1_grad[:,1:] + (Theta1[:,1:] * lambdaa) &#x2F;m</span><br><span class="line">    Theta2_grad[:,1:] &#x3D; Theta2_grad[:,1:] + (Theta2[:,1:] * lambdaa) &#x2F;m</span><br><span class="line">    grad &#x3D; np.concatenate((np.ravel(Theta1_grad), np.ravel(Theta2_grad) ))</span><br><span class="line">    print(J)</span><br><span class="line">    return J, grad</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">def rand_initialize_weights(L_in, L_out):</span><br><span class="line">    epsilon_init &#x3D; math.sqrt(6)&#x2F;math.sqrt(L_in+L_out)</span><br><span class="line">    theta_init &#x3D; np.random.random ((L_out, L_in+1))*(2*epsilon_init)-epsilon_init</span><br><span class="line">    return theta_init</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">def check_nn_gradient(lambdaa &#x3D; 0):</span><br><span class="line">    input_size &#x3D; 3</span><br><span class="line">    hidden_size &#x3D; 5</span><br><span class="line">    num_labels &#x3D; 3</span><br><span class="line">    m &#x3D; 5</span><br><span class="line"></span><br><span class="line">    Theta1 &#x3D; rand_initialize_weights(input_size,hidden_size)</span><br><span class="line">    Theta2 &#x3D; rand_initialize_weights(hidden_size,num_labels)</span><br><span class="line"></span><br><span class="line">    X &#x3D; rand_initialize_weights(input_size-1,m)</span><br><span class="line">    y &#x3D;np.reshape( 1 + np.mod(np.arange(1,m+1),num_labels),(-1,1))</span><br><span class="line">    print(y)</span><br><span class="line">    from sklearn.preprocessing import OneHotEncoder</span><br><span class="line">    encoder &#x3D; OneHotEncoder(sparse&#x3D;False,categories&#x3D;&#39;auto&#39;)</span><br><span class="line">    y_onehot &#x3D; encoder.fit_transform(y)</span><br><span class="line">    print(y_onehot)</span><br><span class="line"></span><br><span class="line">    nn_params &#x3D; np.concatenate([Theta1.flatten(),Theta2.flatten()])</span><br><span class="line">    J,grad &#x3D; back_propagation(nn_params,input_size,hidden_size,num_labels,X,y_onehot,lambdaa)</span><br><span class="line"></span><br><span class="line">    np.set_printoptions(precision&#x3D;20)</span><br><span class="line">    size &#x3D; nn_params.size</span><br><span class="line">    numgrad &#x3D; np.zeros(size)</span><br><span class="line">    perturb &#x3D; np.zeros(size)</span><br><span class="line">    e &#x3D; 1e-4</span><br><span class="line">    for p in range(size):</span><br><span class="line">        perturb[p] &#x3D; e</span><br><span class="line">        loss1, _ &#x3D; back_propagation(nn_params-perturb,input_size,hidden_size,num_labels,X,y_onehot,lambdaa)</span><br><span class="line">        loss2, _ &#x3D; back_propagation(nn_params+perturb,input_size,hidden_size,num_labels,X,y_onehot,lambdaa)</span><br><span class="line">        numgrad[p] &#x3D; (loss2 - loss1) &#x2F; (2 * e)</span><br><span class="line">        perturb[p] &#x3D; 0</span><br><span class="line">    print(np.c_[grad,numgrad])</span><br><span class="line"></span><br><span class="line">data &#x3D; loadmat(&#39;ex4data1.mat&#39;)</span><br><span class="line">#print(data)</span><br><span class="line">X &#x3D; data[&#39;X&#39;]</span><br><span class="line">y &#x3D; data[&#39;y&#39;]</span><br><span class="line">#print(X.shape,y.shape)</span><br><span class="line"></span><br><span class="line"># y标签进行一次one-hot 编码</span><br><span class="line"></span><br><span class="line">from sklearn.preprocessing import OneHotEncoder</span><br><span class="line">encoder &#x3D; OneHotEncoder(sparse&#x3D;False,categories&#x3D;&#39;auto&#39;)</span><br><span class="line">y_onehot &#x3D; encoder.fit_transform(y)</span><br><span class="line"># print(y_onehot.shape)</span><br><span class="line"># print(y_onehot[0:5])</span><br><span class="line"></span><br><span class="line">data2 &#x3D; loadmat(&#39;ex4weights.mat&#39;)</span><br><span class="line"></span><br><span class="line">Theta1 &#x3D; np.array(data2[&#39;Theta1&#39;])</span><br><span class="line">Theta2 &#x3D; np.array(data2[&#39;Theta2&#39;])</span><br><span class="line"># forward_propagation(X,Theta1,Theta2)</span><br><span class="line"></span><br><span class="line">input_size &#x3D; 400</span><br><span class="line">hidden_size &#x3D; 25</span><br><span class="line">num_labels &#x3D; 10</span><br><span class="line">lambdaa &#x3D; 1</span><br><span class="line">X &#x3D; np.array(X)</span><br><span class="line">y &#x3D; np.array(y)</span><br><span class="line"># print(Theta1.flatten())</span><br><span class="line">nn_params &#x3D; np.concatenate([Theta1.flatten(),Theta2.flatten()])</span><br><span class="line"># print(nn_params.shape) # 10285 * </span><br><span class="line"></span><br><span class="line">print(nn_cost_function(nn_params,input_size,hidden_size,num_labels,X,y_onehot,lambdaa))</span><br><span class="line"></span><br><span class="line">print(sigmoid_gradient(0))  #0.25</span><br><span class="line"></span><br><span class="line"># back_propagation(nn_params,input_size,hidden_size,num_labels,X,y_onehot,lambdaa)</span><br><span class="line"># check_nn_gradient(1)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">from scipy.optimize import minimize</span><br><span class="line"></span><br><span class="line">Theta1 &#x3D; rand_initialize_weights(input_size,hidden_size)</span><br><span class="line">Theta2 &#x3D; rand_initialize_weights(hidden_size,num_labels)</span><br><span class="line">nn_params &#x3D; np.concatenate([Theta1.flatten(),Theta2.flatten()])</span><br><span class="line"># minimize the objective function</span><br><span class="line">fmin &#x3D; minimize(fun&#x3D;back_propagation, x0&#x3D;nn_params, args&#x3D;(input_size, hidden_size, num_labels, X, y_onehot, lambdaa), </span><br><span class="line">                method&#x3D;&#39;TNC&#39;, jac&#x3D;True, options&#x3D;&#123;&#39;maxiter&#39;: 100&#125;)</span><br><span class="line">print(fmin)</span><br><span class="line"></span><br><span class="line">theta1 &#x3D; np.array(np.reshape(fmin.x[:hidden_size * (input_size + 1)], (hidden_size, (input_size + 1))))</span><br><span class="line">theta2 &#x3D; np.array(np.reshape(fmin.x[hidden_size * (input_size + 1):], (num_labels, (hidden_size + 1))))</span><br><span class="line"></span><br><span class="line">a1, z2, a2, z3, h &#x3D; forward_propagation(X, theta1, theta2)</span><br><span class="line">y_pred &#x3D; np.array(np.argmax(h, axis&#x3D;1) + 1)</span><br><span class="line">print(y_pred)</span><br><span class="line">correct &#x3D; [1 if a &#x3D;&#x3D; b else 0 for (a, b) in zip(y_pred, y)]</span><br><span class="line">accuracy &#x3D; (sum(map(int, correct)) &#x2F; float(len(correct)))</span><br><span class="line">print (&#39;accuracy &#x3D; &#123;0&#125;%&#39;.format(accuracy * 100))</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+      <div>
+        <ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者：</strong>
+    符说八道
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://blog.tyfuu.net/posts/59779/" title="吴恩达机器学习EX4(神经网络-反向传播算法)">http://blog.tyfuu.net/posts/59779/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>
+    本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 3.0</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/%E5%88%86%E7%B1%BB/" rel="tag"># 分类</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/posts/56b4/" rel="next" title="NG机器学习EX3(多分类和神经网络)">
+                <i class="fa fa-chevron-left"></i> NG机器学习EX3(多分类和神经网络)
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+    </div>
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.JPG"
+                alt="符说八道" />
+            
+              <p class="site-author-name" itemprop="name">符说八道</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+             
+               <a href="/archives/">
+               
+             
+                 <span class="site-state-item-count">7</span>
+                 <span class="site-state-item-name">日志</span>
+               </a>
+             </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">2</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">4</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+
+
+
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Neural-Networks-Learning-反向传播算法-BackPropagation"><span class="nav-number">1.</span> <span class="nav-text">Neural Networks: Learning:反向传播算法(BackPropagation)</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Cost-Funciton"><span class="nav-number">1.1.</span> <span class="nav-text">Cost Funciton</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#BackPropagation-Algorithm"><span class="nav-number">1.2.</span> <span class="nav-text">BackPropagation Algorithm</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Gradient-Checking-梯度校验-验证bp算法实现是否正确"><span class="nav-number">1.3.</span> <span class="nav-text">Gradient Checking(梯度校验,验证bp算法实现是否正确)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Random-Initialization"><span class="nav-number">1.4.</span> <span class="nav-text">Random Initialization</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#python代码实现"><span class="nav-number">2.</span> <span class="nav-text">python代码实现</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#读入数据-定义sigmoid函数"><span class="nav-number">2.1.</span> <span class="nav-text">读入数据 定义sigmoid函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#对y-labels-进行one-hot编码"><span class="nav-number">2.2.</span> <span class="nav-text">对y(labels)进行one-hot编码</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#前馈神经网络"><span class="nav-number">2.3.</span> <span class="nav-text">前馈神经网络</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Cost-Function"><span class="nav-number">2.4.</span> <span class="nav-text">Cost Function</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#定义sigmoid-gradient-rand-initialize-weights函数"><span class="nav-number">2.5.</span> <span class="nav-text">定义sigmoid_gradient,rand_initialize_weights函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#bp算法"><span class="nav-number">2.6.</span> <span class="nav-text">bp算法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#"><span class="nav-number">2.7.</span> <span class="nav-text"> </span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#优化目标函数求准确率"><span class="nav-number">2.8.</span> <span class="nav-text">优化目标函数求准确率</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#总结"><span class="nav-number">2.9.</span> <span class="nav-text">总结</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#References"><span class="nav-number">3.</span> <span class="nav-text">References</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#完整代码"><span class="nav-number">4.</span> <span class="nav-text">完整代码</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+
+
+
+
+
+
+<script type="text/javascript" charset="utf-8" src="/js/tagcloud.js"></script>
+<script type="text/javascript" charset="utf-8" src="/js/tagcanvas.js"></script>
+<div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div id="myCanvasContainer" class="widget tagcloud">
+        <canvas width="200" height="200" id="resCanvas" style="width:100%">
+            <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%88%86%E7%B1%BB/" rel="tag">分类</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%9B%9E%E5%BD%92/" rel="tag">回归</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%81%9A%E7%B1%BB/" rel="tag">聚类</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%99%8D%E7%BB%B4/" rel="tag">降维</a><span class="tag-list-count">1</span></li></ul>
+        </canvas>
+    </div>
+</div>
+
+
+
+
+
+
+
+    </div>
+  </aside>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">符说八道</span>
+
+  
+</div>
+
+
+  
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Gemini</a> v5.1.4</div>
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src="//unpkg.com/valine/dist/Valine.min.js"></script>
+  
+  <script type="text/javascript">
+    var GUEST = ['nick','mail','link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item=>{
+      return GUEST.indexOf(item)>-1;
+    });
+    new Valine({
+        el: '#comments' ,
+        verify: false,
+        notify: false,
+        appId: 'oa1IsRTpNYlsx2T8E5BQLcD5-gzGzoHsz',
+        appKey: 'tfEiyXjLfbAO6U0refNaYHmO',
+        placeholder: '请多指教（留下邮箱可以收到回复通知哦',
+        avatar:'mm',
+        guest_info:guest,
+        pageSize:'10' || 10,
+    });
+  </script>
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.4.js"></script>
+  <script>AV.initialize("oa1IsRTpNYlsx2T8E5BQLcD5-gzGzoHsz", "tfEiyXjLfbAO6U0refNaYHmO");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"log":false,"model":{"jsonPath":"/live2dw/assets/hijiki.model.json"},"display":{"position":"right","width":150,"height":300},"mobile":{"show":true},"react":{"opacity":0.7}});</script></body>
+</html>

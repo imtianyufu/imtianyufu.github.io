@@ -75,7 +75,7 @@
 
 
 
-  <meta name="keywords" content="聚类," />
+  <meta name="keywords" content="回归," />
 
 
 
@@ -86,21 +86,24 @@
 
 
 
-<meta name="description" content="本篇博客的主要内容有：  K-means算法 python代码实现 任意选择K(类别)聚类 选取最佳的k,画出聚类后的图像分布 计算准则函数J,画出J的变化图像 完整python代码">
+<meta name="description" content="本篇博客的主要内容有：  python实现的ex1 梯度下降 特征缩放 学习率选取   正规方程">
 <meta property="og:type" content="article">
-<meta property="og:title" content="K-Means算法实现">
-<meta property="og:url" content="http://blog.tyfuu.net/2020/10/27/K-Means%E7%AE%97%E6%B3%95%E5%AE%9E%E7%8E%B0/index.html">
+<meta property="og:title" content="NG机器学习EX1(线性回归)">
+<meta property="og:url" content="http://blog.tyfuu.net/posts/8590/index.html">
 <meta property="og:site_name" content="just do I T">
-<meta property="og:description" content="本篇博客的主要内容有：  K-means算法 python代码实现 任意选择K(类别)聚类 选取最佳的k,画出聚类后的图像分布 计算准则函数J,画出J的变化图像 完整python代码">
-<meta property="og:image" content="http://blog.tyfuu.net/images/3%20kmeans/data.png">
-<meta property="og:image" content="http://blog.tyfuu.net/images/3%20kmeans/k3.png">
-<meta property="og:image" content="http://blog.tyfuu.net/images/3%20kmeans/j%20vs%20k.png">
-<meta property="article:published_time" content="2020-10-27T11:01:54.000Z">
-<meta property="article:modified_time" content="2020-11-05T10:44:23.755Z">
+<meta property="og:description" content="本篇博客的主要内容有：  python实现的ex1 梯度下降 特征缩放 学习率选取   正规方程">
+<meta property="og:image" content="http://blog.tyfuu.net/images/data1.png">
+<meta property="og:image" content="http://blog.tyfuu.net/images/GradientDescent.png">
+<meta property="og:image" content="http://blog.tyfuu.net/images/onefit.png">
+<meta property="og:image" content="http://blog.tyfuu.net/images/cost.png">
+<meta property="og:image" content="http://blog.tyfuu.net/images/alpha.png">
+<meta property="og:image" content="http://blog.tyfuu.net/images/feature%20scaling.png">
+<meta property="article:published_time" content="2020-10-24T11:25:05.000Z">
+<meta property="article:modified_time" content="2020-11-21T12:56:01.774Z">
 <meta property="article:author" content="符说八道">
-<meta property="article:tag" content="聚类">
+<meta property="article:tag" content="回归">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://blog.tyfuu.net/images/3%20kmeans/data.png">
+<meta name="twitter:image" content="http://blog.tyfuu.net/images/data1.png">
 
 
 
@@ -130,13 +133,13 @@
 
 
 
-  <link rel="canonical" href="http://blog.tyfuu.net/2020/10/27/K-Means算法实现/"/>
+  <link rel="canonical" href="http://blog.tyfuu.net/posts/8590/"/>
 
 
 
 
 
-  <title>K-Means算法实现 | just do I T</title>
+  <title>NG机器学习EX1(线性回归) | just do I T</title>
   
 
 
@@ -297,7 +300,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://blog.tyfuu.net/2020/10/27/K-Means%E7%AE%97%E6%B3%95%E5%AE%9E%E7%8E%B0/">
+    <link itemprop="mainEntityOfPage" href="http://blog.tyfuu.net/posts/8590/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="符说八道">
@@ -314,7 +317,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">K-Means算法实现</h1>
+          <h1 class="post-title" itemprop="name headline">NG机器学习EX1(线性回归)</h1>
         
 
         <div class="post-meta">
@@ -326,8 +329,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-10-27T19:01:54+08:00">
-                2020-10-27
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-10-24T19:25:05+08:00">
+                2020-10-24
               </time>
             
 
@@ -349,8 +352,8 @@
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/ML/" itemprop="url" rel="index">
-                    <span itemprop="name">ML</span>
+                  <a href="/categories/NG-ML/" itemprop="url" rel="index">
+                    <span itemprop="name">NG-ML</span>
                   </a>
                 </span>
 
@@ -367,8 +370,8 @@
                 <span class="post-meta-item-icon">
                   <i class="fa fa-comment-o"></i>
                 </span>
-                <a href="/2020/10/27/K-Means%E7%AE%97%E6%B3%95%E5%AE%9E%E7%8E%B0/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count valine-comment-count" data-xid="/2020/10/27/K-Means%E7%AE%97%E6%B3%95%E5%AE%9E%E7%8E%B0/" itemprop="commentCount"></span>
+                <a href="/posts/8590/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count valine-comment-count" data-xid="/posts/8590/" itemprop="commentCount"></span>
                 </a>
               </span>
             
@@ -376,7 +379,7 @@
 
           
           
-             <span id="/2020/10/27/K-Means%E7%AE%97%E6%B3%95%E5%AE%9E%E7%8E%B0/" class="leancloud_visitors" data-flag-title="K-Means算法实现">
+             <span id="/posts/8590/" class="leancloud_visitors" data-flag-title="NG机器学习EX1(线性回归)">
                <span class="post-meta-divider">|</span>
                <span class="post-meta-item-icon">
                  <i class="fa fa-eye"></i>
@@ -402,7 +405,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  2k字
+                  2.4k字
                 </span>
               
 
@@ -418,7 +421,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  9分钟
+                  10分钟
                 </span>
               
             </div>
@@ -441,70 +444,86 @@
       
         <p>本篇博客的主要内容有：</p>
 <ol>
-<li>K-means算法</li>
-<li>python代码实现<ul>
-<li>任意选择K(类别)聚类</li>
-<li>选取最佳的k,画出聚类后的图像分布</li>
-<li>计算准则函数J,画出J的变化图像</li>
-<li>完整python代码</li>
+<li>python实现的ex1</li>
+<li>梯度下降<ul>
+<li>特征缩放</li>
+<li>学习率选取</li>
 </ul>
 </li>
+<li>正规方程</li>
 </ol>
 <hr>
 <a id="more"></a>
-<p>这是模式识别课的作业</p>
-<blockquote>
-<p>试用K—均值法对如下模式分布进行聚类分析。编程实现，编程语言不限。<br>    {x1(0, 0), x2(3,8), x3(2,2), x4(1,1),<br>    x5(5,3), x6(4,8), x7(6,3), x8(5,4),<br>    x9(6,4), x10(7,5)}</p>
-</blockquote>
-<h2 id="K-Means算法"><a href="#K-Means算法" class="headerlink" title="K-Means算法"></a>K-Means算法</h2><p>K均值是一种动态巨累法<br><strong>动态聚类法</strong>先粗略地进行预分类，然后再逐步调整，直到把类分得比较合理为止，这种方法计算量较小、使用内存量小、方法简单,适用于大样本的聚类分析。<br>K均值算法的思想是首先任意选取K个聚类中心，按最小距离原则将各模式分配到K类的某一类,再不断计算聚类中心和调整各模式的类别,最终使各模式到其判属类别中心的距离平方之和最小。<br>具体步骤:</p>
+<p>这篇博客的主要来源是吴恩达老师的机器学习第一周、第二周的学习课程。其中部分内容参考自<a href="https://github.com/fengdu78/Coursera-ML-AndrewNg-Notes" target="_blank" rel="noopener">黄海广博士的笔记内容</a>,先根据作业完成了matlab代码,并且学习将它用python来实现(博客中无matlab实现)。在学习的过程中我结合吴恩达老师的上课内容和matlab代码修改了一部分代码(个人认为有点小错误以及可以优化的地方)。</p>
+<h2 id="读入数据并且可视化数据"><a href="#读入数据并且可视化数据" class="headerlink" title="读入数据并且可视化数据"></a>读入数据并且可视化数据</h2><p>第一部分的数据由两列组成,第一列是population(城市人口),第二列是profit(食物车的利润),在这里是2D数据,我们可以可视化它。</p>
 <ol>
-<li>任意选K个聚类中心(可以随机,或者直接选样本的前K个,后面会动态调整)</li>
-<li>遍历所有样本,将每个样本按照最小距离原则分到K类中的一类</li>
-<li>更新聚类中心,具体为将每个类别的聚类中心改为该类中所有样本的均值</li>
-<li>一直重复上述过程,直到聚类中心保持不变。</li>
+<li>读入数据<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">path &#x3D;  &#39;ex1data1.txt&#39;</span><br><span class="line">data &#x3D; pd.read_csv(path, header&#x3D;None, names&#x3D;[&#39;Population&#39;, &#39;Profit&#39;])</span><br><span class="line">data.head()</span><br></pre></td></tr></table></figure></li>
+<li>画出数据的分布<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">data.plot(kind&#x3D;&#39;scatter&#39;, x&#x3D;&#39;Population&#39;, y&#x3D;&#39;Profit&#39;, figsize&#x3D;(12,8))</span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure>
+<img src="/images/data1.png" width="50%" height="50%"> </li>
 </ol>
-<p>这里有个问题是,为什么<strong>聚类中心为什么要选择样本的均值</strong>,在下面的准则函数中将会给出推导过程。<br>所以K均值算法的实现最重要的就是计算距离和均值。</p>
-<h2 id="准则函数定义"><a href="#准则函数定义" class="headerlink" title="准则函数定义"></a>准则函数定义</h2><ul>
-<li><p>对于第j个类别$S_{j}$,有$N_{j}$个样本,聚类中心为$Z_{j}$</p>
-<p>  $J_{j} = \sum_{i=1}^{N_{j}}\parallel X_{i} - Z{j} \parallel ^{2}$</p>
-<p>  (这里应该是二范数的平方,markdown公式和博客代码不是很兼容的原因导致只是显示了一条竖线)</p>
-</li>
-<li><p>对于所有K个类别的准则函数就是把每个类别的求和就行</p>
-<p>  由上面的准则函数,可以得到,对于某一个聚类$j$,应有:</p>
-<p>  $\frac{\partial J_{j}}{\partial Z_{j}} = 0$</p>
-<p>  那么有:</p>
-<p>  $\frac{\partial \sum_{i=1}^{N_{j}}\parallel X_{i} - Z{j} \parallel ^{2}}{\partial Z_{j}} = \frac{\partial \sum_{i=1}^{N_{j}}(X_{i}-Z_{j})^{T}(X_{i}-Z_{j}) }{\partial Z_{j}} = 0$</p>
-<p>  可以解得:<br>  $Z_{j}= \frac{1}{N_{j}}\sum_{i=1}^{N_{j}}X_{i},X_{i} \in S_{j}$</p>
+<h2 id="梯度下降知识点回顾"><a href="#梯度下降知识点回顾" class="headerlink" title="梯度下降知识点回顾"></a>梯度下降知识点回顾</h2><p> 作业中把梯度下降方法分成了两个函数,一个是单变量的线性回归,一个是多变量的线性回归,这里是直接实现的是多变量的线性回归。</p>
+<p> 代价函数为:</p>
+<ul>
+<li>单变量<br>  $J\left( {\theta_{0}},{\theta_{1}}…{\theta_{n}} \right)=\frac{1}{2m}\sum_{i=1}^{m}(h_{\theta }(x^{(i)})-y^{(i)})^{2}$</li>
+<li>多变量<br>  $J(\theta ) = \frac{1}{2m}(X\theta -y)^{T}(X\theta -y)$<br>  s.t. $h_{\theta}(x)=\theta^{T}X={\theta_{0}}+{\theta_{1}}{x_{1}}+{\theta_{2}}{x_{2}}+…+{\theta_{n}}{x_{n}}$<br>  对$J$求导后,得到梯度下降更新算法<br><img src="/images/GradientDescent.png" width="50%" height="50%"><br><strong>注意这里的每个$\theta_{j}$都需要同时更新</strong><br>每次迭代计算后,每个$\theta_{j}$会趋于最优值,进而达到最低的cost,从而达到收敛</li>
+</ul>
+<h2 id="设置X-y-theta并转为numpy矩阵"><a href="#设置X-y-theta并转为numpy矩阵" class="headerlink" title="设置X,y,theta并转为numpy矩阵"></a>设置X,y,theta并转为numpy矩阵</h2><p>实现过程中,我们设$X$为列向量,为了更方便的计算(向量化),考虑$\theta_{0}$,在$X$中插入每个元素为1的列向量,这样我们就可以轻易的使用代码来实现$h_{\theta}(x)=X \cdot\theta^{T}$来计算$h_{\theta}(x)$了<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">data.insert(0,&#39;Ones&#39;,1)</span><br><span class="line">cols &#x3D; data.shape[1]</span><br><span class="line">X &#x3D; data.iloc[:,0:cols-1] # X是前cols-1列</span><br><span class="line">y &#x3D; data.iloc[:,cols-1:cols]#y是最后一列</span><br><span class="line">#将X y theta转换为numpy矩阵</span><br><span class="line">X &#x3D; np.matrix(X.values)</span><br><span class="line">y &#x3D; np.matrix(y.values)</span><br><span class="line">theta &#x3D; np.matrix(np.array([0,0]))</span><br></pre></td></tr></table></figure></p>
+<h2 id="def-computeCost"><a href="#def-computeCost" class="headerlink" title="def computeCost()"></a>def computeCost()</h2><p>函数中前面注释的三行是计算单变量的,后面两行是计算多变量的<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">def computeCost(X, y, theta):</span><br><span class="line">#</span><br><span class="line">#    prediction &#x3D; X * theta.T </span><br><span class="line">#    sqrErrors &#x3D; np.power(prediction-y,2)</span><br><span class="line">#    return np.sum(sqrErrors) &#x2F; (2*len(X))</span><br><span class="line">    prediction &#x3D; X * theta.T </span><br><span class="line">    return (prediction-y).T * (prediction-y) &#x2F; (2*len(X)) </span><br><span class="line">computeCost(X,y,theta)</span><br></pre></td></tr></table></figure><br>执行函数后,结果是32.072733877455676</p>
+<h2 id="def-gradientDescent"><a href="#def-gradientDescent" class="headerlink" title="def gradientDescent"></a>def gradientDescent</h2><p>对于每个样本都需要计算,这里应该是<strong>batch gradient decent</strong><br>$\theta _{j}:= \theta _{j} - \alpha \frac{\partial }{\partial \theta _{j}}J(\theta )$<br>注意每次更新都需要同时更新每个$\theta _{j}$<br>吴恩达老师的课特意强调了向量化,它可以让我们有更少的代码量(减少循环),同时也能利用高级语言的函数库更加快速的计算(如矩阵运算,可能可以实现并行计算等)<br>向量化的更新为<br>$\theta:=\theta-\alpha \cdot \delta$<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">def gradientDescent(X, y, theta, alpha, num_iters):</span><br><span class="line"></span><br><span class="line">    J_history &#x3D; np.zeros(num_iters)</span><br><span class="line">    </span><br><span class="line">    for i in range(num_iters):</span><br><span class="line">        prediction &#x3D; X * theta.T </span><br><span class="line">        delta &#x3D; X.T * (prediction-y) &#x2F; len(X)</span><br><span class="line">        theta &#x3D; theta - alpha * delta.T </span><br><span class="line">        # print(theta)</span><br><span class="line">        J_history[i] &#x3D; computeCost(X, y, theta)</span><br><span class="line">        </span><br><span class="line">    return theta, J_history</span><br></pre></td></tr></table></figure><br>调用函数执行:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">theta, J &#x3D; gradientDescent(X, y, theta, alpha, num_iters)</span><br></pre></td></tr></table></figure><br>theta = matrix([[-3.63029144,  1.16636235]])</p>
+<h2 id="画出拟合的回归方程以及代价函数的变化"><a href="#画出拟合的回归方程以及代价函数的变化" class="headerlink" title="画出拟合的回归方程以及代价函数的变化"></a>画出拟合的回归方程以及代价函数的变化</h2><p>前面我们虽然用来多变量的计算代价函数和梯度下降,但是当我们使用单变量时,我们还可以画出回归线性模型,看看他的拟合效果.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">X &#x3D; np.linspace(data.Population.min(), data.Population.max(), 100)</span><br><span class="line">y &#x3D; theta[0,0] + (theta[0,1] * X)</span><br><span class="line">fig, ax &#x3D; plt.subplots(figsize&#x3D;(12,8))</span><br><span class="line">ax.plot(X, y, &#39;r&#39;, label&#x3D;&#39;Prediction&#39;)</span><br><span class="line">ax.scatter(data.Population, data.Profit, label&#x3D;&#39;Traning Data&#39;)</span><br><span class="line">ax.legend(loc&#x3D;2)</span><br><span class="line">ax.set_xlabel(&#39;Population&#39;)</span><br><span class="line">ax.set_ylabel(&#39;Profit&#39;)</span><br><span class="line">ax.set_title(&#39;Predicted Profit vs. Population Size&#39;)</span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure>
+<p>上述代码运行完,图像是这样的:<br> <img src="/images/onefit.png" width="50%" height="50%"></p>
+<p>如何确定梯度下降已经正确的执行了?<br>**在每个迭代之后,$J(\theta)$应该在减小</p>
+<ul>
+<li>我们可以画出图像来看$J(\theta)$是否收敛</li>
+<li>我们还可以设置当$J(\theta)$在某个迭代计算中小于某个值来认为收敛,不过这个值难以确定,因为不同模型的$J$最小值可能是不一样的</li>
+</ul>
+<p>下面我们画出代价函数的变化<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">fig, ax &#x3D; plt.subplots(figsize&#x3D;(12,8))</span><br><span class="line">ax.plot(np.arange(num_iters), J, &#39;r&#39;)</span><br><span class="line">ax.set_xlabel(&#39;Iterations&#39;)</span><br><span class="line">ax.set_ylabel(&#39;Cost&#39;)</span><br><span class="line">ax.set_title(&#39;Error vs. Training Epoch&#39;)</span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure><br>图像是这样的:<br> <img src="/images/cost.png" width="50%" height="50%"></p>
+<p>到这里,已经可以完成coursa上面的作业了<br>不过这里有个小细节需要注意:<br>$\alpha$(学习率)对梯度下降的收敛是有影响的,可以去不同的学习率来测试,我尝试过使用$\alpha=0.1$在单变量的环境下测试,是不会收敛的,一开始还以为是代码哪里写的有问题,后面想到学习率对于梯度下降的影响才恍然大悟。</p>
+<p>关于$\alpha$(学习率)对梯度下降的影响:</p>
+<ul>
+<li>$\alpha$太小: 慢收敛</li>
+<li><p>$\alpha$太大:$J(\theta)$在每次迭代过程中可能不会减小,也可能不会收敛(当然也可能会慢收敛)<br>如果我们的$J(\theta)$与iterations的图像是下面这样的,说明梯度下降没有很好的工作,需要使用更小的$\alpha$<br><img src="/images/alpha.png" width="50%" height="50%"><br>实际计算过程中,我们可以尝试选择下面的$\alpha$来计算:</p>
+<p>…0.001,0.003,0.01,0.03,0.1,0.3,1…<br>(每次$\times 3$)</p>
 </li>
 </ul>
-<p>所以 为了使得准则函数最小,$S_{j}$类的聚类中心应选为<strong>该类样本的均值</strong></p>
-<p>下面是作业的python实现。</p>
-<h2 id="K-Means的python实现"><a href="#K-Means的python实现" class="headerlink" title="K-Means的python实现"></a>K-Means的python实现</h2><ol>
-<li><p>首先,K均值算法的K我们是没有办法事先预知的,所以,我先画出了图像的分布情况。<br>下面是原始数据,将其保存在txt文件中:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">0,0</span><br><span class="line">3,8</span><br><span class="line">2,2</span><br><span class="line">1,1</span><br><span class="line">5,3</span><br><span class="line">4,8</span><br><span class="line">6,3</span><br><span class="line">5,4</span><br><span class="line">6,4</span><br><span class="line">7,5</span><br></pre></td></tr></table></figure>
-<p>先将其读入,并且画出图像</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">path &#x3D;  &#39;data.txt&#39;</span><br><span class="line">data &#x3D; pd.read_csv(path, header&#x3D;None, names&#x3D;[&#39;x1&#39;, &#39;x2&#39;])</span><br></pre></td></tr></table></figure>
-<p><img src="/images/3 kmeans/data.png" width="50%" height="50%"></p>
-</li>
-<li><p>计算距离</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">def calDist(X,center):</span><br><span class="line">    return np.linalg.norm(X - center,2,1)</span><br></pre></td></tr></table></figure>
-<p>这里直接返回了二范数的距离(平方再开根号)</p>
-</li>
-<li><p>K-means算法的实现</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">def kmeans(X,k):</span><br><span class="line">#@ return centers,clusters[每个聚类中心,每个样本所属的类别]</span><br><span class="line">    centers &#x3D; X[:k,:]</span><br><span class="line">    newCenters &#x3D; np.zeros(centers.shape)</span><br><span class="line">    clusters &#x3D; np.zeros(len(X))</span><br><span class="line">    while True: #当聚类中心不再变化时算法停止</span><br><span class="line"></span><br><span class="line">        #计算每个点到所有中心的距离</span><br><span class="line">        for i in range(len(X)):</span><br><span class="line">            d &#x3D; calDist(X[i], centers)</span><br><span class="line">            cluster &#x3D; np.argmin(d) </span><br><span class="line">            clusters[i] &#x3D; cluster #第i个样本的类别设定为到所有聚类中心最近的那个</span><br><span class="line">        #遍历k个中心,分别找出以该聚类中心的所有点并且求均值作为新的聚类中心</span><br><span class="line">        for i in range(k):</span><br><span class="line">            points &#x3D; [X[j] for j in range(len(X)) if clusters[j] &#x3D;&#x3D; i]</span><br><span class="line">            newCenters[i] &#x3D; np.mean(points, axis&#x3D;0)</span><br><span class="line">        if (centers &#x3D;&#x3D; newCenters).all():#当聚类中心不再变化时,终止循环</span><br><span class="line">            break </span><br><span class="line">        else:</span><br><span class="line">            centers &#x3D; newCenters</span><br><span class="line">    return centers,clusters</span><br></pre></td></tr></table></figure>
-</li>
-</ol>
-<h2 id="K-3的代码分析"><a href="#K-3的代码分析" class="headerlink" title="K = 3的代码分析"></a>K = 3的代码分析</h2><p>由于我们之前已经画出了图像,可以很自然的得到他应该分为3个类别,使用K-means算法,并画出图像<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">centers,clusters &#x3D; kmeans(X,k)</span><br><span class="line">colors &#x3D; [&#39;r&#39;, &#39;g&#39;, &#39;b&#39;]</span><br><span class="line">fig, ax &#x3D; plt.subplots()</span><br><span class="line">for i in range(k):</span><br><span class="line">    points &#x3D; np.array([X[j] for j in range(len(X)) if clusters[j] &#x3D;&#x3D; i])</span><br><span class="line">    #上面是3*1*2的array,先用flatten变为1*len(X)维的,再reshape</span><br><span class="line">    points &#x3D; points.flatten()</span><br><span class="line">    points &#x3D; np.reshape(points,(int(len(points)&#x2F;2),2))</span><br><span class="line">    print(points[:,0],points[:,1])      </span><br><span class="line">    ax.scatter(points[:,0],points[:,1], s&#x3D;20, c&#x3D;colors[i])</span><br><span class="line">ax.scatter(newCenters[:, 0], newCenters[:, 1], marker&#x3D;&#39;*&#39;, s&#x3D;30, c&#x3D;&#39;y&#39;)</span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure><br>下面是K-means算法后的结果,其中五角星是聚类中心<br> <img src="/images/3 kmeans/k3.png" width="50%" height="50%"><br>由图可知,分成了三类,每个聚类中心分别为<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[[1.  1. ] </span><br><span class="line"> [3.5 8. ] </span><br><span class="line"> [5.8 3.8]]</span><br></pre></td></tr></table></figure></p>
-<h2 id="取K不同值时J的变化"><a href="#取K不同值时J的变化" class="headerlink" title="取K不同值时J的变化"></a>取K不同值时J的变化</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">J &#x3D; np.zeros([11,1])</span><br><span class="line">with warnings.catch_warnings():</span><br><span class="line">    warnings.filterwarnings(&#39;error&#39;)</span><br><span class="line">    #依次计算出J[k](准则函数)</span><br><span class="line">    for k in range(1,11):</span><br><span class="line">        try:</span><br><span class="line">            centers,clusters &#x3D; kmeans(X,k)</span><br><span class="line">            for i in range(len(X)):</span><br><span class="line">                d &#x3D; calDist(X[i],centers[int(clusters[i])])</span><br><span class="line">                J[k] &#x3D; J[k] + (d**2)              </span><br><span class="line">        except:</span><br><span class="line">            print(&quot;None&quot;)</span><br><span class="line">            </span><br><span class="line">fig, ax &#x3D; plt.subplots(figsize&#x3D;(12,8))</span><br><span class="line">ax.plot(range(1,11), J[1:], &#39;b&#39;)</span><br><span class="line"></span><br><span class="line">#下面是为了标出每个点的坐标</span><br><span class="line">for i_x, i_y in zip(range(1,11), J[1:]):</span><br><span class="line">    plt.text(i_x, i_y, &#39;(&#123;&#125;, &#123;&#125;)&#39;.format(i_x, i_y))</span><br><span class="line">ax.scatter(range(1,11),J[1:])</span><br><span class="line">ax.scatter(3,J[3:],&#39;r&#39;)</span><br><span class="line">ax.set_xlabel(&#39;k&#39;)</span><br><span class="line">ax.set_ylabel(&#39;J&#39;)</span><br><span class="line">ax.set_title(&#39;J vs k&#39;)</span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure>
-<p>下面是取不同k值的j的变化.这里的J是距离平方的和</p>
-<p> <img src="/images/3 kmeans/j vs k.png" width="50%" height="50%"></p>
-<p>一般来说,如果样本集的合理聚类数为K类，当类别数从1增加到K时准则函数迅速减小，当类别数超过K时，准则函数虽然继续减少但会呈现平缓趋势。 所以<strong>K一般会选择在拐点</strong><br>上图中K=3的时候是比较合适的点(在K&gt;3之后下降缓慢)。</p>
-<p><strong>K均值的结果受到所选聚类中心的个数和其初始位置的影响较大,实际应用中需要试探不同的K值和选择不同的聚类中心起始值。(这里我直接取了前K个样本)</strong></p>
-<h2 id="完整代码"><a href="#完整代码" class="headerlink" title="完整代码"></a>完整代码</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br></pre></td><td class="code"><pre><span class="line">import numpy as np</span><br><span class="line">import pandas as pd</span><br><span class="line">import matplotlib.pyplot as plt</span><br><span class="line">import warnings</span><br><span class="line"></span><br><span class="line">def calDist(X,center):</span><br><span class="line">    return np.linalg.norm(X - center,2,1)</span><br><span class="line"></span><br><span class="line">def kmeans(X,k):</span><br><span class="line">    np.seterr(invalid&#x3D;&#39;ignore&#39;)</span><br><span class="line">    centers &#x3D; X[:k,:]</span><br><span class="line">    newCenters &#x3D; np.zeros(centers.shape)</span><br><span class="line">    clusters &#x3D; np.zeros(len(X))</span><br><span class="line">    while True:</span><br><span class="line">        for i in range(len(X)):</span><br><span class="line">            d &#x3D; calDist(X[i], centers)</span><br><span class="line">            cluster &#x3D; np.argmin(d) </span><br><span class="line">            clusters[i] &#x3D; cluster</span><br><span class="line">        for i in range(k):</span><br><span class="line">            points &#x3D; [X[j] for j in range(len(X)) if clusters[j] &#x3D;&#x3D; i]</span><br><span class="line">            newCenters[i] &#x3D; np.mean(points, axis&#x3D;0)</span><br><span class="line">        if (centers &#x3D;&#x3D; newCenters).all():</span><br><span class="line">            break </span><br><span class="line">        else:</span><br><span class="line">            centers &#x3D; newCenters</span><br><span class="line">    return centers,clusters</span><br><span class="line"></span><br><span class="line">def plotPoints(X,centers,clusters,k):</span><br><span class="line">    colors &#x3D; [&#39;r&#39;, &#39;g&#39;, &#39;b&#39;, &#39;y&#39;, &#39;c&#39;, &#39;m&#39;]</span><br><span class="line">    fig, ax &#x3D; plt.subplots()</span><br><span class="line">    for i in range(k):</span><br><span class="line">        points &#x3D; np.array([X[j] for j in range(len(X)) if clusters[j] &#x3D;&#x3D; i])</span><br><span class="line">        points &#x3D; points.flatten()</span><br><span class="line">        points &#x3D; np.reshape(points,(int(len(points)&#x2F;2),2))</span><br><span class="line">        print(points[:,0],points[:,1])      </span><br><span class="line">        ax.scatter(points[:,0],points[:,1], s&#x3D;7, c&#x3D;colors[i])</span><br><span class="line">    ax.scatter(centers[:, 0], centers[:, 1], marker&#x3D;&#39;*&#39;, s&#x3D;10, c&#x3D;&#39;y&#39;)</span><br><span class="line">    plt.show()</span><br><span class="line"></span><br><span class="line">def main():</span><br><span class="line">    path &#x3D;  &#39;data.txt&#39;</span><br><span class="line">    data &#x3D; pd.read_csv(path, header&#x3D;None, names&#x3D;[&#39;x1&#39;, &#39;x2&#39;])</span><br><span class="line">    X &#x3D; data</span><br><span class="line">    X &#x3D; np.matrix(X.values)</span><br><span class="line">    J &#x3D; np.zeros([11,1])</span><br><span class="line">    with warnings.catch_warnings():</span><br><span class="line">        warnings.filterwarnings(&#39;error&#39;)</span><br><span class="line">        for k in range(1,11):</span><br><span class="line">            try:</span><br><span class="line">                centers,clusters &#x3D; kmeans(X,k)</span><br><span class="line">                for i in range(len(X)):</span><br><span class="line">                    d &#x3D; calDist(X[i],centers[int(clusters[i])])</span><br><span class="line">                    J[k] &#x3D; J[k] + (d**2)              </span><br><span class="line">            except:</span><br><span class="line">                print(&quot;None&quot;)      </span><br><span class="line">    fig, ax &#x3D; plt.subplots(figsize&#x3D;(12,8))</span><br><span class="line">    ax.plot(range(1,11), J[1:], &#39;b&#39;)</span><br><span class="line">    # ax.scatter(3,J[3],&#39;r&#39;)</span><br><span class="line">    for i_x, i_y in zip(range(1,11), J[1:]):</span><br><span class="line">        plt.text(i_x, i_y, &#39;(&#123;&#125;, &#123;&#125;)&#39;.format(i_x, i_y[0]))</span><br><span class="line">    ax.scatter(range(1,11),J[1:])</span><br><span class="line">    ax.set_xlabel(&#39;k&#39;)</span><br><span class="line">    ax.set_ylabel(&#39;J&#39;)</span><br><span class="line">    ax.set_title(&#39;J vs k&#39;)</span><br><span class="line">    plt.show()</span><br><span class="line">main()</span><br></pre></td></tr></table></figure>
-<h2 id="References"><a href="#References" class="headerlink" title="References"></a>References</h2><ol>
-<li><a href="https://www.cnblogs.com/shenfeng/p/kmeans_demo.html" target="_blank" rel="noopener">K-Means算法的Python实现</a></li>
-<li>模式识别课的PPT</li>
-</ol>
+<p>下面是关于 特征缩放、正规方程的内容。</p>
+<h2 id="特征缩放-feature-scaling"><a href="#特征缩放-feature-scaling" class="headerlink" title="特征缩放(feature scaling)"></a>特征缩放(feature scaling)</h2><p>前面的过程我们并没有将特征进行缩放,使用特征缩放在我们面对多维特征问题的时候,保证这些特征都具有相近的尺度,这将有助于<strong>梯度下降算法更快地收敛</strong>(如果特征差距过大,变量非常不均匀时,它会无效率地<strong>振荡</strong>到最优质,梯度下降算法需要非常多次的迭代才能收敛)<br> <img src="/images/feature scaling.png" width="50%" height="50%"><br>特征缩放一般是将数据减去均值再除以标准差,当然除以数据的最大与最小值之差也是可以的<br>一般来说特征缩放不需要太精确,只需要每个特征roughly the same,这样梯度下降可以运行的更快一些。<br>对于第二个实验数据的正则化,使用python可以这样完成<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">path &#x3D; &#39;ex1data2.txt&#39;</span><br><span class="line">data2 &#x3D; pd.read_csv(path,header&#x3D;None,names&#x3D;[&#39;Size&#39;,&#39;Bedrooms&#39;,&#39;Price&#39;])</span><br><span class="line"># data2.head()</span><br><span class="line">cols &#x3D; data2.shape[1]</span><br><span class="line">X2 &#x3D; data2.iloc[:,0:cols-1]</span><br><span class="line">X2 &#x3D; (X2-X2.mean()) &#x2F; X2.std()</span><br><span class="line">X2.insert(0, &#39;Ones&#39;, 1)</span><br><span class="line">y2 &#x3D; data2.iloc[:,-1]</span><br></pre></td></tr></table></figure></p>
+<h2 id="正规方程-Normal-equation"><a href="#正规方程-Normal-equation" class="headerlink" title="正规方程(Normal equation)"></a>正规方程(Normal equation)</h2><p>$\theta = (X^{T}X)^{-1}X^{T} \vec{y}$<br>直接使用这个公式就可以计算出让$J(\theta)$取值最小的$\theta$<br>注意<strong>使用正规方程计算不需要对X进行feature scaling</strong><br>由上面的式子我们可以看出,正规方程主要工作量是在于计算:<br>$(X^{T}X)^{-1}$,计算机计算逆矩阵大约是$O(n^{3})$<br>一般情况下我们是不会出现$(X^{T}X)^{-1}$不存在(逆矩阵不存在)的情况<br>如果出现不可逆的情况,可以考虑:</p>
+<ul>
+<li><strong>Redundant features</strong>:有冗余特征,他们是线性相关的,这时候可以考虑去除冗余特征</li>
+<li><strong>too many features</strong>:假设我们有m个样本,n个特征。如果$m&lt;n$,可能情况是m个样本不够来拟合n个特征的$\theta$,所以可以考虑减少特征数量,还有一种办法是<strong>regularization</strong>,它可以让我们在很少的样本时拟合很多的特征(这个方法吴恩达老师只是简单的介绍,具体应该会在后面的课程中讲述)<br>第三周课程更新:<br>(通过添加正则化项,我们还解决了存在不可逆矩阵的问题)</li>
+</ul>
+<p>下面是具体的代码实现<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">def normalEqn(X, y):</span><br><span class="line">    theta &#x3D; np.linalg.inv(X.T@X)@X.T@y#X.T@X等价于X.T.dot(X)</span><br><span class="line">    return theta</span><br></pre></td></tr></table></figure><br>这里也需要注意一下,<strong>使用正规方程求出来的$\theta_{1}$和我们用梯度下降法求出来的$\theta_{2}$可能是不一样的</strong><br>可以从等高线图来理解,或者老师课上的可视化代价函数,可能有多个$\theta$使得代价函数的最小的。<br>关于正规方程的推导过程我将会在另外的博客中进行说明,因为里面同样涉及到矩阵求导,还有PCA的优化求导,以及我的PR课上老师要求的一个求导小练习一起做个总结。<br>最后是梯度下降与正规方程的比较</p>
+<h2 id="梯度下降-VS-正规方程"><a href="#梯度下降-VS-正规方程" class="headerlink" title="梯度下降 VS 正规方程"></a>梯度下降 VS 正规方程</h2><div class="table-container">
+<table>
+<thead>
+<tr>
+<th>Gradient Descent</th>
+<th>Normal equation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>需要选择$\alpha$</td>
+<td>不需要选择$\alpha$</td>
+</tr>
+<tr>
+<td>需要多次迭代计算</td>
+<td>不需要迭代计算</td>
+</tr>
+<tr>
+<td>当n(特征数量)很大时依旧工作的很好</td>
+<td>需要计算$(X^{T}X)^{-1}$逆矩阵的计算需要$O(n^{3})$,通常来说当n小于10000 时还是可以接受的</td>
+</tr>
+<tr>
+<td>适用于各种模型的优化求解</td>
+<td>只适用于线性模型，不适合逻辑回归模型等其他更加复杂模型</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>bty,在batch gradient decent中复杂度是$O(m \times n) \approx O(n^{2})$</p>
 
       
     </div>
@@ -525,7 +544,7 @@
   </li>
   <li class="post-copyright-link">
     <strong>本文链接：</strong>
-    <a href="http://blog.tyfuu.net/2020/10/27/K-Means%E7%AE%97%E6%B3%95%E5%AE%9E%E7%8E%B0/" title="K-Means算法实现">http://blog.tyfuu.net/2020/10/27/K-Means%E7%AE%97%E6%B3%95%E5%AE%9E%E7%8E%B0/</a>
+    <a href="http://blog.tyfuu.net/posts/8590/" title="NG机器学习EX1(线性回归)">http://blog.tyfuu.net/posts/8590/</a>
   </li>
   <li class="post-copyright-license">
     <strong>版权声明： </strong>
@@ -540,7 +559,7 @@
       
         <div class="post-tags">
           
-            <a href="/tags/%E8%81%9A%E7%B1%BB/" rel="tag"># 聚类</a>
+            <a href="/tags/%E5%9B%9E%E5%BD%92/" rel="tag"># 回归</a>
           
         </div>
       
@@ -553,8 +572,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2020/10/24/NG%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0EX1(%E7%BA%BF%E6%80%A7%E5%9B%9E%E5%BD%92)/" rel="next" title="NG机器学习EX1(线性回归)">
-                <i class="fa fa-chevron-left"></i> NG机器学习EX1(线性回归)
+              <a href="/posts/100d/" rel="next" title="PCA学习笔记(含推导过程)">
+                <i class="fa fa-chevron-left"></i> PCA学习笔记(含推导过程)
               </a>
             
           </div>
@@ -563,8 +582,8 @@
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2020/11/03/NG%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0EX2(%E9%80%BB%E8%BE%91%E5%9B%9E%E5%BD%921)/" rel="prev" title="NG机器学习EX2(逻辑回归1)">
-                NG机器学习EX2(逻辑回归1) <i class="fa fa-chevron-right"></i>
+              <a href="/posts/948e/" rel="prev" title="K-Means算法实现">
+                K-Means算法实现 <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -650,7 +669,7 @@
                <a href="/archives/">
                
              
-                 <span class="site-state-item-count">6</span>
+                 <span class="site-state-item-count">7</span>
                  <span class="site-state-item-name">日志</span>
                </a>
              </div>
@@ -709,7 +728,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#K-Means算法"><span class="nav-number">1.</span> <span class="nav-text">K-Means算法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#准则函数定义"><span class="nav-number">2.</span> <span class="nav-text">准则函数定义</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#K-Means的python实现"><span class="nav-number">3.</span> <span class="nav-text">K-Means的python实现</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#K-3的代码分析"><span class="nav-number">4.</span> <span class="nav-text">K &#x3D; 3的代码分析</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#取K不同值时J的变化"><span class="nav-number">5.</span> <span class="nav-text">取K不同值时J的变化</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#完整代码"><span class="nav-number">6.</span> <span class="nav-text">完整代码</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#References"><span class="nav-number">7.</span> <span class="nav-text">References</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#读入数据并且可视化数据"><span class="nav-number">1.</span> <span class="nav-text">读入数据并且可视化数据</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#梯度下降知识点回顾"><span class="nav-number">2.</span> <span class="nav-text">梯度下降知识点回顾</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#设置X-y-theta并转为numpy矩阵"><span class="nav-number">3.</span> <span class="nav-text">设置X,y,theta并转为numpy矩阵</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#def-computeCost"><span class="nav-number">4.</span> <span class="nav-text">def computeCost()</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#def-gradientDescent"><span class="nav-number">5.</span> <span class="nav-text">def gradientDescent</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#画出拟合的回归方程以及代价函数的变化"><span class="nav-number">6.</span> <span class="nav-text">画出拟合的回归方程以及代价函数的变化</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#特征缩放-feature-scaling"><span class="nav-number">7.</span> <span class="nav-text">特征缩放(feature scaling)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#正规方程-Normal-equation"><span class="nav-number">8.</span> <span class="nav-text">正规方程(Normal equation)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#梯度下降-VS-正规方程"><span class="nav-number">9.</span> <span class="nav-text">梯度下降 VS 正规方程</span></a></li></ol></div>
             
 
           </div>
@@ -731,7 +750,7 @@
     <h3 class="widget-title">Tag Cloud</h3>
     <div id="myCanvasContainer" class="widget tagcloud">
         <canvas width="200" height="200" id="resCanvas" style="width:100%">
-            <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%88%86%E7%B1%BB/" rel="tag">分类</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%9B%9E%E5%BD%92/" rel="tag">回归</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%81%9A%E7%B1%BB/" rel="tag">聚类</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%99%8D%E7%BB%B4/" rel="tag">降维</a><span class="tag-list-count">1</span></li></ul>
+            <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%88%86%E7%B1%BB/" rel="tag">分类</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%9B%9E%E5%BD%92/" rel="tag">回归</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%81%9A%E7%B1%BB/" rel="tag">聚类</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%99%8D%E7%BB%B4/" rel="tag">降维</a><span class="tag-list-count">1</span></li></ul>
         </canvas>
     </div>
 </div>

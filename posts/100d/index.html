@@ -75,7 +75,7 @@
 
 
 
-  <meta name="keywords" content="回归," />
+  <meta name="keywords" content="降维," />
 
 
 
@@ -86,24 +86,17 @@
 
 
 
-<meta name="description" content="本篇博客的主要内容有：  python实现的ex1 梯度下降 特征缩放 学习率选取   正规方程">
+<meta name="description" content="本篇博客的主要内容有：  降维 PCA的数学基础 PCA的两种思想推导 基于最大投影方差 基于最小重构距离   PCA的计算过程">
 <meta property="og:type" content="article">
-<meta property="og:title" content="NG机器学习EX1(线性回归)">
-<meta property="og:url" content="http://blog.tyfuu.net/2020/10/24/NG%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0EX1(%E7%BA%BF%E6%80%A7%E5%9B%9E%E5%BD%92)/index.html">
+<meta property="og:title" content="PCA学习笔记(含推导过程)">
+<meta property="og:url" content="http://blog.tyfuu.net/posts/100d/index.html">
 <meta property="og:site_name" content="just do I T">
-<meta property="og:description" content="本篇博客的主要内容有：  python实现的ex1 梯度下降 特征缩放 学习率选取   正规方程">
-<meta property="og:image" content="http://blog.tyfuu.net/images/data1.png">
-<meta property="og:image" content="http://blog.tyfuu.net/images/GradientDescent.png">
-<meta property="og:image" content="http://blog.tyfuu.net/images/onefit.png">
-<meta property="og:image" content="http://blog.tyfuu.net/images/cost.png">
-<meta property="og:image" content="http://blog.tyfuu.net/images/alpha.png">
-<meta property="og:image" content="http://blog.tyfuu.net/images/feature%20scaling.png">
-<meta property="article:published_time" content="2020-10-24T11:25:05.000Z">
-<meta property="article:modified_time" content="2020-11-06T10:31:02.827Z">
+<meta property="og:description" content="本篇博客的主要内容有：  降维 PCA的数学基础 PCA的两种思想推导 基于最大投影方差 基于最小重构距离   PCA的计算过程">
+<meta property="article:published_time" content="2020-10-18T07:04:18.000Z">
+<meta property="article:modified_time" content="2020-11-21T12:56:01.954Z">
 <meta property="article:author" content="符说八道">
-<meta property="article:tag" content="回归">
+<meta property="article:tag" content="降维">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://blog.tyfuu.net/images/data1.png">
 
 
 
@@ -133,13 +126,13 @@
 
 
 
-  <link rel="canonical" href="http://blog.tyfuu.net/2020/10/24/NG机器学习EX1(线性回归)/"/>
+  <link rel="canonical" href="http://blog.tyfuu.net/posts/100d/"/>
 
 
 
 
 
-  <title>NG机器学习EX1(线性回归) | just do I T</title>
+  <title>PCA学习笔记(含推导过程) | just do I T</title>
   
 
 
@@ -300,7 +293,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://blog.tyfuu.net/2020/10/24/NG%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0EX1(%E7%BA%BF%E6%80%A7%E5%9B%9E%E5%BD%92)/">
+    <link itemprop="mainEntityOfPage" href="http://blog.tyfuu.net/posts/100d/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="符说八道">
@@ -317,7 +310,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">NG机器学习EX1(线性回归)</h1>
+          <h1 class="post-title" itemprop="name headline">PCA学习笔记(含推导过程)</h1>
         
 
         <div class="post-meta">
@@ -329,8 +322,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-10-24T19:25:05+08:00">
-                2020-10-24
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-10-18T15:04:18+08:00">
+                2020-10-18
               </time>
             
 
@@ -352,8 +345,8 @@
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/NG-ML/" itemprop="url" rel="index">
-                    <span itemprop="name">NG-ML</span>
+                  <a href="/categories/ML/" itemprop="url" rel="index">
+                    <span itemprop="name">ML</span>
                   </a>
                 </span>
 
@@ -370,8 +363,8 @@
                 <span class="post-meta-item-icon">
                   <i class="fa fa-comment-o"></i>
                 </span>
-                <a href="/2020/10/24/NG%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0EX1(%E7%BA%BF%E6%80%A7%E5%9B%9E%E5%BD%92)/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count valine-comment-count" data-xid="/2020/10/24/NG%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0EX1(%E7%BA%BF%E6%80%A7%E5%9B%9E%E5%BD%92)/" itemprop="commentCount"></span>
+                <a href="/posts/100d/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count valine-comment-count" data-xid="/posts/100d/" itemprop="commentCount"></span>
                 </a>
               </span>
             
@@ -379,7 +372,7 @@
 
           
           
-             <span id="/2020/10/24/NG%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0EX1(%E7%BA%BF%E6%80%A7%E5%9B%9E%E5%BD%92)/" class="leancloud_visitors" data-flag-title="NG机器学习EX1(线性回归)">
+             <span id="/posts/100d/" class="leancloud_visitors" data-flag-title="PCA学习笔记(含推导过程)">
                <span class="post-meta-divider">|</span>
                <span class="post-meta-item-icon">
                  <i class="fa fa-eye"></i>
@@ -405,7 +398,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  2.4k字
+                  3.2k字
                 </span>
               
 
@@ -421,7 +414,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  10分钟
+                  13分钟
                 </span>
               
             </div>
@@ -444,86 +437,101 @@
       
         <p>本篇博客的主要内容有：</p>
 <ol>
-<li>python实现的ex1</li>
-<li>梯度下降<ul>
-<li>特征缩放</li>
-<li>学习率选取</li>
+<li>降维</li>
+<li>PCA的数学基础</li>
+<li>PCA的两种思想推导<ul>
+<li>基于最大投影方差</li>
+<li>基于最小重构距离</li>
 </ul>
 </li>
-<li>正规方程</li>
+<li>PCA的计算过程</li>
 </ol>
 <hr>
 <a id="more"></a>
-<p>这篇博客的主要来源是吴恩达老师的机器学习第一周、第二周的学习课程。其中部分内容参考自<a href="https://github.com/fengdu78/Coursera-ML-AndrewNg-Notes" target="_blank" rel="noopener">黄海广博士的笔记内容</a>,先根据作业完成了matlab代码,并且学习将它用python来实现(博客中无matlab实现)。在学习的过程中我结合吴恩达老师的上课内容和matlab代码修改了一部分代码(个人认为有点小错误以及可以优化的地方)。</p>
-<h2 id="读入数据并且可视化数据"><a href="#读入数据并且可视化数据" class="headerlink" title="读入数据并且可视化数据"></a>读入数据并且可视化数据</h2><p>第一部分的数据由两列组成,第一列是population(城市人口),第二列是profit(食物车的利润),在这里是2D数据,我们可以可视化它。</p>
+<h2 id="降维"><a href="#降维" class="headerlink" title="降维"></a>降维</h2><p>降维属于<strong>无监督学习</strong>，可以用来解决训练中<strong>过拟合</strong>和<strong>维数灾难</strong>问题。</p>
 <ol>
-<li>读入数据<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">path &#x3D;  &#39;ex1data1.txt&#39;</span><br><span class="line">data &#x3D; pd.read_csv(path, header&#x3D;None, names&#x3D;[&#39;Population&#39;, &#39;Profit&#39;])</span><br><span class="line">data.head()</span><br></pre></td></tr></table></figure></li>
-<li>画出数据的分布<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">data.plot(kind&#x3D;&#39;scatter&#39;, x&#x3D;&#39;Population&#39;, y&#x3D;&#39;Profit&#39;, figsize&#x3D;(12,8))</span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure>
-<img src="/images/data1.png" width="50%" height="50%"> </li>
-</ol>
-<h2 id="梯度下降知识点回顾"><a href="#梯度下降知识点回顾" class="headerlink" title="梯度下降知识点回顾"></a>梯度下降知识点回顾</h2><p> 作业中把梯度下降方法分成了两个函数,一个是单变量的线性回归,一个是多变量的线性回归,这里是直接实现的是多变量的线性回归。</p>
-<p> 代价函数为:</p>
-<ul>
-<li>单变量<br>  $J\left( {\theta_{0}},{\theta_{1}}…{\theta_{n}} \right)=\frac{1}{2m}\sum_{i=1}^{m}(h_{\theta }(x^{(i)})-y^{(i)})^{2}$</li>
-<li>多变量<br>  $J(\theta ) = \frac{1}{2m}(X\theta -y)^{T}(X\theta -y)$<br>  s.t. $h_{\theta}(x)=\theta^{T}X={\theta_{0}}+{\theta_{1}}{x_{1}}+{\theta_{2}}{x_{2}}+…+{\theta_{n}}{x_{n}}$<br>  对$J$求导后,得到梯度下降更新算法<br><img src="/images/GradientDescent.png" width="50%" height="50%"><br><strong>注意这里的每个$\theta_{j}$都需要同时更新</strong><br>每次迭代计算后,每个$\theta_{j}$会趋于最优值,进而达到最低的cost,从而达到收敛</li>
-</ul>
-<h2 id="设置X-y-theta并转为numpy矩阵"><a href="#设置X-y-theta并转为numpy矩阵" class="headerlink" title="设置X,y,theta并转为numpy矩阵"></a>设置X,y,theta并转为numpy矩阵</h2><p>实现过程中,我们设$X$为列向量,为了更方便的计算(向量化),考虑$\theta_{0}$,在$X$中插入每个元素为1的列向量,这样我们就可以轻易的使用代码来实现$h_{\theta}(x)=X \cdot\theta^{T}$来计算$h_{\theta}(x)$了<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">data.insert(0,&#39;Ones&#39;,1)</span><br><span class="line">cols &#x3D; data.shape[1]</span><br><span class="line">X &#x3D; data.iloc[:,0:cols-1] # X是前cols-1列</span><br><span class="line">y &#x3D; data.iloc[:,cols-1:cols]#y是最后一列</span><br><span class="line">#将X y theta转换为numpy矩阵</span><br><span class="line">X &#x3D; np.matrix(X.values)</span><br><span class="line">y &#x3D; np.matrix(y.values)</span><br><span class="line">theta &#x3D; np.matrix(np.array([0,0]))</span><br></pre></td></tr></table></figure></p>
-<h2 id="def-computeCost"><a href="#def-computeCost" class="headerlink" title="def computeCost()"></a>def computeCost()</h2><p>函数中前面注释的三行是计算单变量的,后面两行是计算多变量的<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">def computeCost(X, y, theta):</span><br><span class="line">#</span><br><span class="line">#    prediction &#x3D; X * theta.T </span><br><span class="line">#    sqrErrors &#x3D; np.power(prediction-y,2)</span><br><span class="line">#    return np.sum(sqrErrors) &#x2F; (2*len(X))</span><br><span class="line">    prediction &#x3D; X * theta.T </span><br><span class="line">    return (prediction-y).T * (prediction-y) &#x2F; (2*len(X)) </span><br><span class="line">computeCost(X,y,theta)</span><br></pre></td></tr></table></figure><br>执行函数后,结果是32.072733877455676</p>
-<h2 id="def-gradientDescent"><a href="#def-gradientDescent" class="headerlink" title="def gradientDescent"></a>def gradientDescent</h2><p>对于每个样本都需要计算,这里应该是<strong>batch gradient decent</strong><br>$\theta _{j}:= \theta _{j} - \alpha \frac{\partial }{\partial \theta _{j}}J(\theta )$<br>注意每次更新都需要同时更新每个$\theta _{j}$<br>吴恩达老师的课特意强调了向量化,它可以让我们有更少的代码量(减少循环),同时也能利用高级语言的函数库更加快速的计算(如矩阵运算,可能可以实现并行计算等)<br>向量化的更新为<br>$\theta:=\theta-\alpha \cdot \delta$<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">def gradientDescent(X, y, theta, alpha, num_iters):</span><br><span class="line"></span><br><span class="line">    J_history &#x3D; np.zeros(num_iters)</span><br><span class="line">    </span><br><span class="line">    for i in range(num_iters):</span><br><span class="line">        prediction &#x3D; X * theta.T </span><br><span class="line">        delta &#x3D; X.T * (prediction-y) &#x2F; len(X)</span><br><span class="line">        theta &#x3D; theta - alpha * delta.T </span><br><span class="line">        # print(theta)</span><br><span class="line">        J_history[i] &#x3D; computeCost(X, y, theta)</span><br><span class="line">        </span><br><span class="line">    return theta, J_history</span><br></pre></td></tr></table></figure><br>调用函数执行:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">theta, J &#x3D; gradientDescent(X, y, theta, alpha, num_iters)</span><br></pre></td></tr></table></figure><br>theta = matrix([[-3.63029144,  1.16636235]])</p>
-<h2 id="画出拟合的回归方程以及代价函数的变化"><a href="#画出拟合的回归方程以及代价函数的变化" class="headerlink" title="画出拟合的回归方程以及代价函数的变化"></a>画出拟合的回归方程以及代价函数的变化</h2><p>前面我们虽然用来多变量的计算代价函数和梯度下降,但是当我们使用单变量时,我们还可以画出回归线性模型,看看他的拟合效果.</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">X &#x3D; np.linspace(data.Population.min(), data.Population.max(), 100)</span><br><span class="line">y &#x3D; theta[0,0] + (theta[0,1] * X)</span><br><span class="line">fig, ax &#x3D; plt.subplots(figsize&#x3D;(12,8))</span><br><span class="line">ax.plot(X, y, &#39;r&#39;, label&#x3D;&#39;Prediction&#39;)</span><br><span class="line">ax.scatter(data.Population, data.Profit, label&#x3D;&#39;Traning Data&#39;)</span><br><span class="line">ax.legend(loc&#x3D;2)</span><br><span class="line">ax.set_xlabel(&#39;Population&#39;)</span><br><span class="line">ax.set_ylabel(&#39;Profit&#39;)</span><br><span class="line">ax.set_title(&#39;Predicted Profit vs. Population Size&#39;)</span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure>
-<p>上述代码运行完,图像是这样的:<br> <img src="/images/onefit.png" width="50%" height="50%"></p>
-<p>如何确定梯度下降已经正确的执行了?<br>**在每个迭代之后,$J(\theta)$应该在减小</p>
-<ul>
-<li>我们可以画出图像来看$J(\theta)$是否收敛</li>
-<li>我们还可以设置当$J(\theta)$在某个迭代计算中小于某个值来认为收敛,不过这个值难以确定,因为不同模型的$J$最小值可能是不一样的</li>
-</ul>
-<p>下面我们画出代价函数的变化<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">fig, ax &#x3D; plt.subplots(figsize&#x3D;(12,8))</span><br><span class="line">ax.plot(np.arange(num_iters), J, &#39;r&#39;)</span><br><span class="line">ax.set_xlabel(&#39;Iterations&#39;)</span><br><span class="line">ax.set_ylabel(&#39;Cost&#39;)</span><br><span class="line">ax.set_title(&#39;Error vs. Training Epoch&#39;)</span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure><br>图像是这样的:<br> <img src="/images/cost.png" width="50%" height="50%"></p>
-<p>到这里,已经可以完成coursa上面的作业了<br>不过这里有个小细节需要注意:<br>$\alpha$(学习率)对梯度下降的收敛是有影响的,可以去不同的学习率来测试,我尝试过使用$\alpha=0.1$在单变量的环境下测试,是不会收敛的,一开始还以为是代码哪里写的有问题,后面想到学习率对于梯度下降的影响才恍然大悟。</p>
-<p>关于$\alpha$(学习率)对梯度下降的影响:</p>
-<ul>
-<li>$\alpha$太小: 慢收敛</li>
-<li><p>$\alpha$太大:$J(\theta)$在每次迭代过程中可能不会减小,也可能不会收敛(当然也可能会慢收敛)<br>如果我们的$J(\theta)$与iterations的图像是下面这样的,说明梯度下降没有很好的工作,需要使用更小的$\alpha$<br><img src="/images/alpha.png" width="50%" height="50%"><br>实际计算过程中,我们可以尝试选择下面的$\alpha$来计算:</p>
-<p>…0.001,0.003,0.01,0.03,0.1,0.3,1…<br>(每次$\times 3$)</p>
+<li><p><strong>维数灾难</strong> 导致数据稀疏性/过拟合<br>一个直观的理解是：假设我们有十个样本<br>特征维数为1D时，当特征空间是长度为5的线段时，样本密度是10/5=2。<br>特征维数为2D时，特征空间大小为$5^{2}$，样本密度为10/25=0.4。<br>特征维数为3D时，特征空间大小为$5^{3}$，样本密度为10/125=0.08<br>如果我们继续增加特征，特征空间的维数就会不断增长，变得越来越稀疏。由于这种稀疏性，当特征的数量无穷大时，训练样本位于最佳超平面错误一侧的可能性无穷小，因此找到可分离超平面就变得容易得多。事实上，增加特征数量使得高维空间线性可分，相当于在低维空间内训练一个复杂的非线性分类器。不过，这个非线性分类器学习了训练数据中的specific instances and exceptions，这就直接导致导致了<strong>过拟合</strong></p>
 </li>
-</ul>
-<p>下面是关于 特征缩放、正规方程的内容。</p>
-<h2 id="特征缩放-feature-scaling"><a href="#特征缩放-feature-scaling" class="headerlink" title="特征缩放(feature scaling)"></a>特征缩放(feature scaling)</h2><p>前面的过程我们并没有将特征进行缩放,使用特征缩放在我们面对多维特征问题的时候,保证这些特征都具有相近的尺度,这将有助于<strong>梯度下降算法更快地收敛</strong>(如果特征差距过大,变量非常不均匀时,它会无效率地<strong>振荡</strong>到最优质,梯度下降算法需要非常多次的迭代才能收敛)<br> <img src="/images/feature scaling.png" width="50%" height="50%"><br>特征缩放一般是将数据减去均值再除以标准差,当然除以数据的最大与最小值之差也是可以的<br>一般来说特征缩放不需要太精确,只需要每个特征roughly the same,这样梯度下降可以运行的更快一些。<br>对于第二个实验数据的正则化,使用python可以这样完成<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">path &#x3D; &#39;ex1data2.txt&#39;</span><br><span class="line">data2 &#x3D; pd.read_csv(path,header&#x3D;None,names&#x3D;[&#39;Size&#39;,&#39;Bedrooms&#39;,&#39;Price&#39;])</span><br><span class="line"># data2.head()</span><br><span class="line">cols &#x3D; data2.shape[1]</span><br><span class="line">X2 &#x3D; data2.iloc[:,0:cols-1]</span><br><span class="line">X2 &#x3D; (X2-X2.mean()) &#x2F; X2.std()</span><br><span class="line">X2.insert(0, &#39;Ones&#39;, 1)</span><br><span class="line">y2 &#x3D; data2.iloc[:,-1]</span><br></pre></td></tr></table></figure></p>
-<h2 id="正规方程-Normal-equation"><a href="#正规方程-Normal-equation" class="headerlink" title="正规方程(Normal equation)"></a>正规方程(Normal equation)</h2><p>$\theta = (X^{T}X)^{-1}X^{T} \vec{y}$<br>直接使用这个公式就可以计算出让$J(\theta)$取值最小的$\theta$<br>注意<strong>使用正规方程计算不需要对X进行feature scaling</strong><br>由上面的式子我们可以看出,正规方程主要工作量是在于计算:<br>$(X^{T}X)^{-1}$,计算机计算逆矩阵大约是$O(n^{3})$<br>一般情况下我们是不会出现$(X^{T}X)^{-1}$不存在(逆矩阵不存在)的情况<br>如果出现不可逆的情况,可以考虑:</p>
+<li><p><strong>过拟合(overfitting)</strong> 使用太多特征将会导致过拟合，泛化能力差<br><strong>overfitting</strong>: The classifier starts learning exceptions that are specific to the training data and do not generalize well when new data is encountered.<br>虽然在较低维度下分类器的性能表现的可能不如在高维空间中的好，但是对于未见过的数据却表现了良好的泛化能力，也就是说，使用更少的特征，我们的分类器可以<strong>避免过拟合</strong>，进而<strong>避免维数灾难</strong></p>
+</li>
+<li><p>维数灾难不同视角一<br>假设每个样本的特征值都是唯一的，并且每个特征的范围都是[0-1]<br>在1D时，如果我们想要将训练数据覆盖特征范围的20%时，我们需要所有样本的20%作为训练数据<br>在2D时，0.45^2=0.2，因此我们需要所有样本的45%作为训练数据<br>在3D时，0.58^3=0.2，因为我们需要所有样本的58%作为训练样本<br>也就是说，随着特征维数的增加，为了覆盖特征值值域的20%，我们需要增加更多的训练样本，当<strong>训练样本数量固定时，增加更多的特征维数，就容易导致过拟合</strong></p>
+</li>
+<li><p>维数灾难中不同视角二<br>维数灾难导致<strong>训练样本的分布不均</strong> 在中心位置的数据比在其周围的数据分布更加的稀疏，更多的数据将会分布在超立方体的角落。<br>可以这样来理解，设我们的立方体的边长为1。<br>不管维数多少，我们的超立方体的体积都为1<br>超球体的体积计算公式为：<br>$V_{超球体} = K \cdot  r ^{D}$   （r为小于1的数）<br>当D-&gt;无穷大时，V-&gt;0，这部分说明了分类问题中的“维数灾难”：<strong>在高维特征空间中，大多数的训练样本位于超立方体的角落。</strong></p>
+</li>
+<li><p>维数灾难中不同视角三<br>想象我们有一个圆环，其外环半径为1，内环半径为$1-\varepsilon$<br>可以求得：<br>$V_{外} = K \cdot 1 ^{D} = K$<br>$V_{环} =V_{外} - V_{内} =  K - K \cdot (1-\varepsilon )^{D}$<br>从而有：<br>$\frac{V_{外}}{V_{内}}  =  1 - (1-\varepsilon ) ^{D}$<br>$\lim_{D \to \infty }\frac{V_{外}}{V_{内}} = 1$<br><strong>随着维数的增加，我们在三维空间中的几何直觉会在考虑高维空间中不起作用。</strong> 一个球体的大部分体积都聚集在表面附近的薄球壳上面。</p>
+</li>
+<li><p>降维的方法分类<br>对于数据降维的方法有</p>
 <ul>
-<li><strong>Redundant features</strong>:有冗余特征,他们是线性相关的,这时候可以考虑去除冗余特征</li>
-<li><strong>too many features</strong>:假设我们有m个样本,n个特征。如果$m&lt;n$,可能情况是m个样本不够来拟合n个特征的$\theta$,所以可以考虑减少特征数量,还有一种办法是<strong>regularization</strong>,它可以让我们在很少的样本时拟合很多的特征(这个方法吴恩达老师只是简单的介绍,具体应该会在后面的课程中讲述)<br>第三周课程更新:<br>(通过添加正则化项,我们还解决了存在不可逆矩阵的问题)</li>
+<li>直接降维(特征选择)</li>
+<li>线性降维(PCA等)</li>
+<li>非线性降维(流行学习等)<br>下面将开始介绍PCA降维的思想。</li>
 </ul>
-<p>下面是具体的代码实现<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">def normalEqn(X, y):</span><br><span class="line">    theta &#x3D; np.linalg.inv(X.T@X)@X.T@y#X.T@X等价于X.T.dot(X)</span><br><span class="line">    return theta</span><br></pre></td></tr></table></figure><br>这里也需要注意一下,<strong>使用正规方程求出来的$\theta_{1}$和我们用梯度下降法求出来的$\theta_{2}$可能是不一样的</strong><br>可以从等高线图来理解,或者老师课上的可视化代价函数,可能有多个$\theta$使得代价函数的最小的。<br>关于正规方程的推导过程我将会在另外的博客中进行说明,因为里面同样涉及到矩阵求导,还有PCA的优化求导,以及我的PR课上老师要求的一个求导小练习一起做个总结。<br>最后是梯度下降与正规方程的比较</p>
-<h2 id="梯度下降-VS-正规方程"><a href="#梯度下降-VS-正规方程" class="headerlink" title="梯度下降 VS 正规方程"></a>梯度下降 VS 正规方程</h2><div class="table-container">
-<table>
-<thead>
-<tr>
-<th>Gradient Descent</th>
-<th>Normal equation</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>需要选择$\alpha$</td>
-<td>不需要选择$\alpha$</td>
-</tr>
-<tr>
-<td>需要多次迭代计算</td>
-<td>不需要迭代计算</td>
-</tr>
-<tr>
-<td>当n(特征数量)很大时依旧工作的很好</td>
-<td>需要计算$(X^{T}X)^{-1}$逆矩阵的计算需要$O(n^{3})$,通常来说当n小于10000 时还是可以接受的</td>
-</tr>
-<tr>
-<td>适用于各种模型的优化求解</td>
-<td>只适用于线性模型，不适合逻辑回归模型等其他更加复杂模型</td>
-</tr>
-</tbody>
-</table>
-</div>
-<p>bty,在batch gradient decent中复杂度是$O(m \times n) \approx O(n^{2})$</p>
+</li>
+</ol>
+<h2 id="PCA的基础概念"><a href="#PCA的基础概念" class="headerlink" title="PCA的基础概念"></a>PCA的基础概念</h2><ol>
+<li><p>求和向量$1_{n}$<br>对于任何一个向量x，其所有元素之和都等于x与求和向量的内积</p>
+</li>
+<li><p>中心化矩阵(centering matrix)<br>$H = I_{N} - \frac{1}{N}\cdot 1_{N}\cdot 1_{N}^{T}$<br>对于任意的向量x,$H\cdot x$表示将原数据向量的各个元素减去n个数据的均值的结果,直观上理解就是将数据往中心原点移动,中心化后的数据均值为0。<br>中心化矩阵有两个基本性质：</p>
+</li>
+</ol>
+<ul>
+<li>$H^{T} = H$</li>
+<li>$H^{n} = H$<br>以上两个将会在推导PCoA中使用到</li>
+</ul>
+<ol>
+<li><p>Data:<br>$X_{N\times P} = \begin{pmatrix}<br>x_{1}&amp; x_{2} &amp; …  &amp; x_{n}<br>\end{pmatrix}^{T}$<br>表示有N个数据，每个数据是P维的</p>
+</li>
+<li><p>Sample Mean:<br>$\bar{X} = \frac{1}{N} \sum_{i=1}^{N}x_{i}$</p>
+</li>
+<li><p>Sample Covariance<br>对于一维数据，我们有：<br>$S = \frac{1}{N} \sum_{i=1}^{N}(x_{i}-\bar{x})^{2} = \frac{1}{N}\cdot X^{T}\cdot 1_{N}$<br>对于p维数据，我们有：<br>$S_{p\times p} = \frac{1}{N} \sum_{i=1}^{N}(x_{i}-\bar{x})\cdot (x_{i}-\bar{x})^{T} = \frac{1}{N}\cdot X^{T}\cdot H\cdot X$</p>
+</li>
+<li><p>计算向量在某个方向上的投影<br>假设有两个向量$\vec{a},\vec{b}$,则$\vec{a}$在$\vec{b}$上面的投影$P_{1} = |\vec{a}| \cdot  \cos \theta$<br>同时我们有$\vec{a}\cdot \vec{b} = \left | \vec{a} \right |\cdot \left | \vec{b} \right |\cdot \cos \theta$<br>因此，当$\left | \vec{b} \right | = 1$时,<br>$\vec{a}\cdot \vec{b} =  \left | \vec{a} \right |\cdot\cos \theta = P_{2}$<br>我们可以看到,当$\left | \vec{b} \right | = 1$,$P_{1} = P_{2}$<br>因此算投影可以直接算向量点积,在数学中我们一般写成下面的形式: $P = a^{T} \cdot b$<br>s.t. $\left | \vec{b} \right | = 1$</p>
+</li>
+</ol>
+<h2 id="PCA的思想与推导过程"><a href="#PCA的思想与推导过程" class="headerlink" title="PCA的思想与推导过程"></a>PCA的思想与推导过程</h2><p>PCA的主要内容可以用一句话来概括，那就是：<strong>一个中心，两个基本点</strong><br><strong>一个中心</strong>：是对原始特征空间的重构，将一组可能是线性相关的数据通过正交变换，变成线性无关的数据(即去除数据的线性相关性)，当重构的空间维数小于原始特征空间维数时，就达到了降维的目的。<br><strong>两个基本点</strong>：</p>
+<ul>
+<li>最大投影方差思想</li>
+<li>最小重构距离思想</li>
+</ul>
+<h3 id="基于最大投影方差思想的推导过程"><a href="#基于最大投影方差思想的推导过程" class="headerlink" title="基于最大投影方差思想的推导过程"></a>基于最大投影方差思想的推导过程</h3><p>最大投影方差指：<br>将样本投影到新的坐标下，数据能够尽可能的分开(也就是方差尽可能大)，这样就能尽可能的将降低数据维度的同时更好的保留原始数据的特性，更好的区分原始数据。<br>我们先计算将数据降至1维，投影方向$\vec{u_{1}}$</p>
+<p>$j = \overrightarrow{(x_{i}-\bar{x})^{T}}\cdot \vec{u_{1}}$<br>s.t. $\vec{|u_{1}|}=1(u_{1}^{T} \cdot u_{1}=1)$<br>实际上投影是一个数:以$u_{1}$为基底时，在$u_{1}$方向上的坐标<br>那么投影方差应该表示为：<br>$J = \frac{1}{N}\sum_{i=1}^{N}\begin{Bmatrix}<br>(x_{i}-\bar{x})^{T}\cdot u_{1}<br>\end{Bmatrix}^{2}$<br>(这里要注意,因为前面已经中心化,均值已经为0了,所以直接把投影做平方累加就好)<br>$= \frac{1}{N}\sum_{i=1}^{N}u_{1}^{T}\cdot (x_{i}-\bar{x})\cdot (x_{i}-\bar{x})^{T}\cdot u_{1}$<br>$=u_{1}^{T}\cdot \bigl(\begin{smallmatrix}<br>\frac{1}{N}\sum_{i=1}^{N}<br>(x_{i}-\bar{x})\cdot (x_{i}-\bar{x})^{T}<br>\end{smallmatrix}\bigr)\cdot u_{1}$<br>$= u_{1}^{T}\cdot S \cdot u_{1}$</p>
+<p>到这里我们就得到了J的表示函数，就将问题转为求：<br>$\check{u_{1}} = argmax ( u_{1}^{T}\cdot S \cdot u_{1})$<br>s.t. $u_{1}^{T} \cdot u_{1} = 1$</p>
+<p>根据拉格朗日乘子法<br>$\alpha (u_{1},\lambda ) = u_{1}^{T}\cdot S \cdot u_{1})  + \lambda \cdot (1-u_{1}^{T}\cdot u_{1})$<br>有<br>$\frac{\partial \alpha}{\partial u_{1}} = 2\cdot S\cdot u_{1} - \lambda \cdot 2\cdot u_{1}=0$<br>$Su_{1} = \lambda u_{1}$</p>
+<p>这里面涉及到矩阵求导，请参考：<br><a href="https://zhuanlan.zhihu.com/p/24709748" target="_blank" rel="noopener">矩阵求导术</a></p>
+<p>实际上式子推导到这里，我们可以得出结论：<br>$\lambda$即特征值，$u_{1}$即特征向量<br>也就是说，我们的投影方向应该是S的特征向量的方向<br>再接着我们将上面的式子左乘$u_{1}^{T}$可以得到：<br>$u_{1}^{T}\cdot S \cdot u_{1} = J = \lambda$<br>注意这里$\lambda$刚好就是等于我们的$J$<br>也就是说，如果将数据降至一维，那么我们的$\check{u_{1}} = argmax ( u_{1}^{T}\cdot S \cdot u_{1}) $ 极大值就是$\lambda$<br>即$u_{1}$是S最大特征值对应的特征向量时，投影方差取到极大值，我们称$u_{1}$为<strong>第一主成分</strong><br>那么接下来我们就先获得方差最大的1维，生成该维的补空间；，继续在补空间中获得方差最大的1维，继续生成新的补空间，依次循环下去得到q维的空间，我们就可以降至q维了。<br>S的特征向量，就可以认为是<strong>主成分</strong></p>
+<h3 id="基于最小重构距离思想的推导过程"><a href="#基于最小重构距离思想的推导过程" class="headerlink" title="基于最小重构距离思想的推导过程"></a>基于最小重构距离思想的推导过程</h3><p>最小重构距离指：<br>恢复到原始数据的代价最小(当我们考虑最大投影方差时，其实也可以任务数据尽可能的分散，那么恢复成原始数据的代价就更小，如果数据都重合在了一起，那么想要恢复数据，也就是重构，就更加困难了)</p>
+<ol>
+<li><p>在新基底(以S的特征向量为基底)的向量表示<br>$\vec{x_{i}} = \sum_{k=1}^{p}(\vec{x_{i}^{T}}\cdot \vec{u_{k}} )\cdot \vec{u_{k}}$<br>为了简化描述，我们先假设数据已经中心化，注意这里的<strong>原始数据是p维的</strong></p>
+</li>
+<li><p>降至<strong>q维</strong>的向量表示<br>$\vec{\hat{x_{i}}} = \sum_{k=1}^{q}(\vec{x_{i}^{T}}\cdot \vec{u_{k}} )\cdot \vec{u_{k}}$</p>
+</li>
+<li><p>最小重构代价计算<br>$J = \frac{1}{N} \sum_{i=1}^{N}\parallel \vec{x_{i}}-\hat{x_{i}} \parallel^{2}$</p>
+<p>$= \frac{1}{N} \sum_{i=1}^{N}\parallel   \sum_{k=q+1}^{p}(\vec{x_{i}^{T}} \cdot \vec{u_{k}} )\cdot \vec{u_{k}}   \parallel^{2}$</p>
+<p>$= \frac{1}{N} \sum_{i=1}^{N} \sum_{k=q+1}^{p}(x_{i}^{T}\cdot u_{k})^{2}$<br>前面我们假设数据已经中心化，现在我们代入真正的数据<br>$J= \frac{1}{N} \sum_{i=1}^{N} \sum_{k=q+1}^{p}\begin{Bmatrix}<br>(x_{i}^{T}-\bar{x})\cdot u_{k}<br>\end{Bmatrix}^{2}$</p>
+</li>
+</ol>
+<p>$J= \sum_{k=q+1}^{p}\sum_{i=1}^{N} \frac{1}{N}  \begin{Bmatrix}<br>(x_{i}^{T}-\bar{x})\cdot u_{k}<br>\end{Bmatrix}^{2}$</p>
+<p>$J=\sum_{k=q+1}^{p}u_{k}^{T}\cdot S \cdot u_{k}$<br>s.t. $u_{k}^{T}\cdot u_{k}=1$</p>
+<p>到这里我们的推导已经基本上完成了，下面是我们的优化目标：让J最小<br>$J = argmin (\sum_{k=q+1}^{p}u_{k}^{T}\cdot S \cdot u_{k})$<br>s.t. $u_{k}^{T}\cdot u_{k}=1$<br>在这里我们可以发现，这个优化目标与最大方差的优化目标形式是一样的，只不过一个是求最大的$\vec{u}$，一个是降至k维后余下向量的$\vec{u}$<br>要求最小的J的话,应该求最小的特征值，那么剩下的特征值就是前q维的主成分了。</p>
+<h2 id="PCA的计算过程-IPO"><a href="#PCA的计算过程-IPO" class="headerlink" title="PCA的计算过程(IPO)"></a>PCA的计算过程(IPO)</h2><p>input:  $X_{N \times p}$,降至d维<br>Process:</p>
+<ol>
+<li>中心化 $X:= H \cdot X$ </li>
+<li>计算样本的协方差矩阵S</li>
+<li>对S做特征值分解</li>
+<li>取前d大个特征值所对应的特征向量 $u_{1},u_{2},…u_{d}$(列向量)组成投影矩阵$P=(u_{1}u_{2}…u_{d})$</li>
+</ol>
+<p>Output: $X_{N \times d} =  X_{N \times p} \cdot P_{p \times d}$</p>
+<p>这里还有一个小细节,就是西瓜书中计算新的坐标时是采用:<br> $X_{d \times N} = P^{T}_{d \times p} \cdot X_{p \times N}$<br> 最后得出来的结果是一样的.<br> 网上的很多文章对这个都解释的不太清楚,这里从矩阵线性变换的角度来理解看看:<br> 首先,计算一个列向量$x$在新基下面的坐标是这样计算的:<br> $x^{‘}: P^{-1} \cdot x$<br> 而如果将列向量组成矩阵,那么计算应该是这样的:<br> $X_{d \times N} = P^{-1}_{d \times p} \cdot X_{p \times N}$<br> 但是,如果是标准正交基的话,有:<br> $P^{-1} = P^{T}$<br> 这样就变成西瓜书上面的:<br>  $X_{d \times N} = P^{T}_{d \times p} \cdot X_{p \times N}$</p>
+<p>关于PCA的内容还有一个是关于PCA的计算优化PCoA，使用SVD分解，以及scikit learn中的PCA源码就是使用PCoA，这个先挖坑待填。</p>
+<hr>
+<h2 id="References"><a href="#References" class="headerlink" title="References"></a>References</h2><ol>
+<li><a href="https://www.visiondummy.com/2014/04/curse-dimensionality-affect-classification/" target="_blank" rel="noopener">Vincent Spruyt. The Curse of Dimensionality in classification. Computer vision for dummies. 2014.</a></li>
+<li>西瓜书</li>
+<li>PRML</li>
+<li><a href="https://www.cnblogs.com/yanxingang/p/10776475.html" target="_blank" rel="noopener">求和向量和中心矩阵</a></li>
+<li><a href="https://zhuanlan.zhihu.com/p/24709748" target="_blank" rel="noopener">矩阵求导术</a></li>
+<li><a href="https://www.bilibili.com/video/BV1aE411o7qd?t=4&amp;p=4" target="_blank" rel="noopener">白板推导系列</a></li>
+</ol>
 
       
     </div>
@@ -544,7 +552,7 @@
   </li>
   <li class="post-copyright-link">
     <strong>本文链接：</strong>
-    <a href="http://blog.tyfuu.net/2020/10/24/NG%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0EX1(%E7%BA%BF%E6%80%A7%E5%9B%9E%E5%BD%92)/" title="NG机器学习EX1(线性回归)">http://blog.tyfuu.net/2020/10/24/NG%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0EX1(%E7%BA%BF%E6%80%A7%E5%9B%9E%E5%BD%92)/</a>
+    <a href="http://blog.tyfuu.net/posts/100d/" title="PCA学习笔记(含推导过程)">http://blog.tyfuu.net/posts/100d/</a>
   </li>
   <li class="post-copyright-license">
     <strong>版权声明： </strong>
@@ -559,7 +567,7 @@
       
         <div class="post-tags">
           
-            <a href="/tags/%E5%9B%9E%E5%BD%92/" rel="tag"># 回归</a>
+            <a href="/tags/%E9%99%8D%E7%BB%B4/" rel="tag"># 降维</a>
           
         </div>
       
@@ -572,18 +580,14 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2020/10/18/PCA%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0(%E5%90%AB%E6%8E%A8%E5%AF%BC%E8%BF%87%E7%A8%8B)/" rel="next" title="PCA学习笔记(含推导过程)">
-                <i class="fa fa-chevron-left"></i> PCA学习笔记(含推导过程)
-              </a>
-            
           </div>
 
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2020/10/27/K-Means%E7%AE%97%E6%B3%95%E5%AE%9E%E7%8E%B0/" rel="prev" title="K-Means算法实现">
-                K-Means算法实现 <i class="fa fa-chevron-right"></i>
+              <a href="/posts/8590/" rel="prev" title="NG机器学习EX1(线性回归)">
+                NG机器学习EX1(线性回归) <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -669,7 +673,7 @@
                <a href="/archives/">
                
              
-                 <span class="site-state-item-count">6</span>
+                 <span class="site-state-item-count">7</span>
                  <span class="site-state-item-name">日志</span>
                </a>
              </div>
@@ -728,7 +732,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#读入数据并且可视化数据"><span class="nav-number">1.</span> <span class="nav-text">读入数据并且可视化数据</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#梯度下降知识点回顾"><span class="nav-number">2.</span> <span class="nav-text">梯度下降知识点回顾</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#设置X-y-theta并转为numpy矩阵"><span class="nav-number">3.</span> <span class="nav-text">设置X,y,theta并转为numpy矩阵</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#def-computeCost"><span class="nav-number">4.</span> <span class="nav-text">def computeCost()</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#def-gradientDescent"><span class="nav-number">5.</span> <span class="nav-text">def gradientDescent</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#画出拟合的回归方程以及代价函数的变化"><span class="nav-number">6.</span> <span class="nav-text">画出拟合的回归方程以及代价函数的变化</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#特征缩放-feature-scaling"><span class="nav-number">7.</span> <span class="nav-text">特征缩放(feature scaling)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#正规方程-Normal-equation"><span class="nav-number">8.</span> <span class="nav-text">正规方程(Normal equation)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#梯度下降-VS-正规方程"><span class="nav-number">9.</span> <span class="nav-text">梯度下降 VS 正规方程</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#降维"><span class="nav-number">1.</span> <span class="nav-text">降维</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#PCA的基础概念"><span class="nav-number">2.</span> <span class="nav-text">PCA的基础概念</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#PCA的思想与推导过程"><span class="nav-number">3.</span> <span class="nav-text">PCA的思想与推导过程</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#基于最大投影方差思想的推导过程"><span class="nav-number">3.1.</span> <span class="nav-text">基于最大投影方差思想的推导过程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#基于最小重构距离思想的推导过程"><span class="nav-number">3.2.</span> <span class="nav-text">基于最小重构距离思想的推导过程</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#PCA的计算过程-IPO"><span class="nav-number">4.</span> <span class="nav-text">PCA的计算过程(IPO)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#References"><span class="nav-number">5.</span> <span class="nav-text">References</span></a></li></ol></div>
             
 
           </div>
@@ -750,7 +754,7 @@
     <h3 class="widget-title">Tag Cloud</h3>
     <div id="myCanvasContainer" class="widget tagcloud">
         <canvas width="200" height="200" id="resCanvas" style="width:100%">
-            <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%88%86%E7%B1%BB/" rel="tag">分类</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%9B%9E%E5%BD%92/" rel="tag">回归</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%81%9A%E7%B1%BB/" rel="tag">聚类</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%99%8D%E7%BB%B4/" rel="tag">降维</a><span class="tag-list-count">1</span></li></ul>
+            <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%88%86%E7%B1%BB/" rel="tag">分类</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%9B%9E%E5%BD%92/" rel="tag">回归</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%81%9A%E7%B1%BB/" rel="tag">聚类</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%99%8D%E7%BB%B4/" rel="tag">降维</a><span class="tag-list-count">1</span></li></ul>
         </canvas>
     </div>
 </div>
