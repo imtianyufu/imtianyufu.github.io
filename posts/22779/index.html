@@ -86,12 +86,12 @@
 
 
 
-<meta name="description" content="主要内容有：  模型选择、评价指标 绘制学习曲线">
+<meta name="description" content="主要内容有：  模型选择、评价指标 绘制数据,欠拟合、过拟合曲线及学习曲线">
 <meta property="og:type" content="article">
 <meta property="og:title" content="NG机器学习EX5(Evaluating a Learning Algorithm)">
 <meta property="og:url" content="http://blog.tyfuu.net/posts/22779/index.html">
 <meta property="og:site_name" content="tyfu&#39;s blog">
-<meta property="og:description" content="主要内容有：  模型选择、评价指标 绘制学习曲线">
+<meta property="og:description" content="主要内容有：  模型选择、评价指标 绘制数据,欠拟合、过拟合曲线及学习曲线">
 <meta property="og:image" content="http://blog.tyfuu.net/images/8%20NG%20EX5/bv.jpg">
 <meta property="og:image" content="http://blog.tyfuu.net/images/8%20NG%20EX5/bias%20and%20variance.png">
 <meta property="og:image" content="http://blog.tyfuu.net/images/8%20NG%20EX5/reg%20bv.jpg">
@@ -100,7 +100,7 @@
 <meta property="og:image" content="http://blog.tyfuu.net/images/8%20NG%20EX5/high%20variance.jpg">
 <meta property="og:image" content="http://blog.tyfuu.net/images/8%20NG%20EX5/ex5%20bias%20and%20variance.png">
 <meta property="article:published_time" content="2020-11-29T08:42:36.000Z">
-<meta property="article:modified_time" content="2020-11-30T13:41:18.438Z">
+<meta property="article:modified_time" content="2020-12-01T06:28:21.905Z">
 <meta property="article:author" content="符说八道">
 <meta property="article:tag" content="分类">
 <meta name="twitter:card" content="summary">
@@ -175,7 +175,7 @@
       </a>
     </div>
       
-        <p class="site-subtitle">just do I T</p>
+        <p class="site-subtitle">just do I . T</p>
       
   </div>
 
@@ -446,7 +446,7 @@
         <p>主要内容有：</p>
 <ol>
 <li>模型选择、评价指标</li>
-<li>绘制学习曲线</li>
+<li>绘制数据,欠拟合、过拟合曲线及学习曲线</li>
 </ol>
 <hr>
 <a id="more"></a>
@@ -491,7 +491,7 @@
 <li>找出最小的$J_{cv}$模型M</li>
 <li>使用M中的params,计算$J_{test}$来评估我们的模型是否具有泛化问题</li>
 </ol>
-<p>需要注意的是,我们在计算$J_{cv},J_{train},J_{test}中都<strong>不需要加入正则项</strong>,而在我们训练模型时的$J$需要加入正则化项,这样做的原因是<strong>为了减少过拟合</strong></p>
+<p>需要注意的是,我们在计算$J_{cv},J_{train},J_{test}$中都<strong>不需要加入正则项</strong>,而在我们训练模型时的$J$需要加入正则化项,这样做的原因是<strong>为了减少过拟合</strong></p>
 <p>下图中:<br><img src="/images/8 NG EX5/reg lambda.jpg" width="50%" height="50%"><br>$\lambda$较小时,$J_{train}$较小(overfitting),$J_{cv}$较大<br>随着$\lambda$增大,$J_{train}$不断增加(under fitting),<strong>而$J_{cv}$是先减小后增大</strong></p>
 <h3 id="Learning-Curves"><a href="#Learning-Curves" class="headerlink" title="Learning Curves"></a>Learning Curves</h3><p><img src="/images/8 NG EX5/high bias.jpg" width="50%" height="50%"></p>
 <p><strong>在high bias(underfit)下,添加更多的训练集不一定会起作用</strong></p>
@@ -581,6 +581,10 @@
 
           <div class="post-nav-prev post-nav-item">
             
+              <a href="/posts/1346/" rel="prev" title="NG机器学习EX6(SVM)">
+                NG机器学习EX6(SVM) <i class="fa fa-chevron-right"></i>
+              </a>
+            
           </div>
         </div>
       
@@ -664,7 +668,7 @@
                <a href="/archives/">
                
              
-                 <span class="site-state-item-count">8</span>
+                 <span class="site-state-item-count">9</span>
                  <span class="site-state-item-name">日志</span>
                </a>
              </div>
@@ -745,7 +749,7 @@
     <h3 class="widget-title">Tag Cloud</h3>
     <div id="myCanvasContainer" class="widget tagcloud">
         <canvas width="200" height="200" id="resCanvas" style="width:100%">
-            <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%88%86%E7%B1%BB/" rel="tag">分类</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%9B%9E%E5%BD%92/" rel="tag">回归</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%81%9A%E7%B1%BB/" rel="tag">聚类</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%99%8D%E7%BB%B4/" rel="tag">降维</a><span class="tag-list-count">1</span></li></ul>
+            <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%88%86%E7%B1%BB/" rel="tag">分类</a><span class="tag-list-count">6</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%9B%9E%E5%BD%92/" rel="tag">回归</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%81%9A%E7%B1%BB/" rel="tag">聚类</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%99%8D%E7%BB%B4/" rel="tag">降维</a><span class="tag-list-count">1</span></li></ul>
         </canvas>
     </div>
 </div>
